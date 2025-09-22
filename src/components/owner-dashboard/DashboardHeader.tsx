@@ -54,12 +54,12 @@ export default function DashboardHeader() {
             <Link href="/" className="text-gray-300 hover:text-white transition-colors">
               Home
             </Link>
-            <a href="/owner-dashboard" className="text-white font-medium">
+            <Link href="/owner-dashboard" className="text-white font-medium">
               Dashboard
-            </a>
-            <a href="/settings" className="text-gray-300 hover:text-white transition-colors">
+            </Link>
+            <Link href="/settings" className="text-gray-300 hover:text-white transition-colors">
               Settings
-            </a>
+            </Link>
           </nav>
 
           {/* User + Logout */}
