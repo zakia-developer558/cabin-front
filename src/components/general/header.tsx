@@ -10,15 +10,15 @@ export default function Header() {
           <Link href="/" className="hover:text-gray-300 transition-colors">
             Home
           </Link>
-          <a href="#" className="hover:text-gray-300 transition-colors">
+          <Link href="#" className="hover:text-gray-300 transition-colors">
             About
-          </a>
-          <a href="#" className="hover:text-gray-300 transition-colors">
+          </Link>
+          <Link href="#" className="hover:text-gray-300 transition-colors">
             Services
-          </a>
-          <a href="#" className="hover:text-gray-300 transition-colors">
+          </Link>
+          <Link href="#" className="hover:text-gray-300 transition-colors">
             Contact
-          </a>
+          </Link>
         </nav>
       </div>
     </header>
