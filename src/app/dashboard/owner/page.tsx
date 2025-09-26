@@ -233,7 +233,7 @@ export default function OwnerDashboard() {
                 </button> */}
               </div>
 
-              <BookingTable bookings={bookings} cabinName={selectedCabin} onBookingUpdate={fetchBookings} />
+              <BookingTable bookings={bookings} cabinName={selectedCabin} />
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">

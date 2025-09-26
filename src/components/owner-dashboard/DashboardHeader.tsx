@@ -55,7 +55,7 @@ export default function DashboardHeader() {
             <Link href="/" className="text-gray-300 hover:text-white transition-colors">
               Home
             </Link>
-            <Link href="/owner-dashboard" className="text-white font-medium">
+            <Link href="/dashboard/owner" className="text-white font-medium">
               Dashboard
             </Link>
             <Link href="/settings" className="text-gray-300 hover:text-white transition-colors">

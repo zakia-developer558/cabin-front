@@ -20,15 +20,7 @@ export default function HomePage() {
             <a href="#" className="hover:text-gray-300 transition-colors">
               Home
             </a>
-            <a href="#" className="hover:text-gray-300 transition-colors">
-              About
-            </a>
-            <a href="#" className="hover:text-gray-300 transition-colors">
-              Services
-            </a>
-            <a href="#" className="hover:text-gray-300 transition-colors">
-              Contact
-            </a>
+           
           </nav>
         </div>
       </header>
