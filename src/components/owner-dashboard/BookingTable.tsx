@@ -1,13 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { CheckCircle, XCircle } from "lucide-react"
+import { Eye } from "lucide-react"
 import { useToast } from "../../hooks/useToast"
 import { ToastContainer } from "../ui/Toast"
+import BookingDetailsModal from "./BookingDetailsModal"
 
 interface Booking {
   id: string
-  orderer: string
+  orderNo: string
   name: string
   email: string
   address: string
@@ -35,12 +36,11 @@ interface BookingTableProps {
 
 export default function BookingTable({ bookings, cabinName, onBookingUpdate }: BookingTableProps) {
   const [activeTab, setActiveTab] = useState<"all" | "confirmed" | "pending" | "rejected">("all")
-  const [loading, setLoading] = useState<string | null>(null) // Track which booking is being processed
   const [currentPage, setCurrentPage] = useState(1)
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const bookingsPerPage = 10
-  const { toasts, success, error, removeToast } = useToast()
-
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
+  const { toasts, removeToast } = useToast()
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -76,79 +76,14 @@ export default function BookingTable({ bookings, cabinName, onBookingUpdate }: B
     setCurrentPage(1)
   }
 
-  const handleConfirm = async (id: string) => {
-    if (!token) {
-      error("Authentication Error", "Please log in again to continue.")
-      return
-    }
-
-    setLoading(id)
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/cabins/admin/bookings/${id}/approve`, {
-        method: "PUT",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      })
-
-      const data = await response.json()
-
-      if (response.ok && data.success) {
-        success("Booking Confirmed!", "The booking has been successfully approved.")
-        // Call the callback to refresh data if provided
-        if (onBookingUpdate) {
-          onBookingUpdate()
-        }
-      } else {
-        error("Confirmation Failed", data.message || "Unable to confirm the booking. Please try again.")
-      }
-    } catch (err) {
-      console.error("Error confirming booking:", err)
-      error("Network Error", "An error occurred while confirming the booking. Please check your connection.")
-    } finally {
-      setLoading(null)
-    }
+  const handleViewDetails = (booking: Booking) => {
+    setSelectedBooking(booking)
+    setIsModalOpen(true)
   }
 
-  const handleReject = async (id: string) => {
-    if (!token) {
-      error("Authentication Error", "Please log in again to continue.")
-      return
-    }
-
-    // Confirm before rejecting
-    if (!confirm("Are you sure you want to reject this booking?")) {
-      return
-    }
-
-    setLoading(id)
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/cabins/admin/bookings/${id}/reject`, {
-        method: "PUT",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      })
-
-      const data = await response.json()
-
-      if (response.ok && data.success) {
-        success("Booking Rejected", "The booking has been successfully rejected.")
-        // Call the callback to refresh data if provided
-        if (onBookingUpdate) {
-          onBookingUpdate()
-        }
-      } else {
-        error("Rejection Failed", data.message || "Unable to reject the booking. Please try again.")
-      }
-    } catch (err) {
-      console.error("Error rejecting booking:", err)
-      error("Network Error", "An error occurred while rejecting the booking. Please check your connection.")
-    } finally {
-      setLoading(null)
-    }
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedBooking(null)
   }
 
   return (
@@ -190,7 +125,7 @@ export default function BookingTable({ bookings, cabinName, onBookingUpdate }: B
             <colgroup><col className="w-48" /><col className="w-40" /><col className="w-56" /><col className="w-64" /><col className="w-48" /><col className="w-32" /><col className="w-32" /></colgroup>
             <thead className="bg-gray-50 sticky top-0">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Orderer</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order No.</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
@@ -206,11 +141,11 @@ export default function BookingTable({ bookings, cabinName, onBookingUpdate }: B
                   <div className="flex items-center">
                     <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center flex-shrink-0">
                       <span className="text-white text-sm font-medium">
-                        {booking.orderer.charAt(0).toUpperCase()}
+                        {booking.orderNo && typeof booking.orderNo === 'string' ? booking.orderNo.charAt(0).toUpperCase() : 'N'}
                       </span>
                     </div>
                     <div className="ml-3 min-w-0">
-                      <div className="text-sm font-medium text-gray-900 truncate">{booking.orderer}</div>
+                      <div className="text-sm font-medium text-gray-900 truncate">{booking.orderNo || 'N/A'}</div>
                     </div>
                   </div>
                 </td>
@@ -242,40 +177,16 @@ export default function BookingTable({ bookings, cabinName, onBookingUpdate }: B
                 </td>
                 
                 <td className="px-4 py-4">
-                  <div className="flex space-x-2 justify-center">
-                      {booking.status === "Venter" && (
-                        <>
-                          <button
-                            onClick={() => handleConfirm(booking.id)}
-                            disabled={loading === booking.id}
-                            className="text-green-600 hover:text-green-800 disabled:text-green-300 disabled:cursor-not-allowed transition-all duration-200 hover:scale-110"
-                            title="Confirm Booking"
-                          >
-                            {loading === booking.id ? (
-                              <div className="w-5 h-5 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
-                            ) : (
-                              <CheckCircle className="w-5 h-5" />
-                            )}
-                          </button>
-                          <button
-                            onClick={() => handleReject(booking.id)}
-                            disabled={loading === booking.id}
-                            className="text-red-600 hover:text-red-800 disabled:text-red-300 disabled:cursor-not-allowed transition-all duration-200 hover:scale-110"
-                            title="Reject Booking"
-                          >
-                            {loading === booking.id ? (
-                              <div className="w-5 h-5 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
-                            ) : (
-                              <XCircle className="w-5 h-5" />
-                            )}
-                          </button>
-                        </>
-                      )}
-                      {booking.status !== "Venter" && (
-                        <span className="text-gray-400 italic text-xs">No actions</span>
-                      )}
-                    </div>
-                  </td>
+                  <div className="flex justify-center">
+                    <button
+                      onClick={() => handleViewDetails(booking)}
+                      className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-md transition-colors"
+                      title="View Details"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -335,6 +246,15 @@ export default function BookingTable({ bookings, cabinName, onBookingUpdate }: B
       
       {/* Toast Container */}
       <ToastContainer toasts={toasts} onClose={removeToast} />
+      
+      {/* Booking Details Modal */}
+      {selectedBooking && (
+        <BookingDetailsModal
+          booking={selectedBooking}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   )
 }

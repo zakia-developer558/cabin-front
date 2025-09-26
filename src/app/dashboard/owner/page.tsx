@@ -1,11 +1,13 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { LegendsProvider } from "../../../contexts/LegendsContext"
 import DashboardHeader from "../../../components/owner-dashboard/DashboardHeader"
 import Sidebar from "../../../components/owner-dashboard/Sidebar"
 import BookingTable from "../../../components/owner-dashboard/BookingTable"
 import Calendar from "../../../components/owner-dashboard/Calender"
 import AvailabilityManager from "../../../components/owner-dashboard/AvailabiityManager"
+import LegendManager from "../../../components/owner-dashboard/LegendManager"
 import AddCabinModal from "../../../components/owner-dashboard/AddCabinModal"
 import type { CabinData } from "../../../components/owner-dashboard/AddCabinModal"
 
@@ -20,6 +22,7 @@ interface Cabin {
 
 interface BackendBooking {
   _id: string
+  orderNo: string
   guestName: string
   guestEmail: string
   guestAddress: string
@@ -128,7 +131,7 @@ export default function OwnerDashboard() {
         // Map backend → frontend format
         const mapped = data.items.map((b: BackendBooking) => ({
           id: b._id,
-          orderer: b.guestName,
+          orderNo: b.orderNo,
           name: b.guestName,
           email: b.guestEmail,
           address: `${b.guestAddress}, ${b.guestCity}`,
@@ -209,42 +212,45 @@ export default function OwnerDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900">
-      <DashboardHeader />
+    <LegendsProvider selectedCabin={selectedCabin}>
+      <div className="min-h-screen bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900">
+        <DashboardHeader />
 
-      <div className="flex">
-        <Sidebar 
-          selectedCabin={selectedCabin} 
-          onCabinSelect={setSelectedCabin} 
-          onCabinAdded={fetchCabins}
-          cabins={cabins}
-          loading={cabinsLoading}
-        />
+        <div className="flex">
+          <Sidebar 
+            selectedCabin={selectedCabin} 
+            onCabinSelect={setSelectedCabin} 
+            onCabinAdded={fetchCabins}
+            cabins={cabins}
+            loading={cabinsLoading}
+          />
 
-        <main className="flex-1 p-6 space-y-6">
-          <div className="bg-white rounded-2xl shadow-2xl p-6">
-            <div className="flex items-center justify-between mb-6">
-              {/* <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
-                Export
-              </button> */}
+          <main className="flex-1 p-6 space-y-6">
+            <div className="bg-white rounded-2xl shadow-2xl p-6">
+              <div className="flex items-center justify-between mb-6">
+                {/* <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
+                  Export
+                </button> */}
+              </div>
+
+              <BookingTable bookings={bookings} cabinName={selectedCabin} onBookingUpdate={fetchBookings} />
             </div>
 
-            <BookingTable bookings={bookings} cabinName={selectedCabin} onBookingUpdate={fetchBookings} />
-          </div>
-
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            <Calendar selectedCabin={selectedCabin} />
-            <AvailabilityManager selectedCabin={selectedCabin} />
-          </div>
-        </main>
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+              <Calendar selectedCabin={selectedCabin} />
+              <AvailabilityManager selectedCabin={selectedCabin} />
+              <LegendManager selectedCabin={selectedCabin} />
+            </div>
+          </main>
+        </div>
+        
+        {/* Add Cabin Modal */}
+        <AddCabinModal
+          isOpen={isAddCabinModalOpen}
+          onClose={() => setIsAddCabinModalOpen(false)}
+          onSubmit={handleAddCabin}
+        />
       </div>
-      
-      {/* Add Cabin Modal */}
-      <AddCabinModal
-        isOpen={isAddCabinModalOpen}
-        onClose={() => setIsAddCabinModalOpen(false)}
-        onSubmit={handleAddCabin}
-      />
-    </div>
+    </LegendsProvider>
   )
 }

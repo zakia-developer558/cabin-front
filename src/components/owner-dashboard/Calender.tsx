@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { useLegends } from "../../contexts/LegendsContext"
 
 interface CalendarProps {
   selectedCabin: string | null
@@ -12,6 +13,7 @@ interface CalendarItem {
   guestName: string
   startDateTime: string
   endDateTime: string
+  reason?: string // Add reason property for blocked items
 }
 
 interface CalendarDay {
@@ -46,6 +48,7 @@ export default function Calendar({ selectedCabin }: CalendarProps) {
   const [calendarData, setCalendarData] = useState<CalendarData | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { activeLegends, getLegendByStatus } = useLegends()
 
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
@@ -113,27 +116,44 @@ const isPartialBooking = (dayData : CalendarDay) => {
   if (!dayData.items || dayData.items.length === 0) return false
 
   for (const item of dayData.items) {
-    if (item.type === 'booking') {
-      // Extract just the time portion
-      const startTime = item.startDateTime.split('T')[1]
-      const endTime = item.endDateTime.split('T')[1]
+    // Only consider approved bookings for visual display
+    if (item.type === 'booking' && item.status === 'approved') {
+      // Parse the UTC datetime strings
+      const startDate = new Date(item.startDateTime)
+      const endDate = new Date(item.endDateTime)
       
-      // Check if it's NOT a full day booking
-      // Full day should start with 00:00:00 and end with 23:59:59
-      const isNotFullDay = !(
-        startTime.startsWith('00:00:00') && 
-        (endTime.startsWith('23:59:59') || endTime.startsWith('00:00:00'))
+      // Use UTC methods to get correct time
+      const startHour = startDate.getUTCHours()
+      const endHour = endDate.getUTCHours()
+      const startMinute = startDate.getUTCMinutes()
+      const endMinute = endDate.getUTCMinutes()
+      
+      console.log('Checking booking:', { 
+        startDateTime: item.startDateTime,
+        endDateTime: item.endDateTime,
+        startHour, endHour, startMinute, endMinute 
+      })
+      
+      // Check if it's a full day booking (00:00:00 to 23:59:59)
+      const isFullDay = (
+        startHour === 0 && startMinute === 0 && 
+        endHour === 23 && endMinute === 59
       )
       
-      if (isNotFullDay) {
+      console.log('Is full day?', isFullDay)
+      
+      // If it's NOT a full day, then it's partial
+      if (!isFullDay) {
+        console.log('Partial booking detected')
         return true
       }
     }
   }
+  console.log('No partial booking found')
   return false
 }
 
-// Helper function to check which halves are booked
+// Helper function to check which halves are booked (only approved bookings)
 const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolean } => {
   if (!dayData.items || dayData.items.length === 0) return { first: false, second: false }
 
@@ -141,25 +161,49 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
   let secondHalfBooked = false
 
   for (const item of dayData.items) {
-    if (item.type === 'booking') {
-      const startTime = item.startDateTime.split('T')[1]
-      const endTime = item.endDateTime.split('T')[1]
-      const startHour = parseInt(startTime.split(':')[0])
-      const endHour = parseInt(endTime.split(':')[0])
-      const endMinute = parseInt(endTime.split(':')[1])
+    // Only consider approved bookings as "booked" for visual display
+    if (item.type === 'booking' && item.status === 'approved') {
+      // Parse the UTC datetime strings
+      const startDate = new Date(item.startDateTime)
+      const endDate = new Date(item.endDateTime)
       
-      // Check if booking covers first half (00:00 - 11:59)
-      if (startHour === 0) {
-        // If it ends at 11:59 or later, it covers first half
-        if (endHour >= 11 && (endHour > 11 || endMinute >= 59)) {
+      // Use UTC methods to get correct time
+      const startHour = startDate.getUTCHours()
+      const endHour = endDate.getUTCHours()
+      const startMinute = startDate.getUTCMinutes()
+      const endMinute = endDate.getUTCMinutes()
+      
+      console.log('Analyzing booking halves:', { 
+        startDateTime: item.startDateTime,
+        endDateTime: item.endDateTime,
+        startHour, endHour, startMinute, endMinute 
+      })
+      
+      // If it's a full day booking (00:00 to 23:59), both halves are booked
+      if (startHour === 0 && startMinute === 0 && endHour === 23 && endMinute === 59) {
+        console.log('Full day booking - both halves booked')
+        firstHalfBooked = true
+        secondHalfBooked = true
+      } else {
+        // For partial bookings, check which halves are covered
+        
+        // First half is booked if booking starts before 12:00
+        if (startHour < 12) {
           firstHalfBooked = true
+        }
+        
+        // Second half is booked if booking ends after 12:00
+        if (endHour > 12 || (endHour === 12 && endMinute > 0)) {
+          secondHalfBooked = true
+        }
+        
+        // Also check if booking starts at or after 12:00 (afternoon booking)
+        if (startHour >= 12) {
+          secondHalfBooked = true
         }
       }
       
-      // Check if booking covers second half (12:00 - 23:59)
-      if (startHour >= 12 || (startHour <= 12 && endHour >= 12)) {
-        secondHalfBooked = true
-      }
+      console.log('Half booking result:', { firstHalfBooked, secondHalfBooked })
     }
   }
   
@@ -177,9 +221,38 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
     const dayData = calendarData.calendar.find(d => d.date === dateString)
 
     if (dayData) {
-      if (dayData.status === 'booked' && isPartialBooking(dayData)) {
-        return 'partially_booked'
+      // Check for blocked items with custom legend IDs in the reason field
+      const blockedItem = dayData.items?.find(item => item.type === 'block')
+      if (blockedItem && blockedItem.reason) {
+        // Check if the reason is a legend ID (not a default status)
+        const legend = getLegendByStatus(blockedItem.reason)
+        if (legend && !legend.isDefault) {
+          // Return the legend ID as the status for custom legends
+          return blockedItem.reason
+        }
       }
+
+      // Check if date has approved bookings for visual display
+      if (dayData.status === 'booked') {
+        // Check if there are any approved bookings
+        const hasApprovedBookings = dayData.items?.some(item => 
+          item.type === 'booking' && item.status === 'approved'
+        )
+        
+        if (hasApprovedBookings) {
+          // Check if it's a partial booking (approved only)
+          if (isPartialBooking(dayData)) {
+            return 'partially_booked'
+          }
+          return 'booked'
+        } else {
+          // Only pending bookings exist, show as available
+          return 'available'
+        }
+      }
+      
+      // Return the status from backend - this supports custom statuses
+      // The backend can return any custom status that matches legend IDs
       return dayData.status
     }
 
@@ -187,6 +260,14 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
   }
 
   const getDateStyles = (status: string) => {
+    // First try to get custom legend styles
+    const legend = getLegendByStatus(status)
+    if (legend) {
+      return `${legend.bgColor} ${legend.textColor} ${legend.borderColor} hover:opacity-80`
+    }
+    
+    // Enhanced fallback to support more custom statuses
+    // This ensures any unknown status gets a neutral appearance
     switch (status) {
       case "booked":
         return "bg-red-100 text-red-800 border-red-200"
@@ -195,8 +276,10 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
       case "maintenance":
         return "bg-yellow-100 text-yellow-800 border-yellow-200"
       case "available":
-      default:
         return "bg-green-100 text-green-800 border-green-200 hover:bg-green-200"
+      default:
+        // For any custom status not found in legends, use a neutral style
+        return "bg-blue-100 text-blue-800 border-blue-200 hover:opacity-80"
     }
   }
 
@@ -288,12 +371,12 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
                 <div key={index} className="aspect-square relative border border-gray-300 rounded-lg overflow-hidden cursor-pointer">
                   {/* First half (12 AM - 12 PM) - Top-left triangle */}
                   <div 
-                    className={`absolute inset-0 ${bookedHalves.first ? 'bg-red-200' : 'bg-green-200'}`} 
+                    className={`absolute inset-0 ${bookedHalves.first ? 'bg-red-500' : 'bg-green-500'}`} 
                     style={{ clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)' }}
                   ></div>
                   {/* Second half (12 PM - 12 AM) - Bottom-right triangle */}
                   <div 
-                    className={`absolute inset-0 ${bookedHalves.second ? 'bg-red-200' : 'bg-green-200'}`} 
+                    className={`absolute inset-0 ${bookedHalves.second ? 'bg-red-500' : 'bg-green-500'}`} 
                     style={{ clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)' }}
                   ></div>
                   <div className="relative z-10 flex items-center justify-center text-sm font-medium text-gray-800 h-full w-full">
@@ -319,29 +402,22 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
         <div className="space-y-2">
           <h4 className="font-semibold text-gray-800 text-sm">Legend</h4>
           <div className="space-y-1">
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
-              <span className="text-xs text-gray-600">Available</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
-              <span className="text-xs text-gray-600">Booked</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 border border-gray-300 rounded relative overflow-hidden bg-white">
-                <div className="absolute inset-0 bg-green-200" style={{ clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)' }}></div>
-                <div className="absolute inset-0 bg-red-200" style={{ clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)' }}></div>
+            {activeLegends.map((legend) => (
+              <div key={legend.id} className="flex items-center space-x-2">
+                {legend.id === 'partially_booked' ? (
+                  <div className="w-4 h-4 border border-gray-300 rounded relative overflow-hidden bg-white">
+                    <div className="absolute inset-0 bg-green-500" style={{ clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)' }}></div>
+                    <div className="absolute inset-0 bg-red-500" style={{ clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)' }}></div>
+                  </div>
+                ) : (
+                  <div 
+                    className={`w-4 h-4 ${legend.bgColor} ${legend.borderColor} rounded`}
+                    style={{ backgroundColor: legend.color }}
+                  ></div>
+                )}
+                <span className="text-xs text-gray-600">{legend.name}</span>
               </div>
-              <span className="text-xs text-gray-600">Partially Booked</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-yellow-100 border border-yellow-200 rounded"></div>
-              <span className="text-xs text-gray-600">Maintenance</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-gray-100 border border-gray-200 rounded"></div>
-              <span className="text-xs text-gray-600">Unavailable</span>
-            </div>
+            ))}
           </div>
         </div>
 

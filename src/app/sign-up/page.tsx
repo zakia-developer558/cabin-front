@@ -9,7 +9,8 @@ export default function SignupPage() {
     firstName: "",
     lastName: "",
     email: "",
-    password: ""
+    password: "",
+    companyName: ""
   })
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -51,6 +52,10 @@ export default function SignupPage() {
       setError("Password must be at least 6 characters long")
       return false
     }
+    if (!formData.companyName.trim()) {
+      setError("Company name is required")
+      return false
+    }
     return true
   }
 
@@ -76,6 +81,7 @@ export default function SignupPage() {
           lastName: formData.lastName,
           email: formData.email,
           password: formData.password,
+          companyName: formData.companyName,
           role: userType
         })
       })
@@ -91,7 +97,8 @@ export default function SignupPage() {
         firstName: "",
         lastName: "",
         email: "",
-        password: ""
+        password: "",
+        companyName: ""
       })
       
       // Optionally redirect to login page after successful registration
@@ -249,6 +256,29 @@ export default function SignupPage() {
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="Email"
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-gray-300 focus:outline-none text-gray-900 placeholder-gray-500"
+                required
+              />
+            </div>
+
+            {/* Company Name Field */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                  />
+                </svg>
+              </div>
+              <input
+                type="text"
+                name="companyName"
+                value={formData.companyName}
+                onChange={handleInputChange}
+                placeholder="Company Name"
                 className="w-full pl-10 pr-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-gray-300 focus:outline-none text-gray-900 placeholder-gray-500"
                 required
               />

@@ -10,29 +10,33 @@ interface User {
   email: string
   role: string
   slug?: string
+  companySlug?: string // Add company slug to user interface
 }
 
 export default function SettingsPage() {
   const [user, setUser] = useState<User | null>(null)
-  const [ownerSlug, setOwnerSlug] = useState<string>('')
+  const [companySlug, setCompanySlug] = useState<string>('')
   const [copySuccess, setCopySuccess] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     // Load user from localStorage when component mounts
     const storedUser = localStorage.getItem("user")
-    const storedSlug = localStorage.getItem("ownerSlug")
+    const storedSlug = localStorage.getItem("companySlug")
     
     if (storedUser) {
       try {
         const userData = JSON.parse(storedUser)
         setUser(userData)
         
-        // Get owner slug from localStorage or user data
+        // Get company slug from localStorage or user data
         if (storedSlug) {
-          setOwnerSlug(storedSlug)
+          setCompanySlug(storedSlug)
+        } else if (userData.companySlug) {
+          setCompanySlug(userData.companySlug)
         } else if (userData.slug) {
-          setOwnerSlug(userData.slug)
+          // Fallback to user slug if no company slug is available
+          setCompanySlug(userData.slug)
         }
       } catch (err) {
         console.error("Error parsing user from localStorage", err)
@@ -41,7 +45,7 @@ export default function SettingsPage() {
     setLoading(false)
   }, [])
 
-  const publicCabinUrl = ownerSlug ? `${window.location.origin}/${ownerSlug}` : ''
+  const publicCabinUrl = companySlug ? `${window.location.origin}/${companySlug}` : ''
 
   const handleCopyLink = async () => {
     if (!publicCabinUrl) return
@@ -125,7 +129,7 @@ export default function SettingsPage() {
                   They can browse and book directly from this public page.
                 </p>
                 
-                {ownerSlug ? (
+                {companySlug ? (
                   <div className="space-y-3">
                     <div className="flex items-center space-x-2">
                       <div className="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono text-gray-700">
@@ -158,13 +162,13 @@ export default function SettingsPage() {
                     </div>
                     
                     <div className="text-xs text-blue-600">
-                      <strong>Your Owner Slug:</strong> {ownerSlug}
+                      <strong>Your Company Slug:</strong> {companySlug}
                     </div>
                   </div>
                 ) : (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                     <p className="text-sm text-yellow-800">
-                      ⚠️ Owner slug not found. Please contact support to set up your public cabin link.
+                      ⚠️ Company slug not found. Please contact support to set up your public cabin link.
                     </p>
                   </div>
                 )}

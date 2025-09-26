@@ -1,8 +1,10 @@
 "use client"
 
 import type React from "react"
+import Image from "next/image"
 
 import { useState } from "react"
+import { uploadImageToFirebase } from "@/utils/imageUpload"
 
 export interface CabinData {
   name: string
@@ -13,7 +15,9 @@ export interface CabinData {
   email: string
   contact_person_name: string
   contact_person_employer: string
-  is_member: boolean
+  halfdayAvailability: boolean
+  image?: string
+  color: string
 }
 
 interface AddCabinModalProps {
@@ -32,24 +36,57 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
     email: "",
     contact_person_name: "",
     contact_person_employer: "",
-    is_member: false,
+    halfdayAvailability: false,
+    image: "",
+    color: "#4ECDC4",
   })
+  const [selectedImage, setSelectedImage] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit(formData)
-    setFormData({
-      name: "",
-      address: "",
-      postal_code: "",
-      city: "",
-      phone: "",
-      email: "",
-      contact_person_name: "",
-      contact_person_employer: "",
-      is_member: false,
-    })
-    onClose()
+    setUploading(true)
+    
+    try {
+      let imageUrl = ""
+      
+      // Upload image if selected
+      if (selectedImage) {
+        imageUrl = await uploadImageToFirebase(selectedImage)
+      }
+      
+      // Submit form data with image URL
+      const cabinDataWithImage = {
+        ...formData,
+        image: imageUrl
+      }
+      
+      onSubmit(cabinDataWithImage)
+      
+      // Reset form
+      setFormData({
+        name: "",
+        address: "",
+        postal_code: "",
+        city: "",
+        phone: "",
+        email: "",
+        contact_person_name: "",
+        contact_person_employer: "",
+        halfdayAvailability: false,
+        image: "",
+        color: "#4ECDC4",
+      })
+      setSelectedImage(null)
+      setImagePreview(null)
+      onClose()
+    } catch (error) {
+      console.error("Error submitting form:", error)
+      alert("Failed to upload image. Please try again.")
+    } finally {
+      setUploading(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -59,6 +96,32 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
       ...prev,
       [name]: target.type === "checkbox" ? target.checked : value,
     }))
+  }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file')
+        return
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size should be less than 5MB')
+        return
+      }
+      
+      setSelectedImage(file)
+      
+      // Create preview
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
   }
 
   if (!isOpen) return null
@@ -184,12 +247,91 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
           <div className="flex items-center">
             <input
               type="checkbox"
-              name="is_member"
-              checked={formData.is_member}
+              name="halfdayAvailability"
+              checked={formData.halfdayAvailability}
               onChange={handleChange}
               className="mr-2 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
             />
-            <label className="text-sm font-medium text-gray-700">Is Member</label>
+            <label className="text-sm font-medium text-gray-700">Half Day Availability</label>
+          </div>
+
+          {/* Color Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Cabin Color</label>
+            <div className="flex items-center space-x-3">
+              <input
+                type="color"
+                name="color"
+                value={formData.color}
+                onChange={handleChange}
+                className="h-10 w-20 border border-gray-300 rounded-lg cursor-pointer"
+              />
+              <span className="text-sm text-gray-600">{formData.color}</span>
+            </div>
+          </div>
+
+          {/* Image Upload Section */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Cabin Image</label>
+            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-red-400 transition-colors">
+              <div className="space-y-1 text-center">
+                {imagePreview ? (
+                  <div className="relative">
+                    <Image
+                      src={imagePreview}
+                      alt="Preview"
+                      width={128}
+                      height={128}
+                      className="mx-auto h-32 w-32 object-cover rounded-lg"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedImage(null)
+                        setImagePreview(null)
+                      }}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <svg
+                      className="mx-auto h-12 w-12 text-gray-400"
+                      stroke="currentColor"
+                      fill="none"
+                      viewBox="0 0 48 48"
+                    >
+                      <path
+                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <div className="flex text-sm text-gray-600">
+                      <label
+                        htmlFor="image-upload"
+                        className="relative cursor-pointer bg-white rounded-md font-medium text-red-600 hover:text-red-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-red-500"
+                      >
+                        <span>Upload a file</span>
+                        <input
+                          id="image-upload"
+                          name="image-upload"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          className="sr-only"
+                        />
+                      </label>
+                      <p className="pl-1">or drag and drop</p>
+                    </div>
+                    <p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
 
 
@@ -199,14 +341,23 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
               type="button"
               onClick={onClose}
               className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              disabled={uploading}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+              className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={uploading}
             >
-              Add Cabin
+              {uploading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Uploading...
+                </div>
+              ) : (
+                "Add Cabin"
+              )}
             </button>
           </div>
         </form>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
+import Image from "next/image"
 
 interface Cabin {
   _id: string
@@ -17,14 +18,15 @@ interface Cabin {
   is_member?: boolean
   createdAt?: string
   updatedAt?: string
+  image?: string
 }
 
 
 
-export default function OwnerCabinsPage() {
+export default function CompanyCabinsPage() {
   const params = useParams()
   const router = useRouter()
-  const ownerSlug = params['owner-slug'] as string
+  const companySlug = params['company-slug'] as string
   
   const [cabins, setCabins] = useState<Cabin[]>([])
   const [loading, setLoading] = useState(true)
@@ -33,34 +35,48 @@ export default function OwnerCabinsPage() {
   const [selectedCity, setSelectedCity] = useState("all")
 
   useEffect(() => {
-    const fetchOwnerCabins = async () => {
-      if (!ownerSlug) return
+    const fetchCompanyCabins = async () => {
+      if (!companySlug) return
       
       try {
         setLoading(true)
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/cabins/owner/${ownerSlug}/cabins`)
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/cabins/company/${companySlug}/cabins`)
         
         if (!response.ok) {
           throw new Error(`Failed to fetch cabins: ${response.status}`)
         }
         
         const data = await response.json()
-        setCabins(data.data || [])
+        
+        // Clean image URLs similar to CabinTable
+        const cleanImageUrl = (imageUrl?: string): string | undefined => {
+          if (!imageUrl) return undefined
+          return imageUrl.replace(/`/g, '').trim() || undefined
+        }
+        
+        const cleanedCabins = (data.data || []).map((cabin: Cabin) => ({
+          ...cabin,
+          image: cleanImageUrl(cabin.image)
+        }))
+        
+        console.log('Company cabins with cleaned images:', cleanedCabins.map((c: Cabin) => ({ name: c.name, image: c.image })))
+        
+        setCabins(cleanedCabins)
       } catch (err) {
-        console.error('Error fetching owner cabins:', err)
+        console.error('Error fetching company cabins:', err)
         setError(err instanceof Error ? err.message : 'Failed to load cabins')
       } finally {
         setLoading(false)
       }
     }
 
-    fetchOwnerCabins()
-  }, [ownerSlug])
+    fetchCompanyCabins()
+  }, [companySlug])
 
   // Navigate to cabin booking page
   const handleViewDetails = (cabin: Cabin) => {
     const cabinSlug = cabin.name.toLowerCase().replace(/\s+/g, '-')
-    router.push(`/${ownerSlug}/${cabinSlug}`)
+    router.push(`/${companySlug}/${cabinSlug}`)
   }
 
   // Filter cabins based on search and city
@@ -110,7 +126,7 @@ export default function OwnerCabinsPage() {
         <div className="text-center">
           <div className="text-gray-400 text-6xl mb-4">🏠</div>
           <h1 className="text-2xl font-bold text-white mb-2">No Cabins Found</h1>
-          <p className="text-gray-300">This owner doesn&apos;t have any cabins listed yet.</p>
+          <p className="text-gray-300">This company doesn&apos;t have any cabins listed yet.</p>
         </div>
       </div>
     )
@@ -125,7 +141,7 @@ export default function OwnerCabinsPage() {
             Available Cabins
           </h1>
           <p className="text-gray-300 text-lg">
-            Browse and book cabins from {ownerSlug}
+            Browse and book cabins from {companySlug}
           </p>
         </div>
 
@@ -185,6 +201,9 @@ export default function OwnerCabinsPage() {
                 <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                      Image
+                    </th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
                       Cabin Name
                     </th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
@@ -204,6 +223,41 @@ export default function OwnerCabinsPage() {
                 <tbody className="divide-y divide-gray-200">
                   {filteredCabins.map((cabin, index) => (
                     <tr key={cabin._id} className="hover:bg-gray-50 transition-colors duration-200">
+                      {/* Image Column */}
+                      <td className="px-6 py-4">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                          {cabin.image ? (
+                            <Image
+                              src={cabin.image}
+                              alt={`${cabin.name} cabin`}
+                              width={64}
+                              height={64}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                console.log('Image failed to load:', cabin.image);
+                                e.currentTarget.style.display = 'none';
+                                e.currentTarget.nextElementSibling?.setAttribute('style', 'display: block');
+                              }}
+                              onLoad={() => {
+                                console.log('Image loaded successfully:', cabin.image);
+                              }}
+                            />
+                          ) : null}
+                          <svg
+                            className={`w-8 h-8 text-gray-400 ${cabin.image ? 'hidden' : 'block'}`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2z"
+                            />
+                          </svg>
+                        </div>
+                      </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div

@@ -10,6 +10,9 @@ interface User {
   lastName: string;
   email: string;
   role: string;
+  companyName: string;
+  slug?: string; // User slug
+  companySlug?: string; // Company slug
 }
 
 // Define the API response type
@@ -54,6 +57,14 @@ export default function LoginPage() {
         // Save token and user data to localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
+        
+        // Save company slug separately if available
+        if (data.user.companySlug) {
+          localStorage.setItem("companySlug", data.user.companySlug);
+        } else if (data.user.slug) {
+          // Fallback: use user slug as company slug if no company slug is provided
+          localStorage.setItem("companySlug", data.user.slug);
+        }
         
         // Navigate based on role
         if (data.user.role === "owner") {

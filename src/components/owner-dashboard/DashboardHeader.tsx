@@ -10,6 +10,7 @@ interface User {
   lastName: string
   email: string
   role: string
+  companyName: string
 }
 
 export default function DashboardHeader() {
@@ -46,7 +47,7 @@ export default function DashboardHeader() {
             <div className="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">C</span>
             </div>
-            <h1 className="text-xl font-bold text-white">CabinOwner</h1>
+            <h1 className="text-xl font-bold text-white">{user?.companyName || "CabinOwner"}</h1>
           </div>
 
           {/* Nav */}
@@ -68,7 +69,7 @@ export default function DashboardHeader() {
               <p className="text-sm text-white font-medium">
                 {user ? `${user.firstName} ${user.lastName}` : "Loading..."}
               </p>
-              <p className="text-xs text-gray-400">{"Cabin Owner"}</p>
+              <p className="text-xs text-gray-400">{user?.companyName || "Cabin Owner"}</p>
             </div>
             <button
               onClick={handleLogout}

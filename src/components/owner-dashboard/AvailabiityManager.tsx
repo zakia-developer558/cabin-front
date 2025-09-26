@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { format, addDays, startOfDay, parseISO } from "date-fns"
+import { useLegends } from "../../contexts/LegendsContext"
+import type { Legend } from "../../contexts/LegendsContext"
 
 interface AvailabilityManagerProps {
   selectedCabin: string | null
@@ -10,13 +12,17 @@ interface AvailabilityManagerProps {
 interface AvailabilitySetting {
   id: string
   date: string
-  status: "available" | "unavailable" | "maintenance"
+  status: string
   type: string
+  legendData?: Legend // Optional legend data for custom legends
 }
 
 interface BookingRange {
   startDate: string
   endDate: string
+  status: string
+  orderNo: string
+  guestName: string
 }
 
 interface BlockRange {
@@ -27,9 +33,10 @@ interface BlockRange {
 
 export default function AvailabilityManager({ selectedCabin }: AvailabilityManagerProps) {
   const [selectedDates, setSelectedDates] = useState<string[]>([])
-  const [availabilityType, setAvailabilityType] = useState<"available" | "unavailable" | "maintenance">("available")
+  const [availabilityType, setAvailabilityType] = useState<string>("available")
   const [availabilitySettings, setAvailabilitySettings] = useState<AvailabilitySetting[]>([])
   const [loading, setLoading] = useState(false)
+  const { legends, activeLegends, getLegendByStatus, loading: legendsLoading } = useLegends()
 
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
 
@@ -79,98 +86,215 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
     }
   }, [])
 
-  useEffect(() => {
+  const fetchAvailability = useCallback(async () => {
     if (!selectedCabin || !token) return
+    
+    setLoading(true)
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/cabins/${selectedCabin}/booked-dates`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
 
-    const fetchAvailability = async () => {
-      setLoading(true)
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/cabins/${selectedCabin}/booked-dates`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const data = await res.json()
+      console.log('Full API response:', JSON.stringify(data, null, 2))
+
+      if (data.success && data.data) {
+        const bookings = data.data.bookings ?? []
+        const blocks = data.data.blocks ?? []
+        
+        console.log('Bookings:', bookings)
+        console.log('Blocks:', blocks)
+
+        // Sets to track different types of dates
+        const unavailableDates = new Set<string>()
+        const maintenanceDates = new Set<string>()
+        const bookingDates = new Map<string, { orderNo: string, guestName: string }>() // date -> booking info
+
+        // Process bookings - store orderNo and guestName for approved bookings
+        bookings.forEach((range: BookingRange) => {
+          // Only process approved bookings for availability blocking
+          if (range.status === 'approved') {
+            const dateRange = getDateRange(range.startDate, range.endDate)
+            dateRange.forEach(date => {
+              bookingDates.set(date, { orderNo: range.orderNo, guestName: range.guestName })
+            })
+          }
         })
 
-        const data = await res.json()
-
-        if (data.success && data.data) {
-          const bookings = data.data.bookings ?? []
-          const blocks = data.data.blocks ?? []
-
-          // Sets to track unavailable and maintenance dates separately
-          const unavailableDates = new Set<string>()
-          const maintenanceDates = new Set<string>()
-
-          // Process bookings
-          bookings.forEach((range: BookingRange) => {
-            const dateRange = getDateRange(range.startDate, range.endDate)
-            dateRange.forEach(date => unavailableDates.add(date))
-          })
-
-          // Process blocks
-          blocks.forEach((range: BlockRange) => {
-            const reason = (range.reason ?? "unavailable").toLowerCase()
-            const dateRange = getDateRange(range.startDate, range.endDate)
-            
-            dateRange.forEach(dateStr => {
-              if (reason === "maintenance") {
-                maintenanceDates.add(dateStr)
-                unavailableDates.delete(dateStr) // Remove from unavailable if it's maintenance
-              } else {
-                if (!maintenanceDates.has(dateStr)) {
-                  unavailableDates.add(dateStr)
-                }
-              }
-            })
-          })
-
-          // Build final list from today to 90 days ahead
-          const today = startOfDay(new Date())
-          const finalDates: AvailabilitySetting[] = []
+        // Process blocks - fetch legend details for each unique reason ID
+        const customLegendDates = new Map<string, Legend>() // date -> legend object
+        const legendCache = new Map<string, Legend>() // Cache fetched legends
+        
+        // Collect unique reason IDs that need to be fetched
+        const uniqueReasonIds = new Set<string>()
+        blocks.forEach((range: BlockRange) => {
+          const reason = range.reason ?? "unavailable"
+          if (reason !== "unavailable" && reason.toLowerCase() !== "maintenance") {
+            uniqueReasonIds.add(reason)
+          }
+        })
+        
+        // Fetch legend details for all unique reason IDs
+         console.log("🔍 Fetching legend details for IDs:", Array.from(uniqueReasonIds))
+         
+         for (const legendId of uniqueReasonIds) {
+           try {
+             console.log(`🌐 Making API call for legend ID: ${legendId}`)
+             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/legends/public/${legendId}`)
+             console.log(`📡 Response status for ${legendId}:`, response.status)
+             
+             if (response.ok) {
+               const data = await response.json()
+               console.log(`📦 API response for ${legendId}:`, data)
+               
+               if (data.success && data.data) {
+                 legendCache.set(legendId, data.data)
+                 console.log(`✅ Cached legend: ${data.data.name} (${legendId})`, data.data)
+               } else {
+                 console.warn(`⚠️ Invalid response structure for ${legendId}:`, data)
+               }
+             } else {
+               console.warn(`⚠️ Failed to fetch legend ${legendId}: ${response.status}`)
+             }
+           } catch (error) {
+             console.error(`❌ Error fetching legend ${legendId}:`, error)
+           }
+         }
+        
+        // Now process blocks with the fetched legend data
+        console.log("🔄 Processing blocks with legend cache:", legendCache)
+        
+        blocks.forEach((range: BlockRange) => {
+          console.log(`📅 Processing block:`, range)
           
-          for (let i = 0; i < 90; i++) {
-            const currentDate = addDays(today, i)
-            const dateStr = format(currentDate, "yyyy-MM-dd")
-
-            if (maintenanceDates.has(dateStr)) {
-              finalDates.push({
-                id: dateStr,
-                date: dateStr,
-                status: "maintenance",
-                type: "Maintenance",
-              })
-            } else if (unavailableDates.has(dateStr)) {
-              finalDates.push({
-                id: dateStr,
-                date: dateStr,
-                status: "unavailable",
-                type: "Unavailable",
+          const reason = range.reason ?? "unavailable"
+          const dateRange = getDateRange(range.startDate, range.endDate)
+          
+          dateRange.forEach(dateStr => {
+            if (reason.toLowerCase() === "maintenance") {
+              maintenanceDates.add(dateStr)
+              unavailableDates.delete(dateStr)
+            } else if (legendCache.has(reason)) {
+              console.log(`🔍 Looking for legend with ID: ${reason}`)
+              // Found a custom legend
+              const legendData = legendCache.get(reason)
+              if (legendData) {
+                customLegendDates.set(dateStr, legendData)
+                // Remove from other sets to avoid conflicts
+                unavailableDates.delete(dateStr)
+                maintenanceDates.delete(dateStr)
+                console.log(`✅ Found custom legend for ${dateStr}:`, legendData)
+                console.log(`📅 Assigned custom legend "${legendData.name}" to date ${dateStr}`)
+                console.log(`📝 Added custom date setting:`, {
+                  date: dateStr,
+                status: legendData.name,
+                type: legendData.name
               })
             } else {
-              finalDates.push({
-                id: dateStr,
-                date: dateStr,
-                status: "available",
-                type: "Available",
-              })
+              console.warn(`❌ Legend not found for ID: ${reason}`)
+              // No legend found - treat as unavailable
+              unavailableDates.add(dateStr)
+              console.log(`📝 Adding blocked date without reason: ${dateStr}`)
             }
+          }})
+        })
+        
+        console.log("📊 Final processing complete:", {
+          customLegendDates: Array.from(customLegendDates.entries()),
+          maintenanceDates: Array.from(maintenanceDates),
+          unavailableDates: Array.from(unavailableDates)
+        })
+
+        // Build final list from today to 90 days ahead
+        const today = startOfDay(new Date())
+        const finalDates: AvailabilitySetting[] = []
+        
+        for (let i = 0; i < 90; i++) {
+          const currentDate = addDays(today, i)
+          const dateStr = format(currentDate, "yyyy-MM-dd")
+
+          if (maintenanceDates.has(dateStr)) {
+            finalDates.push({
+              id: dateStr,
+              date: dateStr,
+              status: "maintenance",
+              type: "Maintenance",
+            })
+          } else if (customLegendDates.has(dateStr)) {
+            // Handle custom legend dates
+            const customLegend = customLegendDates.get(dateStr)!
+            
+            finalDates.push({
+              id: `${dateStr}-custom`,
+              date: dateStr,
+              status: customLegend.name, // Use the legend name as status
+              type: customLegend.name, // Use legend name as type instead of "custom"
+              legendData: customLegend // Store full legend data for styling
+            })
+          } else if (bookingDates.has(dateStr)) {
+            // Handle booking dates - show guestName and orderNo
+            const bookingInfo = bookingDates.get(dateStr)!
+            finalDates.push({
+              id: dateStr,
+              date: dateStr,
+              status: "booked",
+              type: `${bookingInfo.guestName} - ${bookingInfo.orderNo}`, // Show guest name and orderNo
+            })
+          } else if (unavailableDates.has(dateStr)) {
+            finalDates.push({
+              id: dateStr,
+              date: dateStr,
+              status: "unavailable",
+              type: "Unavailable",
+            })
+          } else {
+            finalDates.push({
+              id: dateStr,
+              date: dateStr,
+              status: "available",
+              type: "Available",
+            })
           }
-
-          setAvailabilitySettings(finalDates)
-        } else {
-          console.error("Unexpected API response:", data)
         }
-      } catch (err) {
-        console.error("Failed to fetch availability:", err)
-      } finally {
-        setLoading(false)
-      }
-    }
 
-    fetchAvailability()
+        setAvailabilitySettings(finalDates)
+        console.log("🎯 Final availability settings:", finalDates.filter(d => d.legendData).map(d => ({
+          date: d.date,
+          type: d.type,
+          status: d.status,
+          legendName: d.legendData?.name
+        })))
+      } else {
+        console.error("Unexpected API response:", data)
+      }
+    } catch (err) {
+      console.error("Failed to fetch availability:", err)
+    } finally {
+      setLoading(false)
+    }
   }, [selectedCabin, token, getDateRange])
 
-  const getStatusColor = (status: string) => {
+  useEffect(() => {
+    // Only fetch availability after legends are loaded AND we have legends data
+    if (!legendsLoading && legends.length > 0) {
+      fetchAvailability()
+    }
+  }, [fetchAvailability, legendsLoading, legends.length])
+
+  const getStatusColor = (status: string, legendData?: Legend) => {
+    // If we have legendData (for custom legends), use its colors
+    if (legendData && legendData.bgColor && legendData.textColor) {
+      return `${legendData.bgColor} ${legendData.textColor}`
+    }
+    
+    const legend = getLegendByStatus(status)
+    if (legend) {
+      return `${legend.bgColor} ${legend.textColor}`
+    }
+    
+    // Fallback to default styles if legend not found
     switch (status) {
       case "available":
         return "bg-green-100 text-green-800"
@@ -221,10 +345,13 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
         const payload = {
           action: "block",
           dates: selectedDates.map((date) => ({ date, half: "FULL" })),
-          reason: availabilityType === "maintenance" ? "Maintenance" : "Unavailable",
+          reason: availabilityType, // Use the selected availability type directly as the reason
         }
 
-        await fetch(url, {
+        console.log("🚀 Sending payload:", payload) // Debug log to see what's being sent
+        console.log("🎯 Selected availability type (legend ID):", availabilityType)
+
+        const response = await fetch(url, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -232,12 +359,18 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
           },
           body: JSON.stringify(payload),
         })
+
+        const result = await response.json()
+        console.log("📡 API response:", result) // Debug log to see the response
       }
 
       setSelectedDates([])
 
-      // Refresh data after update - you might want to call fetchAvailability instead of full reload
-      location.reload()
+      // Refresh data after update - removed auto reload for debugging
+      // location.reload()
+      
+      // Instead, manually refresh the availability data
+      await fetchAvailability()
     } catch (error) {
       console.error("Bulk update error:", error)
     }
@@ -245,56 +378,65 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Availability Management</h2>
-        <div className="flex items-center space-x-3">
-          <select
-            value={availabilityType}
-            onChange={(e) => setAvailabilityType(e.target.value as "available" | "unavailable" | "maintenance")}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
-          >
-            <option value="available">Set as Available</option>
-            <option value="unavailable">Set as Unavailable</option>
-            <option value="maintenance">Set as Maintenance</option>
-          </select>
+      <div className="mb-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Availability Management</h2>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center space-x-3">
+            <select
+              value={availabilityType}
+              onChange={(e) => setAvailabilityType(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 min-w-0 flex-1 sm:flex-none sm:min-w-[200px]"
+            >
+              {activeLegends
+                .filter(legend => legend.id !== 'booked' && legend.id !== 'partially_booked')
+                .map(legend => (
+                  <option key={legend.id} value={legend.id}>
+                    Set as {legend.name}
+                  </option>
+                ))
+              }
+            </select>
+          </div>
           <button
             onClick={handleBulkUpdate}
             disabled={selectedDates.length === 0}
-            className="bg-red-500 hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm transition-colors"
+            className="bg-red-500 hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm transition-colors whitespace-nowrap"
           >
             Update Selected ({selectedDates.length})
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
+      <div className="space-y-6">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Date-Specific Settings</h3>
 
           {loading ? (
-            <p className="text-gray-500">Loading availability...</p>
+            <div className="flex items-center justify-center py-8">
+              <p className="text-gray-500">Loading availability...</p>
+            </div>
           ) : (
-            <div className="max-h-96 overflow-y-auto">
-              <div className="space-y-2">
+            <div className="max-h-96 overflow-y-auto border border-gray-200 rounded-lg">
+              <div className="divide-y divide-gray-200">
                 {availabilitySettings.map((setting) => (
                   <div
                     key={setting.id}
-                    className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
+                    className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
                   >
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-3 min-w-0 flex-1">
                       <input
                         type="checkbox"
                         checked={selectedDates.includes(setting.id)}
                         onChange={() => toggleDateSelection(setting.id)}
-                        className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                        className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500 flex-shrink-0"
                       />
-                      <div>
-                        <p className="font-medium text-gray-900">{setting.date}</p>
+                      <div className="min-w-0">
+                        <p className="font-medium text-gray-900 truncate">{setting.date}</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center ml-4">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(setting.status)}`}
+                        className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(setting.status, setting.legendData)}`}
                       >
                         {setting.type}
                       </span>
