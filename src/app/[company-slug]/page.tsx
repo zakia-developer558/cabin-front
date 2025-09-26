@@ -49,9 +49,19 @@ export default function CompanyCabinsPage() {
         const data = await response.json()
         
         // Clean image URLs similar to CabinTable
-        const cleanImageUrl = (imageUrl?: string): string | undefined => {
-          if (!imageUrl) return undefined
-          return imageUrl.replace(/`/g, '').trim() || undefined
+        const cleanImageUrl = (imageUrl?: string): string | null => {
+          if (!imageUrl) return null
+          
+          // Remove leading/trailing spaces and backticks
+          const cleaned = imageUrl.trim().replace(/^`+|`+$/g, '')
+          
+          // Check if it's a valid URL
+          try {
+            new URL(cleaned)
+            return cleaned
+          } catch {
+            return null
+          }
         }
         
         const cleanedCabins = (data.data || []).map((cabin: Cabin) => ({
@@ -96,7 +106,7 @@ export default function CompanyCabinsPage() {
       <div className="min-h-screen bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 flex items-center justify-center">
         <div className="text-white text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-lg">Loading cabins...</p>
+          <p className="text-lg">Laster hytter...</p>
         </div>
       </div>
     )
@@ -107,13 +117,13 @@ export default function CompanyCabinsPage() {
       <div className="min-h-screen bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-400 text-6xl mb-4">⚠️</div>
-          <h1 className="text-2xl font-bold text-white mb-2">Error Loading Cabins</h1>
+          <h1 className="text-2xl font-bold text-white mb-2">Feil ved lasting av hytter</h1>
           <p className="text-gray-300 mb-4">{error}</p>
           <button 
             onClick={() => window.location.reload()} 
             className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition-colors"
           >
-            Try Again
+            Prøv igjen
           </button>
         </div>
       </div>
@@ -125,8 +135,8 @@ export default function CompanyCabinsPage() {
       <div className="min-h-screen bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="text-gray-400 text-6xl mb-4">🏠</div>
-          <h1 className="text-2xl font-bold text-white mb-2">No Cabins Found</h1>
-          <p className="text-gray-300">This company doesn&apos;t have any cabins listed yet.</p>
+          <h1 className="text-2xl font-bold text-white mb-2">Ingen hytter funnet</h1>
+          <p className="text-gray-300">Dette firmaet har ikke lagt til noen hytter ennå.</p>
         </div>
       </div>
     )
@@ -138,10 +148,10 @@ export default function CompanyCabinsPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">
-            Available Cabins
+            Tilgjengelige hytter
           </h1>
           <p className="text-gray-300 text-lg">
-            Browse and book cabins from {companySlug}
+            Bla gjennom og bestill hytter fra {companySlug}
           </p>
         </div>
 
@@ -151,7 +161,7 @@ export default function CompanyCabinsPage() {
             <div className="flex-1">
               <input
                 type="text"
-                placeholder="Search cabins by name, address, or contact person..."
+                placeholder="Søk etter hytter ved navn, adresse eller kontaktperson..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
@@ -163,7 +173,7 @@ export default function CompanyCabinsPage() {
                 onChange={(e) => setSelectedCity(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
               >
-                <option value="all">All Cities</option>
+                <option value="all">Alle byer</option>
                 {cities.map((city) => (
                   <option key={city} value={city}>
                     {city}
@@ -174,7 +184,7 @@ export default function CompanyCabinsPage() {
           </div>
           
           <div className="mt-4 text-sm text-gray-600">
-            Showing {filteredCabins.length} of {cabins.length} cabins
+            Viser {filteredCabins.length} av {cabins.length} hytter
           </div>
         </div>
 
@@ -191,8 +201,8 @@ export default function CompanyCabinsPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No cabins found</h3>
-            <p className="text-gray-600">Try adjusting your search or filter criteria.</p>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Ingen hytter funnet</h3>
+            <p className="text-gray-600">Prøv å justere søke- eller filterkriteriene dine.</p>
           </div>
         ) : (
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -201,82 +211,85 @@ export default function CompanyCabinsPage() {
                 <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                      Image
+                      Bilde
                     </th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                      Cabin Name
+                      Hyttenavn
                     </th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                      Contact Person
+                      Kontaktperson
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                      Location
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                      Contact Info
-                    </th>
+
                     <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                      Actions
+                      Handlinger
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {filteredCabins.map((cabin, index) => (
+                  {filteredCabins.map((cabin) => (
                     <tr key={cabin._id} className="hover:bg-gray-50 transition-colors duration-200">
                       {/* Image Column */}
                       <td className="px-6 py-4">
-                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center relative">
                           {cabin.image ? (
-                            <Image
-                              src={cabin.image}
-                              alt={`${cabin.name} cabin`}
-                              width={64}
-                              height={64}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                console.log('Image failed to load:', cabin.image);
-                                e.currentTarget.style.display = 'none';
-                                e.currentTarget.nextElementSibling?.setAttribute('style', 'display: block');
-                              }}
-                              onLoad={() => {
-                                console.log('Image loaded successfully:', cabin.image);
-                              }}
-                            />
-                          ) : null}
-                          <svg
-                            className={`w-8 h-8 text-gray-400 ${cabin.image ? 'hidden' : 'block'}`}
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2z"
-                            />
-                          </svg>
+                            <>
+                              <Image
+                                src={cabin.image}
+                                alt={`${cabin.name} cabin`}
+                                width={64}
+                                height={64}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  console.log('Image failed to load:', cabin.image);
+                                  const target = e.currentTarget as HTMLImageElement;
+                                  target.style.display = 'none';
+                                  const fallback = target.parentElement?.querySelector('.fallback-icon') as HTMLElement;
+                                  if (fallback) {
+                                    fallback.style.display = 'block';
+                                  }
+                                }}
+                                onLoad={() => {
+                                  console.log('Image loaded successfully:', cabin.image);
+                                }}
+                              />
+                              <svg
+                                className="fallback-icon w-8 h-8 text-gray-400 absolute inset-0 m-auto hidden"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                />
+                              </svg>
+                            </>
+                          ) : (
+                            <svg
+                              className="w-8 h-8 text-gray-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              />
+                            </svg>
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                              index % 3 === 0
-                                ? "bg-red-100"
-                                : index % 3 === 1
-                                  ? "bg-blue-100"
-                                  : "bg-green-100"
-                            }`}
+                            className="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-100"
                           >
                             <svg
-                              className={`w-5 h-5 ${
-                                index % 3 === 0
-                                  ? "text-red-600"
-                                  : index % 3 === 1
-                                    ? "text-blue-600"
-                                    : "text-green-600"
-                              }`}
+                              className="w-5 h-5 text-blue-600"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -319,70 +332,12 @@ export default function CompanyCabinsPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-start gap-2">
-                          <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center mt-0.5">
-                            <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                            </svg>
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-900">{cabin.address}</p>
-                            <p className="text-sm text-gray-600">
-                              {cabin.postal_code} {cabin.city}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                              />
-                            </svg>
-                            <p className="text-sm text-gray-900 break-all">{cabin.email}</p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                              />
-                            </svg>
-                            <p className="text-sm text-gray-900">{cabin.phone}</p>
-                          </div>
-                        </div>
-                      </td>
                       <td className="px-6 py-4 text-center">
                         <button
                           onClick={() => handleViewDetails(cabin)}
-                          className={`px-6 py-2 rounded-xl font-semibold text-white transition-all duration-200 hover:scale-105 shadow-md hover:shadow-lg ${
-                            index % 3 === 0
-                              ? "bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700"
-                              : index % 3 === 1
-                                ? "bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700"
-                                : "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
-                          }`}
+                          className="px-6 py-2 rounded-xl font-semibold text-white transition-all duration-200 hover:scale-105 shadow-md hover:shadow-lg bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700"
                         >
-                          Book
+                          Bestill
                         </button>
                       </td>
                     </tr>

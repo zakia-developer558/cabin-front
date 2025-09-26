@@ -51,11 +51,11 @@ export default function Calendar({ selectedCabin }: CalendarProps) {
   const { activeLegends, getLegendByStatus } = useLegends()
 
   const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "Januar", "Februar", "Mars", "April", "Mai", "Juni",
+    "Juli", "August", "September", "Oktober", "November", "Desember"
   ]
 
-  const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  const dayNames = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
 
   const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null
 
@@ -77,11 +77,11 @@ export default function Calendar({ selectedCabin }: CalendarProps) {
       if (data.success) {
         setCalendarData(data.data)
       } else {
-        setError("Failed to load calendar data")
+        setError("Kunne ikke laste kalenderdata")
       }
     } catch (err) {
       console.error("Error fetching calendar data:", err)
-      setError("Error loading calendar data")
+      setError("Feil ved lasting av kalenderdata")
     } finally {
       setLoading(false)
     }
@@ -296,7 +296,7 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading calendar...</p>
+            <p className="text-gray-600">Laster kalender...</p>
           </div>
         </div>
       </div>
@@ -314,7 +314,7 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
               onClick={() => fetchCalendarData(currentDate.getFullYear(), currentDate.getMonth())}
               className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
             >
-              Retry
+              Prøv igjen
             </button>
           </div>
         </div>
@@ -325,7 +325,7 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Calendar</h2>
+        <h2 className="text-xl font-bold text-gray-900">Kalender</h2>
         <div className="flex items-center space-x-4">
           <button onClick={() => navigateMonth(-1)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -400,7 +400,7 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
 
       <div className="mt-6 grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <h4 className="font-semibold text-gray-800 text-sm">Legend</h4>
+          <h4 className="font-semibold text-gray-800 text-sm">Legende</h4>
           <div className="space-y-1">
             {activeLegends.map((legend) => (
               <div key={legend.id} className="flex items-center space-x-2">
@@ -422,18 +422,18 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
         </div>
 
         <div className="space-y-2">
-          <h4 className="font-semibold text-gray-800 text-sm">Quick Stats</h4>
+          <h4 className="font-semibold text-gray-800 text-sm">Hurtigstatistikk</h4>
           <div className="space-y-1">
             <div className="flex justify-between text-xs">
-              <span className="text-gray-600">Booked days:</span>
+              <span className="text-gray-600">Opptatte dager:</span>
               <span className="font-medium">{calendarData?.stats.bookedDays || 0}</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-gray-600">Available days:</span>
+              <span className="text-gray-600">Tilgjengelige dager:</span>
               <span className="font-medium">{calendarData?.stats.availableDays || 0}</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-gray-600">Occupancy rate:</span>
+              <span className="text-gray-600">Beleggsprosent:</span>
               <span className="font-medium text-green-600">{calendarData?.stats.occupancyRate || 0}%</span>
             </div>
           </div>

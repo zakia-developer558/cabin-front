@@ -67,11 +67,11 @@ export default function BookingCalendar({
   const [calendarData, setCalendarData] = useState<CalendarData | null>(null)
 
   const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "Januar", "Februar", "Mars", "April", "Mai", "Juni",
+    "Juli", "August", "September", "Oktober", "November", "Desember"
   ]
 
-  const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  const dayNames = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"]
 
   // Fetch calendar data from API
   const fetchCalendarData = useCallback(async (year: number, month: number) => {
@@ -385,15 +385,15 @@ export default function BookingCalendar({
         <div className="flex items-center gap-4 mt-4 text-sm">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-red-500 rounded"></div>
-            <span>Current</span>
+            <span>Gjeldende</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-gray-300 rounded"></div>
-            <span>Booked</span>
+            <span>Opptatt</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-white border rounded"></div>
-            <span>Available</span>
+            <span>Ledig</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-red-500 rounded relative">
@@ -402,7 +402,7 @@ export default function BookingCalendar({
                 style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)' }}
               />
             </div>
-            <span>Half-day</span>
+            <span>Halv dag</span>
           </div>
         </div>
       </div>

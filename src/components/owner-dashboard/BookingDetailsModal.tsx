@@ -23,7 +23,7 @@ interface BookingDetailsModalProps {
 }
 
 const formatDateTime = (iso: string) => {
-  return new Date(iso).toLocaleString("en-GB", {
+  return new Date(iso).toLocaleString("nb-NO", {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -71,14 +71,14 @@ export default function BookingDetailsModal({
       const data = await response.json()
 
       if (response.ok && data.success) {
-        success("Booking Confirmed!", "The booking has been successfully approved.")
+        success("Bestilling bekreftet!", "Bestillingen har blitt godkjent.")
         onClose()
       } else {
-        error("Confirmation Failed", data.message || "Unable to confirm the booking. Please try again.")
+        error("Bekreftelse feilet", data.message || "Kunne ikke bekrefte bestillingen. Prøv igjen.")
       }
     } catch (err) {
       console.error("Error confirming booking:", err)
-      error("Network Error", "An error occurred while confirming the booking. Please check your connection.")
+      error("Nettverksfeil", "En feil oppstod under bekreftelse av bestillingen. Sjekk tilkoblingen din.")
     } finally {
       setLoading(null)
     }
@@ -86,11 +86,11 @@ export default function BookingDetailsModal({
 
   const handleReject = async () => {
     if (!booking || !token) {
-      error("Authentication Error", "Please log in again to continue.")
+      error("Autentiseringsfeil", "Vennligst logg inn igjen for å fortsette.")
       return
     }
 
-    if (!confirm("Are you sure you want to reject this booking?")) {
+    if (!confirm("Er du sikker på at du vil avslå denne bestillingen?")) {
       return
     }
 
@@ -107,14 +107,14 @@ export default function BookingDetailsModal({
       const data = await response.json()
 
       if (response.ok && data.success) {
-        success("Booking Rejected", "The booking has been successfully rejected.")
+        success("Bestilling avslått", "Bestillingen har blitt avslått.")
         onClose()
       } else {
-        error("Rejection Failed", data.message || "Unable to reject the booking. Please try again.")
+        error("Avslag feilet", data.message || "Kunne ikke avslå bestillingen. Prøv igjen.")
       }
     } catch (err) {
       console.error("Error rejecting booking:", err)
-      error("Network Error", "An error occurred while rejecting the booking. Please check your connection.")
+      error("Nettverksfeil", "En feil oppstod under avslag av bestillingen. Sjekk tilkoblingen din.")
     } finally {
       setLoading(null)
     }
@@ -127,7 +127,7 @@ export default function BookingDetailsModal({
       <div className="bg-white rounded-md shadow-lg max-w-3xl w-full max-h-[85vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-100">
-          <h2 className="text-lg font-medium text-gray-900">Booking Details</h2>
+          <h2 className="text-lg font-medium text-gray-900">Bestillingsdetaljer</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors p-1"
@@ -142,36 +142,36 @@ export default function BookingDetailsModal({
             {/* Left Side - Booking Information */}
             <div className="space-y-4">
               <div className="space-y-3">
-                <h3 className="text-sm font-medium text-gray-900">Guest Information</h3>
+                <h3 className="text-sm font-medium text-gray-900">Gjesteinformasjon</h3>
                 <div className="space-y-2 text-sm">
                   <div>
-                    <span className="text-gray-500">Order:</span>
+                    <span className="text-gray-500">Ordre:</span>
                     <span className="ml-2 text-gray-900">{booking.orderNo}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Name:</span>
+                    <span className="text-gray-500">Navn:</span>
                     <span className="ml-2 text-gray-900">{booking.name}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Email:</span>
+                    <span className="text-gray-500">E-post:</span>
                     <span className="ml-2 text-gray-900">{booking.email}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Address:</span>
+                    <span className="text-gray-500">Adresse:</span>
                     <span className="ml-2 text-gray-900">{booking.address}</span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-sm font-medium text-gray-900">Booking Details</h3>
+                <h3 className="text-sm font-medium text-gray-900">Bestillingsdetaljer</h3>
                 <div className="space-y-2 text-sm">
                   <div>
-                    <span className="text-gray-500">Check-in:</span>
+                    <span className="text-gray-500">Innsjekking:</span>
                     <span className="ml-2 text-gray-900">{formatDateTime(booking.checkIn)}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Check-out:</span>
+                    <span className="text-gray-500">Utsjekking:</span>
                     <span className="ml-2 text-gray-900">{formatDateTime(booking.checkOut)}</span>
                   </div>
                   <div>
@@ -202,7 +202,7 @@ export default function BookingDetailsModal({
 
             {/* Right Side - Calendar */}
             <div className="space-y-3">
-              <h3 className="text-sm font-medium text-gray-900">Calendar</h3>
+              <h3 className="text-sm font-medium text-gray-900">Kalender</h3>
               <BookingCalendar 
                 booking={booking}
                 cabinName={null}
@@ -226,7 +226,7 @@ export default function BookingDetailsModal({
                 ) : (
                   <XCircle className="w-3 h-3" />
                 )}
-                Reject
+                Avslå
               </button>
               <button
                 onClick={handleConfirm}
@@ -238,7 +238,7 @@ export default function BookingDetailsModal({
                 ) : (
                   <CheckCircle className="w-3 h-3" />
                 )}
-                Confirm
+                Bekreft
               </button>
             </div>
           )}

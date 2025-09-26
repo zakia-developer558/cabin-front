@@ -67,8 +67,8 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
       <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-xl p-8 text-white">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h2 className="text-3xl font-bold mb-2">Discover Amazing Cabins</h2>
-            <p className="text-gray-300 text-lg">Find your perfect mountain getaway</p>
+            <h2 className="text-3xl font-bold mb-2">Oppdag fantastiske hytter</h2>
+            <p className="text-gray-300 text-lg">Finn din perfekte fjellferie</p>
           </div>
           <div className="flex gap-3">
             <div className="relative">
@@ -87,12 +87,12 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
               </svg>
               <input
                 type="text"
-                placeholder="Search cabins..."
+                placeholder="Søk hytter..."
                 className="pl-10 pr-4 py-3 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white placeholder-gray-300 focus:ring-2 focus:ring-red-400 focus:border-transparent transition-all"
               />
             </div>
             <select className="px-4 py-3 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-red-400 focus:border-transparent transition-all">
-              <option className="text-gray-900">All Locations</option>
+              <option className="text-gray-900">Alle steder</option>
               <option className="text-gray-900">Storby</option>
               <option className="text-gray-900">Laketown</option>
               <option className="text-gray-900">Woodland</option>
@@ -148,7 +148,7 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Contact Person</p>
+                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Kontaktperson</p>
                     <p className="text-lg font-semibold text-gray-900">{cabin.contact_person_name}</p>
                   </div>
                 </div>
@@ -171,7 +171,7 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Address</p>
+                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Adresse</p>
                     <p className="text-gray-900 font-medium">{cabin.address}</p>
                     <p className="text-gray-700">
                       {cabin.postal_code} {cabin.city}
@@ -208,7 +208,7 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Phone</p>
+                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Telefon</p>
                     <p className="text-gray-900 font-medium">{cabin.phone}</p>
                   </div>
                 </div>
@@ -224,7 +224,7 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
                       : "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
                 }`}
               >
-                Book This Cabin
+                Bestill denne hytta
               </button>
             </div>
           </div>
@@ -243,8 +243,8 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
               />
             </svg>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-3">No cabins available</h3>
-          <p className="text-gray-600 text-lg">Check back later for new amazing listings.</p>
+          <h3 className="text-2xl font-bold text-gray-900 mb-3">Ingen hytter tilgjengelig</h3>
+          <p className="text-gray-600 text-lg">Sjekk tilbake senere for nye fantastiske oppføringer.</p>
         </div>
       )}
     </div>

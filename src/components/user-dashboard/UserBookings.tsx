@@ -37,22 +37,22 @@ const statusConfig: Record<
   { label: string; color: string; icon: React.ReactNode }
 > = {
   pending: {
-    label: "Pending",
+    label: "Venter",
     color: "bg-yellow-100 text-yellow-700",
     icon: <Clock className="w-4 h-4 mr-1" />,
   },
   approved: {
-    label: "Approved",
+    label: "Godkjent",
     color: "bg-green-100 text-green-700",
     icon: <CheckCircle className="w-4 h-4 mr-1" />,
   },
   cancelled: {
-    label: "Cancelled",
+    label: "Avlyst",
     color: "bg-gray-200 text-gray-600",
     icon: <Ban className="w-4 h-4 mr-1" />,
   },
   rejected: {
-    label: "Rejected",
+    label: "Avvist",
     color: "bg-red-100 text-red-700",
     icon: <XCircle className="w-4 h-4 mr-1" />,
   },
@@ -135,7 +135,7 @@ const UserBookings: React.FC = () => {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-white">My Bookings</h1>
+      <h1 className="text-3xl font-bold mb-6 text-white">Mine bestillinger</h1>
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6 flex-wrap">
@@ -159,12 +159,12 @@ const UserBookings: React.FC = () => {
       </div>
 
       {/* Content */}
-      {loading && <p className="text-center text-gray-500">Loading bookings...</p>}
+      {loading && <p className="text-center text-gray-500">Laster bestillinger...</p>}
       {error && <p className="text-center text-red-500">{error}</p>}
 
       {!loading && !error && filteredBookings.length === 0 && (
         <div className="text-center text-gray-500 py-10 border rounded-xl">
-          No bookings found for this category.
+          Ingen bestillinger funnet for denne kategorien.
         </div>
       )}
 
@@ -195,23 +195,23 @@ const UserBookings: React.FC = () => {
 
               {/* Dates */}
               <div className="text-sm text-gray-600">
-                📅 {new Date(booking.start_date).toLocaleDateString()} →{" "}
-                {new Date(booking.end_date).toLocaleDateString()}
+                📅 {new Date(booking.start_date).toLocaleDateString("nb-NO")} →{" "}
+                {new Date(booking.end_date).toLocaleDateString("nb-NO")}
               </div>
 
               {/* Guest Info */}
               <div className="bg-gray-50 rounded-lg p-4 text-sm flex justify-between items-center">
                 <div>
                   <p className="font-medium text-gray-800">
-                    Guest: {booking.guest_name}
+                    Gjest: {booking.guest_name}
                   </p>
                   <p className="text-gray-600">{booking.guest_email}</p>
                   <p className="text-gray-600">{booking.guest_phone}</p>
                 </div>
                 <div className="text-right text-gray-500">
-                  <p>City: {booking.guest_city}</p>
+                  <p>By: {booking.guest_city}</p>
                   <p>
-                    Booked on {new Date(booking.booking_date).toLocaleDateString()}
+                    Bestilt {new Date(booking.booking_date).toLocaleDateString("nb-NO")}
                   </p>
                 </div>
               </div>
@@ -222,7 +222,7 @@ const UserBookings: React.FC = () => {
                   onClick={() => handleCancelBooking(booking._id)}
                   className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition"
                 >
-                  Cancel Booking
+                  Avbryt bestilling
                 </button>
               )}
             </div>

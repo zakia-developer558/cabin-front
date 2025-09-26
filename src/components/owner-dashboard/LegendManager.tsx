@@ -6,16 +6,16 @@ import { useLegends } from '../../contexts/LegendsContext'
 import type { Legend } from '../../contexts/LegendsContext'
 
 const PRESET_COLORS = [
-  { name: "Green", value: "#10b981", bg: "bg-green-100", text: "text-green-800", border: "border-green-200" },
-  { name: "Red", value: "#ef4444", bg: "bg-red-100", text: "text-red-800", border: "border-red-200" },
-  { name: "Yellow", value: "#f59e0b", bg: "bg-yellow-100", text: "text-yellow-800", border: "border-yellow-200" },
-  { name: "Blue", value: "#3b82f6", bg: "bg-blue-100", text: "text-blue-800", border: "border-blue-200" },
-  { name: "Purple", value: "#8b5cf6", bg: "bg-purple-100", text: "text-purple-800", border: "border-purple-200" },
-  { name: "Pink", value: "#ec4899", bg: "bg-pink-100", text: "text-pink-800", border: "border-pink-200" },
+  { name: "Grønn", value: "#10b981", bg: "bg-green-100", text: "text-green-800", border: "border-green-200" },
+  { name: "Rød", value: "#ef4444", bg: "bg-red-100", text: "text-red-800", border: "border-red-200" },
+  { name: "Gul", value: "#f59e0b", bg: "bg-yellow-100", text: "text-yellow-800", border: "border-yellow-200" },
+  { name: "Blå", value: "#3b82f6", bg: "bg-blue-100", text: "text-blue-800", border: "border-blue-200" },
+  { name: "Lilla", value: "#8b5cf6", bg: "bg-purple-100", text: "text-purple-800", border: "border-purple-200" },
+  { name: "Rosa", value: "#ec4899", bg: "bg-pink-100", text: "text-pink-800", border: "border-pink-200" },
   { name: "Indigo", value: "#6366f1", bg: "bg-indigo-100", text: "text-indigo-800", border: "border-indigo-200" },
-  { name: "Orange", value: "#f97316", bg: "bg-orange-100", text: "text-orange-800", border: "border-orange-200" },
+  { name: "Oransje", value: "#f97316", bg: "bg-orange-100", text: "text-orange-800", border: "border-orange-200" },
   { name: "Teal", value: "#14b8a6", bg: "bg-teal-100", text: "text-teal-800", border: "border-teal-200" },
-  { name: "Gray", value: "#6b7280", bg: "bg-gray-100", text: "text-gray-800", border: "border-gray-200" }
+  { name: "Grå", value: "#6b7280", bg: "bg-gray-100", text: "text-gray-800", border: "border-gray-200" }
 ]
 
 interface ColorPickerProps {
@@ -29,7 +29,7 @@ function ColorPicker({ selectedColor, onColorSelect, onCustomColorSelect }: Colo
     <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 z-10 w-64">
       <div className="space-y-3">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Preset Colors</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Forhåndsinnstilte farger</label>
           <div className="grid grid-cols-5 gap-2">
             {PRESET_COLORS.map((colorInfo) => (
               <button
@@ -44,7 +44,7 @@ function ColorPicker({ selectedColor, onColorSelect, onCustomColorSelect }: Colo
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Custom Color</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Tilpasset farge</label>
           <div className="flex items-center space-x-2">
             <input
               type="color"
@@ -96,7 +96,7 @@ export default function LegendManager({ }: LegendManagerProps) {
 
   const handleSaveLegend = async () => {
     if (!editingLegend?.name.trim()) {
-      alert("Legend name is required")
+      alert("Legendenavn er påkrevd")
       return
     }
 
@@ -111,18 +111,18 @@ export default function LegendManager({ }: LegendManagerProps) {
       setShowColorPicker(false)
     } catch (err) {
       console.error("Error saving legend:", err)
-      alert("Failed to save legend")
+      alert("Kunne ikke lagre legende")
     }
   }
 
   const handleDeleteLegend = async (legendId: string) => {
-    if (!confirm("Are you sure you want to delete this legend?")) return
+    if (!confirm("Er du sikker på at du vil slette denne legenden?")) return
     
     try {
       await deleteLegend(legendId)
     } catch (err) {
       console.error("Error deleting legend:", err)
-      alert("Failed to delete legend")
+      alert("Kunne ikke slette legende")
     }
   }
 
@@ -172,13 +172,13 @@ export default function LegendManager({ }: LegendManagerProps) {
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Legend Management</h2>
+        <h2 className="text-xl font-bold text-gray-900">Legendehåndtering</h2>
         <button
           onClick={handleCreateLegend}
           className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition-colors"
         >
           <Plus className="w-4 h-4" />
-          Add 
+          Legg til 
         </button>
       </div>
 
@@ -197,19 +197,19 @@ export default function LegendManager({ }: LegendManagerProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Legend Name
+                    Legendenavn
                   </label>
                   <input
                     type="text"
                     value={editingLegend.name}
                     onChange={(e) => setEditingLegend({ ...editingLegend, name: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                    placeholder="Enter legend name"
+                    placeholder="Skriv inn legendenavn"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Color
+                    Farge
                   </label>
                   <div className="relative">
                     <button
@@ -237,14 +237,14 @@ export default function LegendManager({ }: LegendManagerProps) {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Description (Optional)
+                  Beskrivelse (Valgfritt)
                 </label>
                 <textarea
                   value={editingLegend.description || ""}
                   onChange={(e) => setEditingLegend({ ...editingLegend, description: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                   rows={2}
-                  placeholder="Enter description for this legend"
+                  placeholder="Skriv inn beskrivelse for denne legenden"
                 />
               </div>
 

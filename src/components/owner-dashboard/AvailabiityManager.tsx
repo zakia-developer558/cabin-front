@@ -220,7 +220,7 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
               id: dateStr,
               date: dateStr,
               status: "maintenance",
-              type: "Maintenance",
+              type: "Vedlikehold",
             })
           } else if (customLegendDates.has(dateStr)) {
             // Handle custom legend dates
@@ -247,14 +247,14 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
               id: dateStr,
               date: dateStr,
               status: "unavailable",
-              type: "Unavailable",
+              type: "Utilgjengelig",
             })
           } else {
             finalDates.push({
               id: dateStr,
               date: dateStr,
               status: "available",
-              type: "Available",
+              type: "Tilgjengelig",
             })
           }
         }
@@ -379,7 +379,7 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6">
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Availability Management</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Tilgjengelighetshåndtering</h2>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center space-x-3">
             <select
@@ -391,7 +391,7 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
                 .filter(legend => legend.id !== 'booked' && legend.id !== 'partially_booked')
                 .map(legend => (
                   <option key={legend.id} value={legend.id}>
-                    Set as {legend.name}
+                    Sett som {legend.name}
                   </option>
                 ))
               }
@@ -402,18 +402,18 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
             disabled={selectedDates.length === 0}
             className="bg-red-500 hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm transition-colors whitespace-nowrap"
           >
-            Update Selected ({selectedDates.length})
+            Oppdater valgte ({selectedDates.length})
           </button>
         </div>
       </div>
 
       <div className="space-y-6">
         <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Date-Specific Settings</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Datospesifikke innstillinger</h3>
 
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <p className="text-gray-500">Loading availability...</p>
+              <p className="text-gray-500">Laster tilgjengelighet...</p>
             </div>
           ) : (
             <div className="max-h-96 overflow-y-auto border border-gray-200 rounded-lg">

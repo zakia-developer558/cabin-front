@@ -78,9 +78,9 @@ export default function Sidebar({ selectedCabin, onCabinSelect, onCabinAdded, ca
     <>
       <aside className="w-64 bg-gray-800 border-r border-gray-700 min-h-screen">
         <div className="p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">My Cabins</h2>
+          <h2 className="text-lg font-semibold text-white mb-4">Mine Hytter</h2>
 
-          {loading && <p className="text-gray-400">Loading cabins...</p>}
+          {loading && <p className="text-gray-400">Laster hytter...</p>}
 
           <div className="space-y-2">
             {cabins.map((cabin) => (
@@ -115,7 +115,7 @@ export default function Sidebar({ selectedCabin, onCabinSelect, onCabinAdded, ca
                     d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                   />
                 </svg>
-                <span>Add New Cabin</span>
+                <span>Legg til ny hytte</span>
               </div>
             </button>
           </div>

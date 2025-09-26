@@ -31,33 +31,47 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Helper function to clean image URL
-  const cleanImageUrl = (imageUrl?: string): string | undefined => {
-    if (!imageUrl) return undefined
-    // Remove backticks, extra spaces, and trim
-    return imageUrl.replace(/`/g, '').trim() || undefined
-  }
-
   // Fetch cabins from API
   useEffect(() => {
-    const fetchCabins = async () => {
+    // Get company slug from localStorage
+    const storedSlug = localStorage.getItem("companySlug")
+
+    // Helper function to clean image URLs
+  const cleanImageUrl = (imageUrl: string | undefined): string | null => {
+    if (!imageUrl) return null;
+    
+    // Remove leading/trailing spaces and backticks
+    const cleaned = imageUrl.trim().replace(/^`+|`+$/g, '');
+    
+    // Check if it's a valid URL
+    try {
+      new URL(cleaned);
+      return cleaned;
+    } catch {
+      return null;
+    }
+  }
+
+  const fetchCabins = async () => {
+      if (!storedSlug) return; // Don't fetch if no company slug
+      
       try {
         setLoading(true)
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/cabins/`)
-        if (!res.ok) throw new Error("Failed to fetch cabins")
-        const data = await res.json()
+        const response = await fetch(`/api/cabins?companySlug=${storedSlug}`)
+        const data = await response.json()
         
-        // Clean the cabin data, especially image URLs
-        const cleanedCabins = (data.items || []).map((cabin: Cabin) => ({
-          ...cabin,
-          image: cleanImageUrl(cabin.image)
-        }))
-        
-        console.log('Fetched cabins with cleaned images:', cleanedCabins.map((c: Cabin) => ({ name: c.name, image: c.image })))
-        
-        setCabins(cleanedCabins)
+        if (data.success) {
+          // Clean image URLs for all cabins
+          const cabinsWithCleanedImages = data.data.map((cabin: Cabin) => ({
+            ...cabin,
+            image: cleanImageUrl(cabin.image)
+          }))
+          setCabins(cabinsWithCleanedImages)
+        } else {
+          throw new Error(data.error || "Kunne ikke hente hytter")
+        }
       } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : "Something went wrong")
+        setError(err instanceof Error ? err.message : "Noe gikk galt")
       } finally {
         setLoading(false)
       }
@@ -85,8 +99,8 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
       <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-xl p-6 text-white">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold mb-1">Available Cabins</h2>
-            <p className="text-gray-300">Browse and book your perfect getaway</p>
+            <h2 className="text-2xl font-bold mb-1">Tilgjengelige hytter</h2>
+            <p className="text-gray-300">Bla gjennom og bestill din perfekte ferie</p>
           </div>
           <div className="flex gap-3">
             {/* Search input */}
@@ -106,7 +120,7 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
               </svg>
               <input
                 type="text"
-                placeholder="Search cabins..."
+                placeholder="Søk hytter..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-2 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white placeholder-gray-300 focus:ring-2 focus:ring-red-400 focus:border-transparent transition-all"
@@ -119,7 +133,7 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
               className="px-4 py-2 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-red-400 focus:border-transparent transition-all"
             >
               <option value="all" className="text-gray-900">
-                All Cities
+                Alle byer
               </option>
               {uniqueCities.map((city) => (
                 <option key={city} value={city} className="text-gray-900">
@@ -153,22 +167,22 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
               <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                 <tr>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                    Image
+                    Bilde
                   </th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                    Cabin Name
+                    Hyttenavn
                   </th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                    Contact Person
+                    Kontaktperson
                   </th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                    Location
+                    Plassering
                   </th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                    Contact Info
+                    Kontaktinfo
                   </th>
                   <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                    Actions
+                    Handlinger
                   </th>
                 </tr>
               </thead>
@@ -177,37 +191,57 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
                   <tr key={cabin._id} className="hover:bg-gray-50 transition-colors duration-200">
                     {/* Image Column */}
                     <td className="px-6 py-4">
-                      <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                      <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center relative">
                         {cabin.image ? (
-                          <Image
-                            src={cabin.image}
-                            alt={`${cabin.name} cabin`}
-                            width={64}
-                            height={64}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              console.log('Image failed to load:', cabin.image);
-                              e.currentTarget.style.display = 'none';
-                              e.currentTarget.nextElementSibling?.setAttribute('style', 'display: block');
-                            }}
-                            onLoad={() => {
-                              console.log('Image loaded successfully:', cabin.image);
-                            }}
-                          />
-                        ) : null}
-                        <svg
-                          className={`w-8 h-8 text-gray-400 ${cabin.image ? 'hidden' : 'block'}`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          />
-                        </svg>
+                          <>
+                            <Image
+                              src={cabin.image}
+                              alt={`${cabin.name} cabin`}
+                              width={64}
+                              height={64}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                console.log('Image failed to load:', cabin.image);
+                                const target = e.currentTarget as HTMLImageElement;
+                                target.style.display = 'none';
+                                const fallback = target.parentElement?.querySelector('.fallback-icon') as HTMLElement;
+                                if (fallback) {
+                                  fallback.style.display = 'block';
+                                }
+                              }}
+                              onLoad={() => {
+                                console.log('Image loaded successfully:', cabin.image);
+                              }}
+                            />
+                            <svg
+                              className="fallback-icon w-8 h-8 text-gray-400 absolute inset-0 m-auto hidden"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              />
+                            </svg>
+                          </>
+                        ) : (
+                          <svg
+                            className="w-8 h-8 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                            />
+                          </svg>
+                        )}
                       </div>
                     </td>
                     {/* Cabin Name Column */}
@@ -326,7 +360,7 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
                               : "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
                         }`}
                       >
-                        Book
+                        Bestill
                       </button>
                     </td>
                   </tr>
@@ -348,8 +382,8 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No cabins found</h3>
-              <p className="text-gray-600">Try adjusting your search criteria.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Ingen hytter funnet</h3>
+              <p className="text-gray-600">Prøv å justere søkekriteriene dine.</p>
             </div>
           )}
         </div>

@@ -47,19 +47,19 @@ export default function DashboardHeader() {
             <div className="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">C</span>
             </div>
-            <h1 className="text-xl font-bold text-white">{user?.companyName || "CabinOwner"}</h1>
+            <h1 className="text-xl font-bold text-white">{user?.companyName || "Hytteeier"}</h1>
           </div>
 
           {/* Nav */}
           <nav className="hidden md:flex items-center space-x-6">
             <Link href="/" className="text-gray-300 hover:text-white transition-colors">
-              Home
+              Hjem
             </Link>
             <Link href="/dashboard/owner" className="text-white font-medium">
-              Dashboard
+              Dashbord
             </Link>
             <Link href="/settings" className="text-gray-300 hover:text-white transition-colors">
-              Settings
+              Innstillinger
             </Link>
           </nav>
 
@@ -67,15 +67,15 @@ export default function DashboardHeader() {
           <div className="flex items-center space-x-4">
             <div className="text-right">
               <p className="text-sm text-white font-medium">
-                {user ? `${user.firstName} ${user.lastName}` : "Loading..."}
+                {user ? `${user.firstName} ${user.lastName}` : "Laster..."}
               </p>
-              <p className="text-xs text-gray-400">{user?.companyName || "Cabin Owner"}</p>
+              <p className="text-xs text-gray-400">{user?.companyName || "Hytteeier"}</p>
             </div>
             <button
               onClick={handleLogout}
               className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition-colors"
             >
-              Logout
+              Logg ut
             </button>
           </div>
         </div>

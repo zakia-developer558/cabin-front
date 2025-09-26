@@ -18,7 +18,7 @@ interface Booking {
 }
 
 const formatDateTime = (iso: string) => {
-  return new Date(iso).toLocaleString("en-GB", {
+  return new Date(iso).toLocaleString("nb-NO", {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -89,18 +89,18 @@ export default function BookingTable({ bookings, cabinName }: BookingTableProps)
     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
       {/* Table Header */}
       <div className="px-6 py-4 border-b border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-800">Bookings for {cabinName}</h2>
-        <p className="text-sm text-gray-600 mt-1">{filteredBookings.length} shown out of {bookings.length}</p>
+        <h2 className="text-xl font-semibold text-gray-800">Bestillinger for {cabinName}</h2>
+        <p className="text-sm text-gray-600 mt-1">{filteredBookings.length} vist av {bookings.length}</p>
       </div>
 
       {/* Filter Tabs */}
       <div className="px-6 py-3 border-b border-gray-200 bg-gray-50">
         <div className="flex space-x-2">
           {[
-            { key: "all", label: "All" },
-            { key: "confirmed", label: "Confirmed" },
-            { key: "pending", label: "Pending" },
-            { key: "rejected", label: "Rejected" },
+            { key: "all", label: "Alle" },
+            { key: "confirmed", label: "Bekreftet" },
+            { key: "pending", label: "Venter" },
+            { key: "rejected", label: "Avlyst" },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -124,13 +124,13 @@ export default function BookingTable({ bookings, cabinName }: BookingTableProps)
             <colgroup><col className="w-48" /><col className="w-40" /><col className="w-56" /><col className="w-64" /><col className="w-48" /><col className="w-32" /><col className="w-32" /></colgroup>
             <thead className="bg-gray-50 sticky top-0">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order No.</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booking Period</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ordrenr.</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Navn</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">E-post</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adresse</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bestillingsperiode</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Handlinger</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -180,7 +180,7 @@ export default function BookingTable({ bookings, cabinName }: BookingTableProps)
                     <button
                       onClick={() => handleViewDetails(booking)}
                       className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-md transition-colors"
-                      title="View Details"
+                      title="Se detaljer"
                     >
                       <Eye className="w-4 h-4" />
                     </button>
@@ -196,7 +196,7 @@ export default function BookingTable({ bookings, cabinName }: BookingTableProps)
       {/* No results message */}
       {filteredBookings.length === 0 && (
         <div className="px-6 py-8 text-center text-gray-500">
-          <p>No bookings found for the selected filter.</p>
+          <p>Ingen bestillinger funnet for det valgte filteret.</p>
         </div>
       )}
 
@@ -205,7 +205,7 @@ export default function BookingTable({ bookings, cabinName }: BookingTableProps)
         <div className="px-6 py-3 border-t border-gray-200 bg-gray-50">
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-600">
-              Showing {startIndex + 1}-{Math.min(endIndex, filteredBookings.length)} of {filteredBookings.length} results
+              Viser {startIndex + 1}-{Math.min(endIndex, filteredBookings.length)} av {filteredBookings.length} resultater
             </div>
             <div className="flex space-x-1">
               <button 
@@ -213,7 +213,7 @@ export default function BookingTable({ bookings, cabinName }: BookingTableProps)
                 disabled={currentPage === 1}
                 className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded disabled:text-gray-400 disabled:cursor-not-allowed"
               >
-                Previous
+                Forrige
               </button>
               
               {/* Page numbers */}
@@ -236,7 +236,7 @@ export default function BookingTable({ bookings, cabinName }: BookingTableProps)
                 disabled={currentPage === totalPages}
                 className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded disabled:text-gray-400 disabled:cursor-not-allowed"
               >
-                Next
+                Neste
               </button>
             </div>
           </div>

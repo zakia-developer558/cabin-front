@@ -73,11 +73,11 @@ export default function LoginPage() {
           window.location.href = "/dashboard/user";
         }
       } else {
-        setError(data.message || "Login failed. Please check your credentials.");
+        setError(data.message || "Innlogging feilet. Vennligst sjekk dine innloggingsopplysninger.");
       }
     } catch (error) {
       console.error("Login error:", error);
-      setError("An error occurred during login. Please try again.");
+      setError("En feil oppstod under innlogging. Vennligst prøv igjen.");
     } finally {
       setIsLoading(false);
     }
@@ -112,8 +112,8 @@ export default function LoginPage() {
           </div>
 
           {/* Heading */}
-          <h1 className="text-2xl font-bold text-center text-gray-900 mb-2">Login</h1>
-          <p className="text-center text-gray-600 mb-8 text-sm">Login to your account</p>
+          <h1 className="text-2xl font-bold text-center text-gray-900 mb-2">Logg inn</h1>
+          <p className="text-center text-gray-600 mb-8 text-sm">Logg inn på din konto</p>
 
           {/* Error Message */}
           {error && (
@@ -138,7 +138,7 @@ export default function LoginPage() {
               </div>
               <input
                 type="email"
-                placeholder="Email"
+                placeholder="E-post"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -160,7 +160,7 @@ export default function LoginPage() {
               </div>
               <input
                 type="password"
-                placeholder="Password"
+                placeholder="Passord"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -171,7 +171,7 @@ export default function LoginPage() {
             {/* Forgot Password */}
             <div className="text-right">
               <a href="#" className="text-sm text-gray-600 hover:text-gray-800">
-                Forgot password?
+                Glemt passord?
               </a>
             </div>
 
@@ -187,17 +187,17 @@ export default function LoginPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Logging in...
+                  Logger inn...
                 </>
-              ) : "Login"}
+              ) : "Logg inn"}
             </button>
           </form>
 
           {/* Sign Up Option */}
           <p className="mt-6 text-center text-sm text-gray-600">
-            Don&apos;t have an account?{" "}
+            Har du ikke en konto?{" "}
             <Link href="/sign-up" className="text-gray-800 font-semibold hover:underline">
-              Sign up
+              Registrer deg
             </Link>
           </p>
 

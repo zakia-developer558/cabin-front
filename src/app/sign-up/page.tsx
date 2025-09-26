@@ -29,31 +29,31 @@ export default function SignupPage() {
 
   const validateForm = () => {
     if (!formData.firstName.trim()) {
-      setError("First name is required")
+      setError("Fornavn er påkrevd")
       return false
     }
     if (!formData.lastName.trim()) {
-      setError("Last name is required")
+      setError("Etternavn er påkrevd")
       return false
     }
     if (!formData.email.trim()) {
-      setError("Email is required")
+      setError("E-post er påkrevd")
       return false
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      setError("Please enter a valid email address")
+      setError("Vennligst oppgi en gyldig e-postadresse")
       return false
     }
     if (!formData.password) {
-      setError("Password is required")
+      setError("Passord er påkrevd")
       return false
     }
     if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters long")
+      setError("Passordet må være minst 6 tegn langt")
       return false
     }
     if (!formData.companyName.trim()) {
-      setError("Company name is required")
+      setError("Firmanavn er påkrevd")
       return false
     }
     return true
@@ -89,10 +89,10 @@ export default function SignupPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.message || "Registration failed")
+        throw new Error(data.message || "Registrering feilet")
       }
 
-      setSuccess("Account created successfully! You can now sign in.")
+      setSuccess("Konto opprettet! Du kan nå logge inn.")
       setFormData({
         firstName: "",
         lastName: "",
@@ -105,7 +105,7 @@ export default function SignupPage() {
       // window.location.href = "/login"
       
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "Something went wrong. Please try again."
+      const errorMessage = err instanceof Error ? err.message : "Noe gikk galt. Vennligst prøv igjen."
       setError(errorMessage)
     } finally {
       setLoading(false)
@@ -140,7 +140,7 @@ export default function SignupPage() {
           </div>
 
           {/* Heading */}
-          <h1 className="text-2xl font-bold text-center text-gray-900 mb-2">Create your account</h1>
+          <h1 className="text-2xl font-bold text-center text-gray-900 mb-2">Opprett din konto</h1>
           {/* <p className="text-center text-gray-600 mb-6 text-sm">
             Join our platform to
             <br />
@@ -210,7 +210,7 @@ export default function SignupPage() {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleInputChange}
-                  placeholder="First Name"
+                  placeholder="Fornavn"
                   className="w-full pl-10 pr-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-gray-300 focus:outline-none text-gray-900 placeholder-gray-500"
                   required
                 />
@@ -231,7 +231,7 @@ export default function SignupPage() {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleInputChange}
-                  placeholder="Last Name"
+                  placeholder="Etternavn"
                   className="w-full pl-10 pr-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-gray-300 focus:outline-none text-gray-900 placeholder-gray-500"
                   required
                 />
@@ -255,7 +255,7 @@ export default function SignupPage() {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                placeholder="Email"
+                placeholder="E-post"
                 className="w-full pl-10 pr-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-gray-300 focus:outline-none text-gray-900 placeholder-gray-500"
                 required
               />
@@ -278,7 +278,7 @@ export default function SignupPage() {
                 name="companyName"
                 value={formData.companyName}
                 onChange={handleInputChange}
-                placeholder="Company Name"
+                placeholder="Firmanavn"
                 className="w-full pl-10 pr-4 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-gray-300 focus:outline-none text-gray-900 placeholder-gray-500"
                 required
               />
@@ -301,7 +301,7 @@ export default function SignupPage() {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                placeholder="Password"
+                placeholder="Passord"
                 className="w-full pl-10 pr-12 py-3 bg-gray-50 border-0 rounded-lg focus:ring-2 focus:ring-gray-300 focus:outline-none text-gray-900 placeholder-gray-500"
                 required
               />
@@ -357,10 +357,10 @@ export default function SignupPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Creating Account...
+                  Oppretter konto...
                 </>
               ) : (
-                "Create Account"
+                "Opprett konto"
               )}
             </button>
           </form>
@@ -372,7 +372,7 @@ export default function SignupPage() {
                 <div className="w-full border-t border-gray-200"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or</span>
+                <span className="px-2 bg-white text-gray-500">Eller</span>
               </div>
             </div>
           </div>
@@ -380,9 +380,9 @@ export default function SignupPage() {
           {/* Login Link */}
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              Already have an account?{" "}
+              Har du allerede en konto?{" "}
               <Link href="/login" className="text-gray-800 hover:text-gray-900 font-semibold">
-                Sign in
+                Logg inn
               </Link>
             </p>
           </div>

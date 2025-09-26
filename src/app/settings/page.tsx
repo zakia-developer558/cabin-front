@@ -75,7 +75,7 @@ export default function SettingsPage() {
         <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
           <div className="text-white text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
-            <p>Loading settings...</p>
+            <p>Laster innstillinger...</p>
           </div>
         </div>
       </div>
@@ -90,30 +90,30 @@ export default function SettingsPage() {
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
           {/* Header */}
           <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-            <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-            <p className="text-gray-600 mt-1">Manage your account and cabin settings</p>
+            <h1 className="text-2xl font-bold text-gray-900">Innstillinger</h1>
+            <p className="text-gray-600 mt-1">Administrer din konto og hytteinnstillinger</p>
           </div>
 
           <div className="p-6 space-y-8">
             {/* Profile Section */}
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900">Profile Information</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Profilinformasjon</h2>
               <div className="bg-gray-50 rounded-lg p-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Fornavn</label>
                     <p className="text-gray-900">{user?.firstName || 'N/A'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Etternavn</label>
                     <p className="text-gray-900">{user?.lastName || 'N/A'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">E-post</label>
                     <p className="text-gray-900">{user?.email || 'N/A'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Rolle</label>
                     <p className="text-gray-900 capitalize">{user?.role || 'N/A'}</p>
                   </div>
                 </div>
@@ -122,11 +122,11 @@ export default function SettingsPage() {
 
             {/* Public Cabin Link Section */}
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900">Public Cabin Link</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Offentlig hyttelenke</h2>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <p className="text-sm text-blue-800 mb-3">
-                  Share this link with potential guests to showcase all your cabins. 
-                  They can browse and book directly from this public page.
+                  Del denne lenken med potensielle gjester for å vise frem alle dine hytter. 
+                  De kan bla gjennom og bestille direkte fra denne offentlige siden.
                 </p>
                 
                 {companySlug ? (
@@ -148,27 +148,27 @@ export default function SettingsPage() {
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
-                            <span>Copied!</span>
+                            <span>Kopiert!</span>
                           </span>
                         ) : (
                           <span className="flex items-center space-x-1">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                             </svg>
-                            <span>Copy Link</span>
+                            <span>Kopier lenke</span>
                           </span>
                         )}
                       </button>
                     </div>
                     
                     <div className="text-xs text-blue-600">
-                      <strong>Your Company Slug:</strong> {companySlug}
+                      <strong>Din firmaslug:</strong> {companySlug}
                     </div>
                   </div>
                 ) : (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                     <p className="text-sm text-yellow-800">
-                      ⚠️ Company slug not found. Please contact support to set up your public cabin link.
+                      ⚠️ Firmaslug ikke funnet. Vennligst kontakt support for å sette opp din offentlige hyttelenke.
                     </p>
                   </div>
                 )}
@@ -177,10 +177,10 @@ export default function SettingsPage() {
 
             {/* Additional Settings Placeholder */}
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900">Account Settings</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Kontoinnstillinger</h2>
               <div className="bg-gray-50 rounded-lg p-4">
                 <p className="text-gray-600 text-sm">
-                  Additional account settings and preferences will be available here in future updates.
+                  Ytterligere kontoinnstillinger og preferanser vil være tilgjengelige her i fremtidige oppdateringer.
                 </p>
               </div>
             </div>

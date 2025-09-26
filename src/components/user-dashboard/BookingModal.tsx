@@ -511,22 +511,22 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
   e.preventDefault()
   
   if (selectedHalfDays.length === 0) {
-    alert("Please select booking dates")
+    alert("Vennligst velg bestillingsdatoer")
     return
   }
 
   if (!cabin?.slug) {
-    error("Booking Error", "Cabin information is missing")
+    error("Bestillingsfeil", "Hytteinformasjon mangler")
     return
   }
 
   setSubmitting(true)
-  info("Processing Booking", "Submitting your booking request...")
+  info("Behandler bestilling", "Sender inn bestillingsforespørselen din...")
 
   try {
     const bookingData = formatBookingData()
     if (!bookingData || !Array.isArray(bookingData)) {
-      throw new Error("Failed to format booking data")
+      throw new Error("Kunne ikke formatere bestillingsdata")
     }
 
     console.log("Submitting bookings:", bookingData) // Debug log
@@ -651,8 +651,8 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
       console.error("Detailed booking errors:", errorDetails)
       
       error(
-        "Booking Failed", 
-        `${failedBookings.length} out of ${bookingData.length} bookings failed. Please check the details and try again.`,
+        "Bestilling mislyktes", 
+        `${failedBookings.length} av ${bookingData.length} bestillinger mislyktes. Vennligst sjekk detaljene og prøv igjen.`,
         8000
       )
       
@@ -666,8 +666,8 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
       }
     } else {
       success(
-        "Booking Successful", 
-        `All ${successfulBookings.length} bookings submitted successfully!`,
+        "Bestilling vellykket", 
+        `Alle ${successfulBookings.length} bestillinger ble sendt inn!`,
         5000
       )
       // Clear selected dates and form
@@ -691,7 +691,7 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
 
   } catch (err) {
     console.error("Error in handleSubmit:", err)
-    error("Booking Error", "An unexpected error occurred while submitting the booking. Please try again.")
+    error("Bestillingsfeil", "En uventet feil oppstod under innsending av bestillingen. Vennligst prøv igjen.")
   } finally {
     setSubmitting(false)
   }
@@ -723,7 +723,7 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
     <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-2xl font-bold text-gray-900">Book {cabin.name}</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Bestill {cabin.name}</h2>
           <button 
             onClick={onClose} 
             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -887,49 +887,49 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
                   <div className="flex flex-wrap gap-4 text-sm">
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
-                      <span className="text-gray-600">Available</span>
+                      <span className="text-gray-600">Tilgjengelig</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
-                      <span className="text-gray-600">Booked</span>
+                      <span className="text-gray-600">Opptatt</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 border border-gray-300 rounded relative overflow-hidden bg-white">
                         <div className="absolute inset-0 bg-green-200" style={{ clipPath: 'polygon(0% 0%, 0% 100%, 100% 100%)' }}></div>
                         <div className="absolute inset-0 bg-red-200" style={{ clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%)' }}></div>
                       </div>
-                      <span className="text-gray-600">Partially Booked</span>
+                      <span className="text-gray-600">Delvis opptatt</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-blue-500 rounded"></div>
-                      <span className="text-gray-600">Selected</span>
+                      <span className="text-gray-600">Valgt</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-gray-100 border border-gray-200 rounded"></div>
-                      <span className="text-gray-600">Unavailable</span>
+                      <span className="text-gray-600">Utilgjengelig</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-yellow-100 border border-yellow-200 rounded"></div>
-                      <span className="text-gray-600">Maintenance</span>
+                      <span className="text-gray-600">Vedlikehold</span>
                     </div>
                   </div>
                 </div>
 
                 {selectedHalfDays.length > 0 && (
                   <div className="bg-blue-50 p-3 rounded-lg mt-4">
-                    <div className="text-sm font-medium text-blue-900">Selected Time Slots:</div>
+                    <div className="text-sm font-medium text-blue-900">Valgte tidslots:</div>
                     <div className="text-sm text-blue-700 space-y-1 max-h-32 overflow-y-auto">
                       {selectedHalfDays.map((selection, index) => (
                         <div key={index} className="flex items-center justify-between">
                           <span>
-                            {selection.date.toLocaleDateString()} •{" "}
+                            {selection.date.toLocaleDateString("nb-NO")} •{" "}
                             {selection.half === "first" ? "12:00 AM - 12:00 PM" : "12:00 PM - 12:00 AM"}
                           </span>
                           <button
                             type="button"
                             onClick={() => removeHalfDaySelection(selection)}
                             className="ml-2 text-red-500 hover:text-red-700 hover:bg-red-100 rounded-full p-1 transition-colors"
-                            title="Remove this time slot"
+                            title="Fjern dette tidsslotet"
                             disabled={submitting}
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -947,7 +947,7 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
             <div>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Navn *</label>
                   <input
                     type="text"
                     value={formData.name}
@@ -959,7 +959,7 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Address *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Adresse *</label>
                   <input
                     type="text"
                     value={formData.address}
@@ -971,7 +971,7 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Postal Code *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Postnummer *</label>
                   <input
                     type="text"
                     value={formData.postalCode}
@@ -983,7 +983,7 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">City *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">By *</label>
                   <input
                     type="text"
                     value={formData.city}
@@ -995,7 +995,7 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Telefon *</label>
                   <input
                     type="tel"
                     value={formData.phone}
@@ -1007,7 +1007,7 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">E-post *</label>
                   <input
                     type="email"
                     value={formData.email}
@@ -1019,7 +1019,7 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Member of:</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Medlem av:</label>
                   <div className="space-y-2">
                     <label className="flex items-center">
                       <input
@@ -1052,16 +1052,16 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
                   {submitting ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Submitting...
+                      Sender inn...
                     </>
                   ) : (
-                    "Send Booking Request"
+                    "Send bestillingsforespørsel"
                   )}
                 </button>
 
                 {selectedHalfDays.length === 0 && (
                   <p className="text-sm text-gray-500 text-center">
-                    Please select at least one time slot to enable booking
+                    Vennligst velg minst ett tidslot for å aktivere bestilling
                   </p>
                 )}
               </form>

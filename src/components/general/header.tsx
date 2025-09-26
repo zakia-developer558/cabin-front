@@ -8,17 +8,9 @@ export default function Header() {
         <div className="text-xl font-semibold">Logo</div>
         <nav className="flex items-center space-x-8">
           <Link href="/" className="hover:text-gray-300 transition-colors">
-            Home
+            Hjem
           </Link>
-          <Link href="#" className="hover:text-gray-300 transition-colors">
-            About
-          </Link>
-          <Link href="#" className="hover:text-gray-300 transition-colors">
-            Services
-          </Link>
-          <Link href="#" className="hover:text-gray-300 transition-colors">
-            Contact
-          </Link>
+      
         </nav>
       </div>
     </header>

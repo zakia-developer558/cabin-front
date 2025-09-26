@@ -130,7 +130,7 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Add New Cabin</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Legg til ny hytte</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -140,7 +140,7 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Cabin Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Hyttenavn</label>
             <input
               type="text"
               name="name"
@@ -148,12 +148,12 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              placeholder="Enter cabin name"
+              placeholder="Skriv inn hyttenavn"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Adresse</label>
             <input
               type="text"
               name="address"
@@ -161,13 +161,13 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              placeholder="Enter address"
+              placeholder="Skriv inn adresse"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Postal Code</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Postnummer</label>
               <input
                 type="text"
                 name="postal_code"
@@ -179,7 +179,7 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">By</label>
               <input
                 type="text"
                 name="city"
@@ -187,13 +187,13 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                placeholder="Enter city"
+                placeholder="Skriv inn by"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Telefon</label>
             <input
               type="tel"
               name="phone"
@@ -206,7 +206,7 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">E-post</label>
             <input
               type="email"
               name="email"
@@ -214,12 +214,12 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              placeholder="cabin@example.com"
+              placeholder="hytte@eksempel.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Contact Person Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Kontaktperson navn</label>
             <input
               type="text"
               name="contact_person_name"
@@ -227,12 +227,12 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              placeholder="Enter contact person name"
+              placeholder="Skriv inn kontaktperson navn"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Contact Person Employer</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Kontaktperson arbeidsgiver</label>
             <input
               type="text"
               name="contact_person_employer"
@@ -240,7 +240,7 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              placeholder="Enter employer name"
+              placeholder="Skriv inn arbeidsgiver navn"
             />
           </div>
 
@@ -252,12 +252,12 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
               onChange={handleChange}
               className="mr-2 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
             />
-            <label className="text-sm font-medium text-gray-700">Half Day Availability</label>
+            <label className="text-sm font-medium text-gray-700">Halvdags tilgjengelighet</label>
           </div>
 
           {/* Color Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Cabin Color</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Hyttens farge</label>
             <div className="flex items-center space-x-3">
               <input
                 type="color"
@@ -272,7 +272,7 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
 
           {/* Image Upload Section */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Cabin Image</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Hyttebilde</label>
             <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-red-400 transition-colors">
               <div className="space-y-1 text-center">
                 {imagePreview ? (
@@ -315,7 +315,7 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
                         htmlFor="image-upload"
                         className="relative cursor-pointer bg-white rounded-md font-medium text-red-600 hover:text-red-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-red-500"
                       >
-                        <span>Upload a file</span>
+                        <span>Last opp en fil</span>
                         <input
                           id="image-upload"
                           name="image-upload"
@@ -325,9 +325,9 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
                           className="sr-only"
                         />
                       </label>
-                      <p className="pl-1">or drag and drop</p>
+                      <p className="pl-1">eller dra og slipp</p>
                     </div>
-                    <p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
+                    <p className="text-xs text-gray-500">PNG, JPG, GIF opptil 5MB</p>
                   </>
                 )}
               </div>
@@ -343,7 +343,7 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
               className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
               disabled={uploading}
             >
-              Cancel
+              Avbryt
             </button>
             <button
               type="submit"
@@ -353,10 +353,10 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
               {uploading ? (
                 <div className="flex items-center justify-center">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Uploading...
+                  Laster opp...
                 </div>
               ) : (
-                "Add Cabin"
+                "Legg til hytte"
               )}
             </button>
           </div>

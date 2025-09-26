@@ -155,12 +155,12 @@ function CabinBookingPageContent() {
         if (data.success && data.data) {
           setCabin(data.data)
         } else {
-          error("Cabin Not Found", "The requested cabin could not be found.")
+          error("Hytte ikke funnet", "Den forespurte hytta kunne ikke finnes.")
           router.push('/') // Redirect to home if cabin not found
         }
       } catch (err) {
         console.error("Error fetching cabin:", err)
-        error("Error", "Failed to load cabin information.")
+        error("Feil", "Kunne ikke laste hytteinformasjon.")
         router.push('/') // Redirect to home on error
       } finally {
         setCabinLoading(false)
@@ -1052,22 +1052,22 @@ function CabinBookingPageContent() {
     e.preventDefault()
     
     if (selectedHalfDays.length === 0) {
-      alert("Please select booking dates")
+      alert("Vennligst velg bestillingsdatoer")
       return
     }
 
     if (!cabin?.slug) {
-      error("Booking Error", "Cabin information is missing")
+      error("Bestillingsfeil", "Hytteinformasjon mangler")
       return
     }
 
     setSubmitting(true)
-    info("Processing Booking", "Submitting your booking request...")
+    info("Behandler bestilling", "Sender bestillingsforespørsel...")
 
     try {
       const bookingData = formatBookingData()
       if (!bookingData) {
-        throw new Error("Failed to format booking data")
+        throw new Error("Kunne ikke formatere bestillingsdata")
       }
 
       console.log("Submitting booking:", bookingData) // Debug log
@@ -1102,8 +1102,8 @@ function CabinBookingPageContent() {
 
       if (response.ok) {
         success(
-          "Booking Successful", 
-          "Your booking has been submitted successfully!",
+          "Bestilling vellykket",
+          "Din bestilling har blitt sendt inn!",
           5000
         )
         
@@ -1153,12 +1153,12 @@ function CabinBookingPageContent() {
         }
         
         console.error("Booking failed:", errorMessage)
-        error("Booking Failed", errorMessage, 8000)
+        error("Bestilling mislyktes", errorMessage, 8000)
       }
 
     } catch (err) {
       console.error("Error in handleSubmit:", err)
-      error("Booking Error", "An unexpected error occurred while submitting the booking. Please try again.")
+      error("Bestillingsfeil", "En uventet feil oppstod under innsending av bestillingen. Vennligst prøv igjen.")
     } finally {
       setSubmitting(false)
     }
@@ -1166,9 +1166,9 @@ function CabinBookingPageContent() {
 
   const calendarDays = getDaysInMonth(selectedMonth)
   const monthNames = [
-    "January","February","March","April","May","June",
-    "July","August","September","October","November","December",
-  ]
+      "Januar","Februar","Mars","April","Mai","Juni",
+      "Juli","August","September","Oktober","November","Desember",
+    ]
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -1196,7 +1196,7 @@ function CabinBookingPageContent() {
               className="animate-spin rounded-full h-8 w-8 border-b-2"
               style={{ borderBottomColor: colors.primary }}
             ></div>
-            <span className="text-lg text-gray-600">Loading cabin details...</span>
+            <span className="text-lg text-gray-600">Laster hyttedetaljer...</span>
           </div>
         </div>
       </div>
@@ -1208,8 +1208,8 @@ function CabinBookingPageContent() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="bg-white p-8 rounded-xl shadow-lg text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Cabin Not Found</h1>
-          <p className="text-gray-600 mb-6">The requested cabin could not be found.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Hytte ikke funnet</h1>
+            <p className="text-gray-600 mb-6">Den forespurte hytta kunne ikke finnes.</p>
           <button 
             onClick={() => router.push('/')}
             className="text-white px-6 py-2 rounded-lg transition-colors"
@@ -1243,9 +1243,9 @@ function CabinBookingPageContent() {
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
-                Back
+                Tilbake
               </button>
-              <h1 className="text-3xl font-bold text-gray-900">Book {cabin.name}</h1>
+              <h1 className="text-3xl font-bold text-gray-900">Bestill {cabin.name}</h1>
               <p className="text-gray-600 mt-1">{cabin.address}, {cabin.city}</p>
             </div>
             
@@ -1260,7 +1260,7 @@ function CabinBookingPageContent() {
           <div>
             <div className="bg-white rounded-xl shadow-lg p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-gray-900">Select Dates</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Velg datoer</h3>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() =>
@@ -1311,7 +1311,7 @@ function CabinBookingPageContent() {
                     className="animate-spin rounded-full h-8 w-8 border-b-2"
                     style={{ borderBottomColor: colors.primary }}
                   ></div>
-                  <span className="ml-2 text-gray-600">Loading calendar...</span>
+                  <span className="ml-2 text-gray-600">Laster kalender...</span>
                 </div>
               )}
 
@@ -1446,30 +1446,30 @@ function CabinBookingPageContent() {
                 <div className="flex flex-wrap gap-4 text-sm">
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
-                    <span className="text-gray-600">Available</span>
+                    <span className="text-gray-600">Tilgjengelig</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
-                    <span className="text-gray-600">Booked</span>
+                    <span className="text-gray-600">Opptatt</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border border-gray-300 rounded relative overflow-hidden bg-white">
                       <div className="absolute inset-0 bg-green-200" style={{ clipPath: 'polygon(0% 0%, 0% 100%, 100% 100%)' }}></div>
                       <div className="absolute inset-0 bg-red-200" style={{ clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%)' }}></div>
                     </div>
-                    <span className="text-gray-600">Partially Booked</span>
+                    <span className="text-gray-600">Delvis opptatt</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-blue-500 rounded"></div>
-                    <span className="text-gray-600">Selected</span>
+                    <span className="text-gray-600">Valgt</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-gray-100 border border-gray-200 rounded"></div>
-                    <span className="text-gray-600">Unavailable</span>
+                    <span className="text-gray-600">Ikke tilgjengelig</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-yellow-100 border border-yellow-200 rounded"></div>
-                    <span className="text-gray-600">Maintenance</span>
+                    <span className="text-gray-600">Vedlikehold</span>
                   </div>
                   {/* Custom Legends */}
                   {activeLegends.map((legend) => (
@@ -1489,19 +1489,19 @@ function CabinBookingPageContent() {
 
               {selectedHalfDays.length > 0 && (
                 <div className="bg-blue-50 p-4 rounded-lg mt-4">
-                  <div className="text-sm font-medium text-blue-900 mb-2">Selected Time Slots:</div>
+                  <div className="text-sm font-medium text-blue-900 mb-2">Valgte tidspunkt:</div>
                   <div className="text-sm text-blue-700 space-y-1 max-h-32 overflow-y-auto">
                     {selectedHalfDays.map((selection, index) => (
                       <div key={index} className="flex items-center justify-between">
                         <span>
-                          {selection.date.toLocaleDateString()} •{" "}
+                          {selection.date.toLocaleDateString("nb-NO")} •{" "}
                           {selection.half === "first" ? "12:00 AM - 12:00 PM" : "12:00 PM - 12:00 AM"}
                         </span>
                         <button
                           type="button"
                           onClick={() => removeHalfDaySelection(selection)}
                           className="ml-2 text-red-500 hover:text-red-700 hover:bg-red-100 rounded-full p-1 transition-colors"
-                          title="Remove this time slot"
+                          title="Fjern dette tidspunktet"
                           disabled={submitting}
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1519,11 +1519,11 @@ function CabinBookingPageContent() {
           {/* Booking Form Section */}
           <div>
             <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">Guest Information</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-6">Gjesteinformasjon</h3>
               
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Navn *</label>
                   <input
                     type="text"
                     value={formData.name}
@@ -1538,7 +1538,7 @@ function CabinBookingPageContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Address *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Adresse *</label>
                   <input
                     type="text"
                     value={formData.address}
@@ -1554,7 +1554,7 @@ function CabinBookingPageContent() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Postal Code *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Postnummer *</label>
                     <input
                       type="text"
                       value={formData.postalCode}
@@ -1569,7 +1569,7 @@ function CabinBookingPageContent() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">City *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">By *</label>
                     <input
                       type="text"
                       value={formData.city}
@@ -1585,7 +1585,7 @@ function CabinBookingPageContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Telefon *</label>
                   <input
                     type="tel"
                     value={formData.phone}
@@ -1600,7 +1600,7 @@ function CabinBookingPageContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">E-post *</label>
                   <input
                     type="email"
                     value={formData.email}
@@ -1615,7 +1615,7 @@ function CabinBookingPageContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Member of:</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Medlem av:</label>
                   <div className="space-y-2">
                     <label className="flex items-center">
                       <input
@@ -1670,16 +1670,16 @@ function CabinBookingPageContent() {
                   {submitting ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Submitting...
+                      Sender inn...
                     </>
                   ) : (
-                    "Send Booking Request"
+                    "Send bestillingsforespørsel"
                   )}
                 </button>
 
                 {selectedHalfDays.length === 0 && (
                   <p className="text-sm text-gray-500 text-center">
-                    Please select at least one time slot to enable booking
+                    Vennligst velg minst ett tidspunkt for å aktivere bestilling
                   </p>
                 )}
               </form>

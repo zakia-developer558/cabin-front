@@ -28,7 +28,7 @@ export default function UserDashboardHeader({ activeView, setActiveView }: UserD
             <div className="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">C</span>
             </div>
-            <h1 className="text-xl font-bold text-white">CabinBooker</h1>
+            <h1 className="text-xl font-bold text-white">Hyttereservasjon</h1>
           </div>
 
           {/* Nav buttons */}
@@ -39,7 +39,7 @@ export default function UserDashboardHeader({ activeView, setActiveView }: UserD
                 activeView === "browse" ? "bg-red-500 text-white" : "text-gray-300 hover:text-white hover:bg-gray-700"
               }`}
             >
-              Browse Cabins
+              Bla gjennom hytter
             </button>
             <button
               onClick={() => setActiveView("bookings")}
@@ -47,18 +47,18 @@ export default function UserDashboardHeader({ activeView, setActiveView }: UserD
                 activeView === "bookings" ? "bg-red-500 text-white" : "text-gray-300 hover:text-white hover:bg-gray-700"
               }`}
             >
-              My Bookings
+              Mine bestillinger
             </button>
           </nav>
 
           {/* User + Logout */}
           <div className="flex items-center space-x-4">
-            <span className="text-gray-300">Welcome</span>
+            <span className="text-gray-300">Velkommen</span>
             <button
               onClick={handleLogout}
               className="text-gray-400 hover:text-white transition-colors"
             >
-              Logout
+              Logg ut
             </button>
           </div>
         </div>
