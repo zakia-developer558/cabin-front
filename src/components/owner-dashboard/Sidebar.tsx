@@ -95,7 +95,7 @@ export default function Sidebar({ selectedCabin, onCabinSelect, onCabinAdded, ca
               >
                 <div className="flex items-center justify-between">
                   <span className="font-medium">{cabin.name}</span>
-                  <span className="text-sm opacity-75">{cabin.bookings ?? 0}</span>
+                  
                 </div>
               </button>
             ))}
