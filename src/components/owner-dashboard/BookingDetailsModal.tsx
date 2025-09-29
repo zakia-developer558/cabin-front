@@ -123,14 +123,14 @@ export default function BookingDetailsModal({
   if (!isOpen || !booking) return null
 
   return (
-    <div className="fixed inset-0 bg-white/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-md shadow-lg max-w-3xl w-full max-h-[85vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-md shadow-lg max-w-3xl w-full max-h-[85vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-100">
-          <h2 className="text-lg font-medium text-gray-900">Bestillingsdetaljer</h2>
+        <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">Bestillingsdetaljer</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+            className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors p-1"
           >
             <X className="w-5 h-5" />
           </button>
@@ -142,56 +142,56 @@ export default function BookingDetailsModal({
             {/* Left Side - Booking Information */}
             <div className="space-y-4">
               <div className="space-y-3">
-                <h3 className="text-sm font-medium text-gray-900">Gjesteinformasjon</h3>
+                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Gjesteinformasjon</h3>
                 <div className="space-y-2 text-sm">
                   <div>
-                    <span className="text-gray-500">Ordre:</span>
-                    <span className="ml-2 text-gray-900">{booking.orderNo}</span>
+                    <span className="text-gray-500 dark:text-gray-400">Ordre:</span>
+                    <span className="ml-2 text-gray-900 dark:text-gray-100">{booking.orderNo}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Navn:</span>
-                    <span className="ml-2 text-gray-900">{booking.name}</span>
+                    <span className="text-gray-500 dark:text-gray-400">Navn:</span>
+                    <span className="ml-2 text-gray-900 dark:text-gray-100">{booking.name}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500">E-post:</span>
-                    <span className="ml-2 text-gray-900">{booking.email}</span>
+                    <span className="text-gray-500 dark:text-gray-400">E-post:</span>
+                    <span className="ml-2 text-gray-900 dark:text-gray-100">{booking.email}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Adresse:</span>
-                    <span className="ml-2 text-gray-900">{booking.address}</span>
+                    <span className="text-gray-500 dark:text-gray-400">Adresse:</span>
+                    <span className="ml-2 text-gray-900 dark:text-gray-100">{booking.address}</span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-sm font-medium text-gray-900">Bestillingsdetaljer</h3>
+                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Bestillingsdetaljer</h3>
                 <div className="space-y-2 text-sm">
                   <div>
-                    <span className="text-gray-500">Innsjekking:</span>
-                    <span className="ml-2 text-gray-900">{formatDateTime(booking.checkIn)}</span>
+                    <span className="text-gray-500 dark:text-gray-400">Innsjekking:</span>
+                    <span className="ml-2 text-gray-900 dark:text-gray-100">{formatDateTime(booking.checkIn)}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Utsjekking:</span>
-                    <span className="ml-2 text-gray-900">{formatDateTime(booking.checkOut)}</span>
+                    <span className="text-gray-500 dark:text-gray-400">Utsjekking:</span>
+                    <span className="ml-2 text-gray-900 dark:text-gray-100">{formatDateTime(booking.checkOut)}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Status:</span>
+                    <span className="text-gray-500 dark:text-gray-400">Status:</span>
                     <span className={`ml-2 px-2 py-0.5 text-xs rounded ${
-                      booking.status === "Bekreftet" ? "bg-green-50 text-green-700" :
-                      booking.status === "Venter" ? "bg-yellow-50 text-yellow-700" :
-                      "bg-red-50 text-red-700"
+                      booking.status === "Bekreftet" ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300" :
+                      booking.status === "Venter" ? "bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300" :
+                      "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300"
                     }`}>
                       {booking.status}
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Status:</span>
+                    <span className="text-gray-500 dark:text-gray-400">Status:</span>
                     <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
                       booking.status === "Bekreftet" 
-                        ? "bg-green-100 text-green-800" 
+                        ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300" 
                         : booking.status === "Venter" 
-                        ? "bg-yellow-100 text-yellow-800" 
-                        : "bg-red-100 text-red-800"
+                        ? "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300" 
+                        : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"
                     }`}>
                       {booking.status}
                     </span>
@@ -202,7 +202,7 @@ export default function BookingDetailsModal({
 
             {/* Right Side - Calendar */}
             <div className="space-y-3">
-              <h3 className="text-sm font-medium text-gray-900">Kalender</h3>
+              <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Kalender</h3>
               <BookingCalendar 
                 booking={booking}
                 cabinName={null}
@@ -215,14 +215,14 @@ export default function BookingDetailsModal({
 
           {/* Action Buttons - Moved to Bottom */}
           {booking.status === "Venter" && (
-            <div className="flex justify-end gap-2 pt-4 mt-4 border-t border-gray-100">
+            <div className="flex justify-end gap-2 pt-4 mt-4 border-t border-gray-100 dark:border-gray-700">
               <button
                 onClick={handleReject}
                 disabled={loading === "reject"}
-                className="flex items-center gap-1 px-3 py-1.5 text-sm text-red-700 hover:bg-red-50 border border-red-200 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 text-sm text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30 border border-red-200 dark:border-red-700 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {loading === "reject" ? (
-                  <div className="w-3 h-3 border border-red-700 border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-3 h-3 border border-red-700 dark:border-red-300 border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                   <XCircle className="w-3 h-3" />
                 )}
@@ -231,10 +231,10 @@ export default function BookingDetailsModal({
               <button
                 onClick={handleConfirm}
                 disabled={loading === "confirm"}
-                className="flex items-center gap-1 px-3 py-1.5 text-sm text-green-700 hover:bg-green-50 border border-green-200 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 text-sm text-green-700 dark:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/30 border border-green-200 dark:border-green-700 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {loading === "confirm" ? (
-                  <div className="w-3 h-3 border border-green-700 border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-3 h-3 border border-green-700 dark:border-green-300 border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                   <CheckCircle className="w-3 h-3" />
                 )}

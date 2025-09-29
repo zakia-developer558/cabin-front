@@ -87,11 +87,11 @@ export default function SettingsPage() {
       <DashboardHeader />
       
       <div className="max-w-4xl mx-auto px-6 py-8">
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden">
           {/* Header */}
-          <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-            <h1 className="text-2xl font-bold text-gray-900">Innstillinger</h1>
-            <p className="text-gray-600 mt-1">Administrer din konto og hytteinnstillinger</p>
+          <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Innstillinger</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">Administrer din konto og hytteinnstillinger</p>
           </div>
 
           <div className="p-6 space-y-8">

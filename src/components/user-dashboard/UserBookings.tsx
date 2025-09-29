@@ -38,22 +38,22 @@ const statusConfig: Record<
 > = {
   pending: {
     label: "Venter",
-    color: "bg-yellow-100 text-yellow-700",
+    color: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300",
     icon: <Clock className="w-4 h-4 mr-1" />,
   },
   approved: {
     label: "Godkjent",
-    color: "bg-green-100 text-green-700",
+    color: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300",
     icon: <CheckCircle className="w-4 h-4 mr-1" />,
   },
   cancelled: {
     label: "Avlyst",
-    color: "bg-gray-200 text-gray-600",
+    color: "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300",
     icon: <Ban className="w-4 h-4 mr-1" />,
   },
   rejected: {
     label: "Avvist",
-    color: "bg-red-100 text-red-700",
+    color: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300",
     icon: <XCircle className="w-4 h-4 mr-1" />,
   },
 }
@@ -135,7 +135,7 @@ const UserBookings: React.FC = () => {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-white">Mine bestillinger</h1>
+      <h1 className="text-3xl font-bold mb-6 text-white dark:text-gray-100">Mine bestillinger</h1>
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6 flex-wrap">
@@ -146,7 +146,7 @@ const UserBookings: React.FC = () => {
             className={`px-4 py-2 rounded-lg font-medium transition ${
               filter === tab
                 ? "bg-red-500 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
             }`}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)} (
@@ -159,11 +159,11 @@ const UserBookings: React.FC = () => {
       </div>
 
       {/* Content */}
-      {loading && <p className="text-center text-gray-500">Laster bestillinger...</p>}
-      {error && <p className="text-center text-red-500">{error}</p>}
+      {loading && <p className="text-center text-gray-500 dark:text-gray-400">Laster bestillinger...</p>}
+      {error && <p className="text-center text-red-500 dark:text-red-400">{error}</p>}
 
       {!loading && !error && filteredBookings.length === 0 && (
-        <div className="text-center text-gray-500 py-10 border rounded-xl">
+        <div className="text-center text-gray-500 dark:text-gray-400 py-10 border dark:border-gray-600 rounded-xl">
           Ingen bestillinger funnet for denne kategorien.
         </div>
       )}
@@ -176,15 +176,15 @@ const UserBookings: React.FC = () => {
           return (
             <div
               key={booking._id}
-              className="rounded-2xl shadow-sm border bg-white hover:shadow-md transition-transform hover:scale-[1.01] p-6 space-y-4"
+              className="rounded-2xl shadow-sm border dark:border-gray-600 bg-white dark:bg-gray-800 hover:shadow-md transition-transform hover:scale-[1.01] p-6 space-y-4"
             >
               {/* Header */}
               <div className="flex justify-between items-start">
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-800">
+                  <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
                     {booking.cabin_name}
                   </h2>
-                  <p className="text-gray-500 text-sm">{booking.cabin_address}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">{booking.cabin_address}</p>
                 </div>
                 <span
                   className={`flex items-center px-3 py-1 rounded-full text-sm font-medium ${status.color}`}
@@ -194,21 +194,21 @@ const UserBookings: React.FC = () => {
               </div>
 
               {/* Dates */}
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-gray-600 dark:text-gray-400">
                 📅 {new Date(booking.start_date).toLocaleDateString("nb-NO")} →{" "}
                 {new Date(booking.end_date).toLocaleDateString("nb-NO")}
               </div>
 
               {/* Guest Info */}
-              <div className="bg-gray-50 rounded-lg p-4 text-sm flex justify-between items-center">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-sm flex justify-between items-center">
                 <div>
-                  <p className="font-medium text-gray-800">
+                  <p className="font-medium text-gray-800 dark:text-gray-100">
                     Gjest: {booking.guest_name}
                   </p>
-                  <p className="text-gray-600">{booking.guest_email}</p>
-                  <p className="text-gray-600">{booking.guest_phone}</p>
+                  <p className="text-gray-600 dark:text-gray-300">{booking.guest_email}</p>
+                  <p className="text-gray-600 dark:text-gray-300">{booking.guest_phone}</p>
                 </div>
-                <div className="text-right text-gray-500">
+                <div className="text-right text-gray-500 dark:text-gray-400">
                   <p>By: {booking.guest_city}</p>
                   <p>
                     Bestilt {new Date(booking.booking_date).toLocaleDateString("nb-NO")}

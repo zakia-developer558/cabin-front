@@ -1227,9 +1227,9 @@ function CabinBookingPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
@@ -1245,8 +1245,8 @@ function CabinBookingPageContent() {
                 </svg>
                 Tilbake
               </button>
-              <h1 className="text-3xl font-bold text-gray-900">Bestill {cabin.name}</h1>
-              <p className="text-gray-600 mt-1">{cabin.address}, {cabin.city}</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Bestill {cabin.name}</h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">{cabin.address}, {cabin.city}</p>
             </div>
             
           </div>
@@ -1258,18 +1258,18 @@ function CabinBookingPageContent() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Calendar Section */}
           <div>
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-gray-900">Velg datoer</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Velg datoer</h3>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() =>
                       setSelectedMonth(new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() - 1))
                     }
-                    className="p-1 hover:bg-gray-200 rounded"
+                    className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
                     disabled={loading}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                   </button>
@@ -1279,7 +1279,7 @@ function CabinBookingPageContent() {
                       const [year, month] = e.target.value.split("-")
                       setSelectedMonth(new Date(Number.parseInt(year), Number.parseInt(month)))
                     }}
-                    className="px-3 py-1 border border-gray-300 rounded text-sm"
+                    className="px-3 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded text-sm"
                     disabled={loading}
                   >
                     {Array.from({ length: 12 }, (_, i) => {
@@ -1295,10 +1295,10 @@ function CabinBookingPageContent() {
                     onClick={() =>
                       setSelectedMonth(new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1))
                     }
-                    className="p-1 hover:bg-gray-200 rounded"
+                    className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
                     disabled={loading}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </button>
@@ -1311,20 +1311,20 @@ function CabinBookingPageContent() {
                     className="animate-spin rounded-full h-8 w-8 border-b-2"
                     style={{ borderBottomColor: colors.primary }}
                   ></div>
-                  <span className="ml-2 text-gray-600">Laster kalender...</span>
+                  <span className="ml-2 text-gray-600 dark:text-gray-300">Laster kalender...</span>
                 </div>
               )}
 
               <div className={`grid grid-cols-7 gap-1 mb-4 select-none ${loading ? 'opacity-50' : ''}`} onMouseLeave={handleMouseUp}>
                 {["M", "T", "W", "T", "F", "S", "S"].map((day, index) => (
-                  <div key={index} className="text-center text-sm font-medium text-gray-600 py-2">
+                  <div key={index} className="text-center text-sm font-medium text-gray-600 dark:text-gray-400 py-2">
                     {day}
                   </div>
                 ))}
                 {calendarDays.map((day, index) => (
                   <div key={index} className="aspect-square">
                     {day ? (
-                      <div className="h-full relative border border-gray-200 rounded-lg overflow-hidden">
+                      <div className="h-full relative border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
                         {cabin?.halfdayAvailability ? (
                           // Half-day availability enabled - show diagonal split interface
                           <>
@@ -1364,7 +1364,7 @@ function CabinBookingPageContent() {
                                 />
 
                                 {/* Day number overlay */}
-                                <div className="absolute inset-0 flex items-center justify-center text-xs font-medium pointer-events-none z-10">
+                                <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-900 pointer-events-none z-10">
                                   {day}
                                 </div>
                               </>
@@ -1404,7 +1404,7 @@ function CabinBookingPageContent() {
                                 />
 
                                 {/* Day number overlay */}
-                                <div className="absolute inset-0 flex items-center justify-center text-xs font-medium pointer-events-none z-10">
+                                <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-900 pointer-events-none z-10">
                                   {day}
                                 </div>
                               </>
@@ -1428,7 +1428,7 @@ function CabinBookingPageContent() {
                             />
 
                             {/* Day number overlay */}
-                            <div className="absolute inset-0 flex items-center justify-center text-xs font-medium pointer-events-none z-10">
+                            <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-900 pointer-events-none z-10">
                               {day}
                             </div>
                           </>
@@ -1445,31 +1445,31 @@ function CabinBookingPageContent() {
               <div className="space-y-4">
                 <div className="flex flex-wrap gap-4 text-sm">
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
-                    <span className="text-gray-600">Tilgjengelig</span>
+                    <div className="w-4 h-4 bg-green-100 dark:bg-green-900 border border-green-200 dark:border-green-700 rounded"></div>
+                    <span className="text-gray-600 dark:text-gray-300">Tilgjengelig</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
-                    <span className="text-gray-600">Opptatt</span>
+                    <div className="w-4 h-4 bg-red-100 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded"></div>
+                    <span className="text-gray-600 dark:text-gray-300">Opptatt</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border border-gray-300 rounded relative overflow-hidden bg-white">
-                      <div className="absolute inset-0 bg-green-200" style={{ clipPath: 'polygon(0% 0%, 0% 100%, 100% 100%)' }}></div>
-                      <div className="absolute inset-0 bg-red-200" style={{ clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%)' }}></div>
+                    <div className="w-4 h-4 border border-gray-300 dark:border-gray-600 rounded relative overflow-hidden bg-white dark:bg-gray-700">
+                      <div className="absolute inset-0 bg-green-200 dark:bg-green-800" style={{ clipPath: 'polygon(0% 0%, 0% 100%, 100% 100%)' }}></div>
+                      <div className="absolute inset-0 bg-red-200 dark:bg-red-800" style={{ clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%)' }}></div>
                     </div>
-                    <span className="text-gray-600">Delvis opptatt</span>
+                    <span className="text-gray-600 dark:text-gray-300">Delvis opptatt</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-blue-500 rounded"></div>
-                    <span className="text-gray-600">Valgt</span>
+                    <span className="text-gray-600 dark:text-gray-300">Valgt</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-gray-100 border border-gray-200 rounded"></div>
-                    <span className="text-gray-600">Ikke tilgjengelig</span>
+                    <div className="w-4 h-4 bg-gray-100 dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded"></div>
+                    <span className="text-gray-600 dark:text-gray-300">Ikke tilgjengelig</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-yellow-100 border border-yellow-200 rounded"></div>
-                    <span className="text-gray-600">Vedlikehold</span>
+                    <div className="w-4 h-4 bg-yellow-100 dark:bg-yellow-900 border border-yellow-200 dark:border-yellow-700 rounded"></div>
+                    <span className="text-gray-600 dark:text-gray-300">Vedlikehold</span>
                   </div>
                   {/* Custom Legends */}
                   {activeLegends.map((legend) => (
@@ -1481,16 +1481,16 @@ function CabinBookingPageContent() {
                           borderColor: legend.color
                         }}
                       ></div>
-                      <span className="text-gray-600">{legend.name}</span>
+                      <span className="text-gray-600 dark:text-gray-300">{legend.name}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {selectedHalfDays.length > 0 && (
-                <div className="bg-blue-50 p-4 rounded-lg mt-4">
-                  <div className="text-sm font-medium text-blue-900 mb-2">Valgte tidspunkt:</div>
-                  <div className="text-sm text-blue-700 space-y-1 max-h-32 overflow-y-auto">
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mt-4">
+                  <div className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">Valgte tidspunkt:</div>
+                  <div className="text-sm text-blue-700 dark:text-blue-200 space-y-1 max-h-32 overflow-y-auto">
                     {selectedHalfDays.map((selection, index) => (
                       <div key={index} className="flex items-center justify-between">
                         <span>
@@ -1500,7 +1500,7 @@ function CabinBookingPageContent() {
                         <button
                           type="button"
                           onClick={() => removeHalfDaySelection(selection)}
-                          className="ml-2 text-red-500 hover:text-red-700 hover:bg-red-100 rounded-full p-1 transition-colors"
+                          className="ml-2 text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-full p-1 transition-colors"
                           title="Fjern dette tidspunktet"
                           disabled={submitting}
                         >
@@ -1518,17 +1518,17 @@ function CabinBookingPageContent() {
 
           {/* Booking Form Section */}
           <div>
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">Gjesteinformasjon</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Gjesteinformasjon</h3>
               
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Navn *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Navn *</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleInputChange("name", e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:border-transparent"
                     style={{
                       '--tw-ring-color': colors.primary
                     } as React.CSSProperties}
@@ -1538,12 +1538,12 @@ function CabinBookingPageContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Adresse *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Adresse *</label>
                   <input
                     type="text"
                     value={formData.address}
                     onChange={(e) => handleInputChange("address", e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:border-transparent"
                     style={{
                       '--tw-ring-color': colors.primary
                     } as React.CSSProperties}
@@ -1554,12 +1554,12 @@ function CabinBookingPageContent() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Postnummer *</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Postnummer *</label>
                     <input
                       type="text"
                       value={formData.postalCode}
                       onChange={(e) => handleInputChange("postalCode", e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:border-transparent"
                       style={{
                         '--tw-ring-color': colors.primary
                       } as React.CSSProperties}
@@ -1569,12 +1569,12 @@ function CabinBookingPageContent() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">By *</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">By *</label>
                     <input
                       type="text"
                       value={formData.city}
                       onChange={(e) => handleInputChange("city", e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:border-transparent"
                       style={{
                         '--tw-ring-color': colors.primary
                       } as React.CSSProperties}
@@ -1585,12 +1585,12 @@ function CabinBookingPageContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Telefon *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Telefon *</label>
                   <input
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:border-transparent"
                     style={{
                       '--tw-ring-color': colors.primary
                     } as React.CSSProperties}
@@ -1600,12 +1600,12 @@ function CabinBookingPageContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">E-post *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">E-post *</label>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:border-transparent"
                     style={{
                       '--tw-ring-color': colors.primary
                     } as React.CSSProperties}
@@ -1615,35 +1615,35 @@ function CabinBookingPageContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Medlem av:</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Medlem av:</label>
                   <div className="space-y-2">
                     <label className="flex items-center">
                       <input
                         type="checkbox"
                         checked={formData.isMemberAEMT}
                         onChange={(e) => handleInputChange("isMemberAEMT", e.target.checked)}
-                        className="rounded border-gray-300 focus:ring-2"
+                        className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2"
                         style={{
                           '--tw-ring-color': colors.primary,
                           color: colors.primary
                         } as React.CSSProperties}
                         disabled={submitting}
                       />
-                      <span className="ml-2 text-sm text-gray-700">AEMT</span>
+                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">AEMT</span>
                     </label>
                     <label className="flex items-center">
                       <input
                         type="checkbox"
                         checked={formData.isMemberELIT}
                         onChange={(e) => handleInputChange("isMemberELIT", e.target.checked)}
-                        className="rounded border-gray-300 focus:ring-2"
+                        className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2"
                         style={{
                           '--tw-ring-color': colors.primary,
                           color: colors.primary
                         } as React.CSSProperties}
                         disabled={submitting}
                       />
-                      <span className="ml-2 text-sm text-gray-700">EL og IT</span>
+                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">EL og IT</span>
                     </label>
                   </div>
                 </div>
@@ -1678,7 +1678,7 @@ function CabinBookingPageContent() {
                 </button>
 
                 {selectedHalfDays.length === 0 && (
-                  <p className="text-sm text-gray-500 text-center">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
                     Vennligst velg minst ett tidspunkt for å aktivere bestilling
                   </p>
                 )}

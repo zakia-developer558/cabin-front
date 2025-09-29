@@ -2,6 +2,8 @@
 import Header from "../../components/general/header" 
 import { useState } from "react"
 import Link from "next/link"
+import { useToast } from "../../hooks/useToast"
+import { ToastContainer } from "../../components/ui/Toast"
 
 export default function SignupPage() {
   const [userType] = useState<"user" | "owner">("owner")
@@ -14,8 +16,7 @@ export default function SignupPage() {
   })
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
+  const { toasts, success, error, removeToast } = useToast()
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -23,37 +24,35 @@ export default function SignupPage() {
       ...prev,
       [name]: value
     }))
-    // Clear error when user starts typing
-    if (error) setError("")
   }
 
   const validateForm = () => {
     if (!formData.firstName.trim()) {
-      setError("Fornavn er påkrevd")
+      error("Validering feilet", "Fornavn er påkrevd")
       return false
     }
     if (!formData.lastName.trim()) {
-      setError("Etternavn er påkrevd")
+      error("Validering feilet", "Etternavn er påkrevd")
       return false
     }
     if (!formData.email.trim()) {
-      setError("E-post er påkrevd")
+      error("Validering feilet", "E-post er påkrevd")
       return false
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      setError("Vennligst oppgi en gyldig e-postadresse")
+      error("Validering feilet", "Vennligst oppgi en gyldig e-postadresse")
       return false
     }
     if (!formData.password) {
-      setError("Passord er påkrevd")
+      error("Validering feilet", "Passord er påkrevd")
       return false
     }
     if (formData.password.length < 6) {
-      setError("Passordet må være minst 6 tegn langt")
+      error("Validering feilet", "Passordet må være minst 6 tegn langt")
       return false
     }
     if (!formData.companyName.trim()) {
-      setError("Firmanavn er påkrevd")
+      error("Validering feilet", "Firmanavn er påkrevd")
       return false
     }
     return true
@@ -61,8 +60,6 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError("")
-    setSuccess("")
 
     if (!validateForm()) {
       return
@@ -92,7 +89,7 @@ export default function SignupPage() {
         throw new Error(data.message || "Registrering feilet")
       }
 
-      setSuccess("Konto opprettet! Du kan nå logge inn.")
+      success("Registrering vellykket!", "Konto opprettet! Du kan nå logge inn med dine nye legitimasjoner.")
       setFormData({
         firstName: "",
         lastName: "",
@@ -106,7 +103,7 @@ export default function SignupPage() {
       
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : "Noe gikk galt. Vennligst prøv igjen."
-      setError(errorMessage)
+      error("Registrering feilet", errorMessage)
     } finally {
       setLoading(false)
     }
@@ -124,11 +121,11 @@ export default function SignupPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
 
         {/* Signup Card */}
-        <div className="relative z-10 bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md mx-4">
+        <div className="relative z-10 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-md mx-4">
           {/* Signup Icon */}
           <div className="flex justify-center mb-6">
-            <div className="bg-gray-100 rounded-full p-3">
-              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-gray-100 dark:bg-gray-700 rounded-full p-3">
+              <svg className="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -140,26 +137,12 @@ export default function SignupPage() {
           </div>
 
           {/* Heading */}
-          <h1 className="text-2xl font-bold text-center text-gray-900 mb-2">Opprett din konto</h1>
+          <h1 className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100 mb-2">Opprett din konto</h1>
           {/* <p className="text-center text-gray-600 mb-6 text-sm">
             Join our platform to
             <br />
             list your own property
           </p> */}
-
-          {/* Success Message */}
-          {success && (
-            <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm">
-              {success}
-            </div>
-          )}
-
-          {/* Error Message */}
-          {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
 
           {/* User Type Slider - Commented out for more concise form */}
           {/* <div className="mb-6">
@@ -379,15 +362,18 @@ export default function SignupPage() {
 
           {/* Login Link */}
           <div className="text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Har du allerede en konto?{" "}
-              <Link href="/login" className="text-gray-800 hover:text-gray-900 font-semibold">
+              <Link href="/login" className="text-gray-800 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white font-semibold">
                 Logg inn
               </Link>
             </p>
           </div>
         </div>
       </main>
+      
+      {/* Toast Container */}
+      <ToastContainer toasts={toasts} onClose={removeToast} />
     </div>
   )
 }

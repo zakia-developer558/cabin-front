@@ -39,26 +39,26 @@ export default function DashboardHeader() {
   }
 
   return (
-    <header className="bg-gray-800 border-b border-gray-700">
+    <header className="bg-gray-800 dark:bg-gray-900 border-b border-gray-700 dark:border-gray-600">
       <div className="px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo + Title */}
           <div className="flex items-center space-x-4">
-            <div className="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-red-500 dark:bg-red-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">C</span>
             </div>
-            <h1 className="text-xl font-bold text-white">{user?.companyName || "Hytteeier"}</h1>
+            <h1 className="text-xl font-bold text-white dark:text-gray-100">{user?.companyName || "Hytteeier"}</h1>
           </div>
 
           {/* Nav */}
           <nav className="hidden md:flex items-center space-x-6">
-            <Link href="/" className="text-gray-300 hover:text-white transition-colors">
+            <Link href="/" className="text-gray-300 dark:text-gray-400 hover:text-white dark:hover:text-gray-200 transition-colors">
               Hjem
             </Link>
-            <Link href="/dashboard/owner" className="text-white font-medium">
+            <Link href="/dashboard/owner" className="text-white dark:text-gray-100 font-medium">
               Dashbord
             </Link>
-            <Link href="/settings" className="text-gray-300 hover:text-white transition-colors">
+            <Link href="/settings" className="text-gray-300 dark:text-gray-400 hover:text-white dark:hover:text-gray-200 transition-colors">
               Innstillinger
             </Link>
           </nav>
@@ -66,14 +66,14 @@ export default function DashboardHeader() {
           {/* User + Logout */}
           <div className="flex items-center space-x-4">
             <div className="text-right">
-              <p className="text-sm text-white font-medium">
+              <p className="text-sm text-white dark:text-gray-100 font-medium">
                 {user ? `${user.firstName} ${user.lastName}` : "Laster..."}
               </p>
-              <p className="text-xs text-gray-400">{user?.companyName || "Hytteeier"}</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">{user?.companyName || "Hytteeier"}</p>
             </div>
             <button
               onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+              className="bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
             >
               Logg ut
             </button>

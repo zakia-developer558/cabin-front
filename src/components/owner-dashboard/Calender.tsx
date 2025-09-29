@@ -270,16 +270,16 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
     // This ensures any unknown status gets a neutral appearance
     switch (status) {
       case "booked":
-        return "bg-red-100 text-red-800 border-red-200"
+        return "bg-red-100 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-200 dark:border-red-700"
       case "unavailable":
-        return "bg-gray-100 text-gray-500 border-gray-200"
+        return "bg-gray-100 text-gray-500 border-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:border-gray-600"
       case "maintenance":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200"
+        return "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900 dark:text-yellow-200 dark:border-yellow-700"
       case "available":
-        return "bg-green-100 text-green-800 border-green-200 hover:bg-green-200"
+        return "bg-green-100 text-green-800 border-green-200 hover:bg-green-200 dark:bg-green-900 dark:text-green-200 dark:border-green-700 dark:hover:bg-green-800"
       default:
         // For any custom status not found in legends, use a neutral style
-        return "bg-blue-100 text-blue-800 border-blue-200 hover:opacity-80"
+        return "bg-blue-100 text-blue-800 border-blue-200 hover:opacity-80 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700"
     }
   }
 
@@ -292,11 +292,11 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Laster kalender...</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600 dark:border-gray-400 mx-auto mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-400">Laster kalender...</p>
           </div>
         </div>
       </div>
@@ -305,11 +305,11 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
 
   if (error) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="text-red-500 mb-2">⚠️</div>
-            <p className="text-red-600">{error}</p>
+            <p className="text-red-600 dark:text-red-400">{error}</p>
             <button 
               onClick={() => fetchCalendarData(currentDate.getFullYear(), currentDate.getMonth())}
               className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
@@ -323,20 +323,20 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Kalender</h2>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Kalender</h2>
         <div className="flex items-center space-x-4">
-          <button onClick={() => navigateMonth(-1)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button onClick={() => navigateMonth(-1)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h3 className="text-lg font-semibold text-gray-800 min-w-[180px] text-center">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 min-w-[180px] text-center">
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
           </h3>
-          <button onClick={() => navigateMonth(1)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button onClick={() => navigateMonth(1)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -345,7 +345,7 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
 
       <div className="grid grid-cols-7 gap-1 mb-2">
         {dayNames.map((day) => (
-          <div key={day} className="p-2 text-center text-sm font-medium text-gray-500">
+          <div key={day} className="p-2 text-center text-sm font-medium text-gray-500 dark:text-gray-400">
             {day}
           </div>
         ))}
@@ -368,7 +368,7 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
               const bookedHalves = getBookedHalves(dayData)
               
               return (
-                <div key={index} className="aspect-square relative border border-gray-300 rounded-lg overflow-hidden cursor-pointer">
+                <div key={index} className="aspect-square relative border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden cursor-pointer">
                   {/* First half (12 AM - 12 PM) - Top-left triangle */}
                   <div 
                     className={`absolute inset-0 ${bookedHalves.first ? 'bg-red-500' : 'bg-green-500'}`} 
@@ -379,7 +379,7 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
                     className={`absolute inset-0 ${bookedHalves.second ? 'bg-red-500' : 'bg-green-500'}`} 
                     style={{ clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)' }}
                   ></div>
-                  <div className="relative z-10 flex items-center justify-center text-sm font-medium text-gray-800 h-full w-full">
+                  <div className="relative z-10 flex items-center justify-center text-sm font-medium text-gray-800 dark:text-gray-200 h-full w-full">
                     {day}
                   </div>
                 </div>
@@ -400,12 +400,12 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
 
       <div className="mt-6 grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <h4 className="font-semibold text-gray-800 text-sm">Legende</h4>
+          <h4 className="font-semibold text-gray-800 dark:text-gray-200 text-sm">Legende</h4>
           <div className="space-y-1">
             {activeLegends.map((legend) => (
               <div key={legend.id} className="flex items-center space-x-2">
                 {legend.id === 'partially_booked' ? (
-                  <div className="w-4 h-4 border border-gray-300 rounded relative overflow-hidden bg-white">
+                  <div className="w-4 h-4 border border-gray-300 dark:border-gray-600 rounded relative overflow-hidden bg-white dark:bg-gray-800">
                     <div className="absolute inset-0 bg-green-500" style={{ clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)' }}></div>
                     <div className="absolute inset-0 bg-red-500" style={{ clipPath: 'polygon(100% 0%, 100% 100%, 0% 100%)' }}></div>
                   </div>
@@ -415,26 +415,26 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
                     style={{ backgroundColor: legend.color }}
                   ></div>
                 )}
-                <span className="text-xs text-gray-600">{legend.name}</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">{legend.name}</span>
               </div>
             ))}
           </div>
         </div>
 
         <div className="space-y-2">
-          <h4 className="font-semibold text-gray-800 text-sm">Hurtigstatistikk</h4>
+          <h4 className="font-semibold text-gray-800 dark:text-gray-200 text-sm">Hurtigstatistikk</h4>
           <div className="space-y-1">
             <div className="flex justify-between text-xs">
-              <span className="text-gray-600">Opptatte dager:</span>
-              <span className="font-medium">{calendarData?.stats.bookedDays || 0}</span>
+              <span className="text-gray-600 dark:text-gray-400">Opptatte dager:</span>
+              <span className="font-medium dark:text-gray-200">{calendarData?.stats.bookedDays || 0}</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-gray-600">Tilgjengelige dager:</span>
-              <span className="font-medium">{calendarData?.stats.availableDays || 0}</span>
+              <span className="text-gray-600 dark:text-gray-400">Tilgjengelige dager:</span>
+              <span className="font-medium dark:text-gray-200">{calendarData?.stats.availableDays || 0}</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-gray-600">Beleggsprosent:</span>
-              <span className="font-medium text-green-600">{calendarData?.stats.occupancyRate || 0}%</span>
+              <span className="text-gray-600 dark:text-gray-400">Beleggsprosent:</span>
+              <span className="font-medium text-green-600 dark:text-green-400">{calendarData?.stats.occupancyRate || 0}%</span>
             </div>
           </div>
         </div>

@@ -96,7 +96,7 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
 
         {/* Login Card */}
-        <div className="relative z-10 bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md mx-4">
+        <div className="relative z-10 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-md mx-4">
           {/* Icon */}
           <div className="flex justify-center mb-6">
             <div className="bg-gray-100 rounded-full p-3">
@@ -112,8 +112,8 @@ export default function LoginPage() {
           </div>
 
           {/* Heading */}
-          <h1 className="text-2xl font-bold text-center text-gray-900 mb-2">Logg inn</h1>
-          <p className="text-center text-gray-600 mb-8 text-sm">Logg inn på din konto</p>
+          <h1 className="text-2xl font-bold text-center text-gray-900 dark:text-gray-100 mb-2">Logg inn</h1>
+          <p className="text-center text-gray-600 dark:text-gray-400 mb-8 text-sm">Logg inn på din konto</p>
 
           {/* Error Message */}
           {error && (
@@ -194,9 +194,9 @@ export default function LoginPage() {
           </form>
 
           {/* Sign Up Option */}
-          <p className="mt-6 text-center text-sm text-gray-600">
+          <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
             Har du ikke en konto?{" "}
-            <Link href="/sign-up" className="text-gray-800 font-semibold hover:underline">
+            <Link href="/sign-up" className="text-gray-800 dark:text-gray-200 font-semibold hover:underline hover:text-gray-900 dark:hover:text-white">
               Registrer deg
             </Link>
           </p>

@@ -294,16 +294,16 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
       return `${legend.bgColor} ${legend.textColor}`
     }
     
-    // Fallback to default styles if legend not found
+    // Fallback to default styles with dark mode support if legend not found
     switch (status) {
       case "available":
-        return "bg-green-100 text-green-800"
+        return "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200"
       case "unavailable":
-        return "bg-red-100 text-red-800"
+        return "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200"
       case "maintenance":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200"
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
     }
   }
 
@@ -377,15 +377,15 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Tilgjengelighetshåndtering</h2>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Tilgjengelighetshåndtering</h2>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center space-x-3">
             <select
               value={availabilityType}
               onChange={(e) => setAvailabilityType(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 min-w-0 flex-1 sm:flex-none sm:min-w-[200px]"
+              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 min-w-0 flex-1 sm:flex-none sm:min-w-[200px] bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             >
               {activeLegends
                 .filter(legend => legend.id !== 'booked' && legend.id !== 'partially_booked')
@@ -400,7 +400,7 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
           <button
             onClick={handleBulkUpdate}
             disabled={selectedDates.length === 0}
-            className="bg-red-500 hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm transition-colors whitespace-nowrap"
+            className="bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm transition-colors whitespace-nowrap"
           >
             Oppdater valgte ({selectedDates.length})
           </button>
@@ -409,29 +409,29 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
 
       <div className="space-y-6">
         <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Datospesifikke innstillinger</h3>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Datospesifikke innstillinger</h3>
 
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <p className="text-gray-500">Laster tilgjengelighet...</p>
+              <p className="text-gray-500 dark:text-gray-400">Laster tilgjengelighet...</p>
             </div>
           ) : (
-            <div className="max-h-96 overflow-y-auto border border-gray-200 rounded-lg">
-              <div className="divide-y divide-gray-200">
+            <div className="max-h-96 overflow-y-auto border border-gray-200 dark:border-gray-600 rounded-lg">
+              <div className="divide-y divide-gray-200 dark:divide-gray-600">
                 {availabilitySettings.map((setting) => (
                   <div
                     key={setting.id}
-                    className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                   >
                     <div className="flex items-center space-x-3 min-w-0 flex-1">
                       <input
                         type="checkbox"
                         checked={selectedDates.includes(setting.id)}
                         onChange={() => toggleDateSelection(setting.id)}
-                        className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500 flex-shrink-0"
+                        className="w-4 h-4 text-red-600 border-gray-300 dark:border-gray-600 rounded focus:ring-red-500 flex-shrink-0"
                       />
                       <div className="min-w-0">
-                        <p className="font-medium text-gray-900 truncate">{setting.date}</p>
+                        <p className="font-medium text-gray-900 dark:text-gray-100 truncate">{setting.date}</p>
                       </div>
                     </div>
                     <div className="flex items-center ml-4">

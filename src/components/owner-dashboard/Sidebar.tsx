@@ -76,11 +76,11 @@ export default function Sidebar({ selectedCabin, onCabinSelect, onCabinAdded, ca
 
   return (
     <>
-      <aside className="w-64 bg-gray-800 border-r border-gray-700 min-h-screen">
+      <aside className="w-64 bg-gray-800 dark:bg-gray-900 border-r border-gray-700 dark:border-gray-600 min-h-screen">
         <div className="p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Mine Hytter</h2>
+          <h2 className="text-lg font-semibold text-white dark:text-gray-100 mb-4">Mine Hytter</h2>
 
-          {loading && <p className="text-gray-400">Laster hytter...</p>}
+          {loading && <p className="text-gray-400 dark:text-gray-500">Laster hytter...</p>}
 
           <div className="space-y-2">
             {cabins.map((cabin) => (
@@ -89,8 +89,8 @@ export default function Sidebar({ selectedCabin, onCabinSelect, onCabinAdded, ca
                 onClick={() => onCabinSelect(cabin.slug)}
                 className={`w-full text-left p-3 rounded-lg transition-colors ${
                   selectedCabin === cabin.slug
-                    ? "bg-red-500 text-white"
-                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                    ? "bg-red-500 dark:bg-red-600 text-white"
+                    : "text-gray-300 dark:text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-800 hover:text-white dark:hover:text-gray-200"
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -101,10 +101,10 @@ export default function Sidebar({ selectedCabin, onCabinSelect, onCabinAdded, ca
             ))}
           </div>
 
-          <div className="mt-8 pt-6 border-t border-gray-700">
+          <div className="mt-8 pt-6 border-t border-gray-700 dark:border-gray-600">
             <button
               onClick={() => setIsAddCabinModalOpen(true)}
-              className="w-full text-left p-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors"
+              className="w-full text-left p-3 text-gray-300 dark:text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-800 hover:text-white dark:hover:text-gray-200 rounded-lg transition-colors"
             >
               <div className="flex items-center space-x-3">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

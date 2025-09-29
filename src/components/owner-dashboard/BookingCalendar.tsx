@@ -302,21 +302,21 @@ export default function BookingCalendar({
   const days = getDaysInMonth(currentDate)
 
   return (
-    <div className="bg-white rounded-lg border">
+    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
       {/* Calendar Header */}
-      <div className="flex items-center justify-between p-4 border-b">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
         <button
           onClick={() => navigateMonth('prev')}
-          className="p-2 hover:bg-gray-100 rounded"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-300"
         >
           ←
         </button>
-        <h3 className="text-lg font-semibold">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
         </h3>
         <button
           onClick={() => navigateMonth('next')}
-          className="p-2 hover:bg-gray-100 rounded"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-300"
         >
           →
         </button>
@@ -327,7 +327,7 @@ export default function BookingCalendar({
         {/* Day Headers */}
         <div className="grid grid-cols-7 gap-1 mb-2">
           {dayNames.map((dayName) => (
-            <div key={dayName} className="text-center text-sm font-medium text-gray-500 py-2">
+            <div key={dayName} className="text-center text-sm font-medium text-gray-500 dark:text-gray-400 py-2">
               {dayName}
             </div>
           ))}
@@ -349,8 +349,8 @@ export default function BookingCalendar({
                 key={day}
                 className={`
                   h-10 flex items-center justify-center text-sm border rounded relative
-                  ${isBookingDay ? 'border-red-500 font-bold' : 'border-gray-200'}
-                  ${!isBookingDay && status === 'booked' ? getStatusColor(status) : 'bg-white'}
+                  ${isBookingDay ? 'border-red-500 font-bold' : 'border-gray-200 dark:border-gray-600'}
+                  ${!isBookingDay && status === 'booked' ? 'bg-gray-300 dark:bg-gray-600' : 'bg-white dark:bg-gray-800'}
                 `}
               >
                 {/* Background for current booking visualization */}
@@ -373,7 +373,7 @@ export default function BookingCalendar({
                 )}
                 
                 {/* Day number */}
-                <span className={`relative z-10 ${isBookingDay ? 'text-white' : status === 'booked' ? 'text-gray-700' : 'text-gray-900'}`}>
+                <span className={`relative z-10 ${isBookingDay ? 'text-white' : status === 'booked' ? 'text-gray-700 dark:text-gray-300' : 'text-gray-900 dark:text-gray-100'}`}>
                   {day}
                 </span>
               </div>
@@ -382,23 +382,23 @@ export default function BookingCalendar({
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-4 mt-4 text-sm">
+        <div className="flex items-center gap-4 mt-4 text-sm text-gray-700 dark:text-gray-300">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-red-500 rounded"></div>
             <span>Gjeldende</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-gray-300 rounded"></div>
+            <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
             <span>Opptatt</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-white border rounded"></div>
+            <div className="w-4 h-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded"></div>
             <span>Ledig</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-red-500 rounded relative">
               <div 
-                className="absolute inset-0 bg-white rounded"
+                className="absolute inset-0 bg-white dark:bg-gray-800 rounded"
                 style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)' }}
               />
             </div>

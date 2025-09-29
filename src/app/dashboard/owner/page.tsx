@@ -226,7 +226,7 @@ export default function OwnerDashboard() {
           />
 
           <main className="flex-1 p-6 space-y-6">
-            <div className="bg-white rounded-2xl shadow-2xl p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6">
               <div className="flex items-center justify-between mb-6">
                 {/* <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
                   Export

@@ -96,11 +96,11 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
   return (
     <div className="space-y-6">
       {/* Search & Filters */}
-      <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-xl p-6 text-white">
+      <div className="bg-gradient-to-r from-gray-800 to-gray-700 dark:from-gray-900 dark:to-gray-800 rounded-2xl shadow-xl p-6 text-white">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h2 className="text-2xl font-bold mb-1">Tilgjengelige hytter</h2>
-            <p className="text-gray-300">Bla gjennom og bestill din perfekte ferie</p>
+            <p className="text-gray-300 dark:text-gray-400">Bla gjennom og bestill din perfekte ferie</p>
           </div>
           <div className="flex gap-3">
             {/* Search input */}
@@ -123,7 +123,7 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
                 placeholder="Søk hytter..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white placeholder-gray-300 focus:ring-2 focus:ring-red-400 focus:border-transparent transition-all"
+                className="pl-10 pr-4 py-2 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white placeholder-gray-300 dark:placeholder-gray-400 focus:ring-2 focus:ring-red-400 focus:border-transparent transition-all"
               />
             </div>
             {/* City filter */}
@@ -132,11 +132,11 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
               onChange={(e) => setSelectedCity(e.target.value)}
               className="px-4 py-2 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-red-400 focus:border-transparent transition-all"
             >
-              <option value="all" className="text-gray-900">
+              <option value="all" className="text-gray-900 dark:text-gray-100">
                 Alle byer
               </option>
               {uniqueCities.map((city) => (
-                <option key={city} value={city} className="text-gray-900">
+                <option key={city} value={city} className="text-gray-900 dark:text-gray-100">
                   {city}
                 </option>
               ))}
@@ -161,37 +161,37 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
 
       {/* Table */}
       {!loading && !error && (
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+              <thead className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider">
                     Bilde
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider">
                     Hyttenavn
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider">
                     Kontaktperson
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider">
                     Plassering
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider">
                     Kontaktinfo
                   </th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider">
                     Handlinger
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredCabins.map((cabin, index) => (
-                  <tr key={cabin._id} className="hover:bg-gray-50 transition-colors duration-200">
+                  <tr key={cabin._id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
                     {/* Image Column */}
                     <td className="px-6 py-4">
-                      <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center relative">
+                      <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700 flex items-center justify-center relative">
                         {cabin.image ? (
                           <>
                             <Image
@@ -214,7 +214,7 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
                               }}
                             />
                             <svg
-                              className="fallback-icon w-8 h-8 text-gray-400 absolute inset-0 m-auto hidden"
+                              className="fallback-icon w-8 h-8 text-gray-400 dark:text-gray-500 absolute inset-0 m-auto hidden"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -229,7 +229,7 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
                           </>
                         ) : (
                           <svg
-                            className="w-8 h-8 text-gray-400"
+                            className="w-8 h-8 text-gray-400 dark:text-gray-500"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -277,15 +277,15 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
                           </svg>
                         </div>
                         <div>
-                          <p className="text-lg font-semibold text-gray-900">{cabin.name}</p>
+                          <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{cabin.name}</p>
       
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
-                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                          <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -294,13 +294,13 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
                             />
                           </svg>
                         </div>
-                        <p className="font-medium text-gray-900">{cabin.contact_person_name}</p>
+                        <p className="font-medium text-gray-900 dark:text-gray-100">{cabin.contact_person_name}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-start gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center mt-0.5">
-                          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center mt-0.5">
+                          <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -316,8 +316,8 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
                           </svg>
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">{cabin.address}</p>
-                          <p className="text-sm text-gray-600">
+                          <p className="font-medium text-gray-900 dark:text-gray-100">{cabin.address}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
                             {cabin.postal_code} {cabin.city}
                           </p>
                         </div>
@@ -326,7 +326,7 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
                     <td className="px-6 py-4">
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
-                          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -334,10 +334,10 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
                               d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                             />
                           </svg>
-                          <p className="text-sm text-gray-900 break-all">{cabin.email}</p>
+                          <p className="text-sm text-gray-900 dark:text-gray-100 break-all">{cabin.email}</p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -345,7 +345,7 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
                               d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                             />
                           </svg>
-                          <p className="text-sm text-gray-900">{cabin.phone}</p>
+                          <p className="text-sm text-gray-900 dark:text-gray-100">{cabin.phone}</p>
                         </div>
                       </div>
                     </td>
@@ -372,7 +372,7 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
           {/* No results */}
           {filteredCabins.length === 0 && (
             <div className="text-center py-12">
-              <div className="text-gray-300 mb-4">
+              <div className="text-gray-300 dark:text-gray-600 mb-4">
                 <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -382,8 +382,8 @@ export default function CabinTable({ onViewDetails }: CabinTableProps) {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Ingen hytter funnet</h3>
-              <p className="text-gray-600">Prøv å justere søkekriteriene dine.</p>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Ingen hytter funnet</h3>
+              <p className="text-gray-600 dark:text-gray-400">Prøv å justere søkekriteriene dine.</p>
             </div>
           )}
         </div>

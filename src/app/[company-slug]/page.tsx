@@ -156,7 +156,7 @@ export default function CompanyCabinsPage() {
         </div>
 
         {/* Search and Filter Controls */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 mb-8">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <input
@@ -164,14 +164,14 @@ export default function CompanyCabinsPage() {
                 placeholder="Søk etter hytter ved navn, adresse eller kontaktperson..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
               />
             </div>
             <div className="md:w-48">
               <select
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value="all">Alle byer</option>
                 {cities.map((city) => (
@@ -183,15 +183,15 @@ export default function CompanyCabinsPage() {
             </div>
           </div>
           
-          <div className="mt-4 text-sm text-gray-600">
+          <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
             Viser {filteredCabins.length} av {cabins.length} hytter
           </div>
         </div>
 
         {/* Cabins Table */}
         {filteredCabins.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
-            <div className="text-gray-300 mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-12 text-center">
+            <div className="text-gray-300 dark:text-gray-600 mb-4">
               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -201,36 +201,36 @@ export default function CompanyCabinsPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Ingen hytter funnet</h3>
-            <p className="text-gray-600">Prøv å justere søke- eller filterkriteriene dine.</p>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Ingen hytter funnet</h3>
+            <p className="text-gray-600 dark:text-gray-400">Prøv å justere søke- eller filterkriteriene dine.</p>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+                <thead className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600">
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
                       Bilde
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
                       Hyttenavn
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
                       Kontaktperson
                     </th>
 
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
                       Handlinger
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                   {filteredCabins.map((cabin) => (
-                    <tr key={cabin._id} className="hover:bg-gray-50 transition-colors duration-200">
+                    <tr key={cabin._id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
                       {/* Image Column */}
                       <td className="px-6 py-4">
-                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center relative">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-700 flex items-center justify-center relative">
                           {cabin.image ? (
                             <>
                               <Image
@@ -253,7 +253,7 @@ export default function CompanyCabinsPage() {
                                 }}
                               />
                               <svg
-                                className="fallback-icon w-8 h-8 text-gray-400 absolute inset-0 m-auto hidden"
+                                className="fallback-icon w-8 h-8 text-gray-400 dark:text-gray-500 absolute inset-0 m-auto hidden"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -268,7 +268,7 @@ export default function CompanyCabinsPage() {
                             </>
                           ) : (
                             <svg
-                              className="w-8 h-8 text-gray-400"
+                              className="w-8 h-8 text-gray-400 dark:text-gray-500"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -286,10 +286,10 @@ export default function CompanyCabinsPage() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div
-                            className="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-100"
+                            className="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-100 dark:bg-blue-900"
                           >
                             <svg
-                              className="w-5 h-5 text-blue-600"
+                              className="w-5 h-5 text-blue-600 dark:text-blue-400"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -303,9 +303,9 @@ export default function CompanyCabinsPage() {
                             </svg>
                           </div>
                           <div>
-                            <p className="text-lg font-semibold text-gray-900">{cabin.name}</p>
+                            <p className="text-lg font-semibold text-gray-900 dark:text-white">{cabin.name}</p>
                             {cabin.is_member && (
-                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
                                 ✅ Member
                               </span>
                             )}
@@ -314,8 +314,8 @@ export default function CompanyCabinsPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
-                            <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                            <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
@@ -325,9 +325,9 @@ export default function CompanyCabinsPage() {
                             </svg>
                           </div>
                           <div>
-                            <p className="font-medium text-gray-900">{cabin.contact_person_name}</p>
+                            <p className="font-medium text-gray-900 dark:text-white">{cabin.contact_person_name}</p>
                             {cabin.contact_person_employer && (
-                              <p className="text-sm text-gray-600">{cabin.contact_person_employer}</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">{cabin.contact_person_employer}</p>
                             )}
                           </div>
                         </div>

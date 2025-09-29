@@ -393,19 +393,19 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
 
     // Check selected state FIRST - this should override all other styling
     if (isSelected) {
-      return "bg-blue-500 border-blue-600"
+      return "bg-blue-500 dark:bg-blue-600 border-blue-600 dark:border-blue-500"
     }
 
     if (status === "booked") {
-      return "bg-red-100 border-red-200 cursor-not-allowed"
+      return "bg-red-100 dark:bg-red-900/30 border-red-200 dark:border-red-700 cursor-not-allowed"
     }
 
     if (status === "maintenance") {
-      return "bg-yellow-100 border-yellow-200 cursor-not-allowed"
+      return "bg-yellow-100 dark:bg-yellow-900/30 border-yellow-200 dark:border-yellow-700 cursor-not-allowed"
     }
 
     if (status === "unavailable") {
-      return "bg-gray-100 border-gray-200 cursor-not-allowed"
+      return "bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-600 cursor-not-allowed"
     }
 
     if (status === "partially_booked") {
@@ -419,16 +419,16 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
         
         if (half === bookedHalf) {
           // This half is booked (red, not clickable)
-          return "bg-red-200 border-red-300 cursor-not-allowed"
+          return "bg-red-200 dark:bg-red-900/40 border-red-300 dark:border-red-600 cursor-not-allowed"
         } else {
           // This half is available (green, clickable)
-          return "bg-green-100 border-green-200 hover:bg-green-200 cursor-pointer"
+          return "bg-green-100 dark:bg-green-900/30 border-green-200 dark:border-green-700 hover:bg-green-200 dark:hover:bg-green-900/50 cursor-pointer"
         }
       }
     }
 
     if (status === "available") {
-      return "bg-green-100 border-green-200 hover:bg-green-200 cursor-pointer"
+      return "bg-green-100 dark:bg-green-900/30 border-green-200 dark:border-green-700 hover:bg-green-200 dark:hover:bg-green-900/50 cursor-pointer"
     }
 
     return ""
@@ -720,13 +720,13 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-2xl font-bold text-gray-900">Bestill {cabin.name}</h2>
+    <div className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Bestill {cabin.name}</h2>
           <button 
             onClick={onClose} 
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
             disabled={submitting}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -738,18 +738,18 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
         <div className="p-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div>
-              <div className="bg-gray-50 rounded-xl p-6">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900">{cabin.name}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{cabin.name}</h3>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() =>
                         setSelectedMonth(new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() - 1))
                       }
-                      className="p-1 hover:bg-gray-200 rounded"
+                      className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
                       disabled={loading}
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
@@ -759,7 +759,7 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
                         const [year, month] = e.target.value.split("-")
                         setSelectedMonth(new Date(Number.parseInt(year), Number.parseInt(month)))
                       }}
-                      className="px-3 py-1 border border-gray-300 rounded text-sm"
+                      className="px-3 py-1 border border-gray-300 dark:border-gray-600 dark:bg-gray-600 dark:text-gray-100 rounded text-sm"
                       disabled={loading}
                     >
                       {Array.from({ length: 12 }, (_, i) => {
@@ -775,10 +775,10 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
                       onClick={() =>
                         setSelectedMonth(new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1))
                       }
-                      className="p-1 hover:bg-gray-200 rounded"
+                      className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
                       disabled={loading}
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </button>
@@ -788,20 +788,20 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
                 {loading && (
                   <div className="flex items-center justify-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500"></div>
-                    <span className="ml-2 text-gray-600">Loading calendar...</span>
+                    <span className="ml-2 text-gray-600 dark:text-gray-300">Loading calendar...</span>
                   </div>
                 )}
 
                 <div className={`grid grid-cols-7 gap-1 mb-4 select-none ${loading ? 'opacity-50' : ''}`} onMouseLeave={handleMouseUp}>
                   {["M", "T", "W", "T", "F", "S", "S"].map((day, index) => (
-                    <div key={index} className="text-center text-sm font-medium text-gray-600 py-2">
+                    <div key={index} className="text-center text-sm font-medium text-gray-600 dark:text-gray-300 py-2">
                       {day}
                     </div>
                   ))}
                   {calendarDays.map((day, index) => (
                     <div key={index} className="aspect-square">
                       {day ? (
-                        <div className="h-full relative border border-gray-200 rounded-lg overflow-hidden">
+                        <div className="h-full relative border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
                           {getDateStatus(day) === "partially_booked" ? (
                             // Render partially booked day - but allow interaction with available halves
                             <>
@@ -834,7 +834,7 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
                               />
 
                               {/* Day number overlay */}
-                              <div className="absolute inset-0 flex items-center justify-center text-xs font-medium pointer-events-none z-10">
+                              <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-900 dark:text-gray-100 pointer-events-none z-10">
                                 {day}
                               </div>
                             </>
@@ -870,7 +870,7 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
                               />
 
                               {/* Day number overlay */}
-                              <div className="absolute inset-0 flex items-center justify-center text-xs font-medium pointer-events-none z-10">
+                              <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-900 dark:text-gray-100 pointer-events-none z-10">
                                 {day}
                               </div>
                             </>
@@ -887,38 +887,38 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
                   <div className="flex flex-wrap gap-4 text-sm">
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
-                      <span className="text-gray-600">Tilgjengelig</span>
+                      <span className="text-gray-600 dark:text-gray-300">Tilgjengelig</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
-                      <span className="text-gray-600">Opptatt</span>
+                      <span className="text-gray-600 dark:text-gray-300">Opptatt</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 border border-gray-300 rounded relative overflow-hidden bg-white">
                         <div className="absolute inset-0 bg-green-200" style={{ clipPath: 'polygon(0% 0%, 0% 100%, 100% 100%)' }}></div>
                         <div className="absolute inset-0 bg-red-200" style={{ clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%)' }}></div>
                       </div>
-                      <span className="text-gray-600">Delvis opptatt</span>
+                      <span className="text-gray-600 dark:text-gray-300">Delvis opptatt</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-blue-500 rounded"></div>
-                      <span className="text-gray-600">Valgt</span>
+                      <span className="text-gray-600 dark:text-gray-300">Valgt</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-gray-100 border border-gray-200 rounded"></div>
-                      <span className="text-gray-600">Utilgjengelig</span>
+                      <span className="text-gray-600 dark:text-gray-300">Utilgjengelig</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-yellow-100 border border-yellow-200 rounded"></div>
-                      <span className="text-gray-600">Vedlikehold</span>
+                      <span className="text-gray-600 dark:text-gray-300">Vedlikehold</span>
                     </div>
                   </div>
                 </div>
 
                 {selectedHalfDays.length > 0 && (
-                  <div className="bg-blue-50 p-3 rounded-lg mt-4">
-                    <div className="text-sm font-medium text-blue-900">Valgte tidslots:</div>
-                    <div className="text-sm text-blue-700 space-y-1 max-h-32 overflow-y-auto">
+                  <div className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg mt-4">
+                    <div className="text-sm font-medium text-blue-900 dark:text-blue-200">Valgte tidslots:</div>
+                    <div className="text-sm text-blue-700 dark:text-blue-300 space-y-1 max-h-32 overflow-y-auto">
                       {selectedHalfDays.map((selection, index) => (
                         <div key={index} className="flex items-center justify-between">
                           <span>
@@ -947,99 +947,99 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
             <div>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Navn *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Navn *</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleInputChange("name", e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     required
                     disabled={submitting}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Adresse *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Adresse *</label>
                   <input
                     type="text"
                     value={formData.address}
                     onChange={(e) => handleInputChange("address", e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     required
                     disabled={submitting}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Postnummer *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Postnummer *</label>
                   <input
                     type="text"
                     value={formData.postalCode}
                     onChange={(e) => handleInputChange("postalCode", e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     required
                     disabled={submitting}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">By *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">By *</label>
                   <input
                     type="text"
                     value={formData.city}
                     onChange={(e) => handleInputChange("city", e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     required
                     disabled={submitting}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Telefon *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Telefon *</label>
                   <input
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     required
                     disabled={submitting}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">E-post *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">E-post *</label>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     required
                     disabled={submitting}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Medlem av:</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Medlem av:</label>
                   <div className="space-y-2">
                     <label className="flex items-center">
                       <input
                         type="checkbox"
                         checked={formData.isMemberAEMT}
                         onChange={(e) => handleInputChange("isMemberAEMT", e.target.checked)}
-                        className="rounded border-gray-300 text-red-500 focus:ring-red-500"
+                        className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-red-500 focus:ring-red-500"
                         disabled={submitting}
                       />
-                      <span className="ml-2 text-sm text-gray-700">AEMT</span>
+                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">AEMT</span>
                     </label>
                     <label className="flex items-center">
                       <input
                         type="checkbox"
                         checked={formData.isMemberELIT}
                         onChange={(e) => handleInputChange("isMemberELIT", e.target.checked)}
-                        className="rounded border-gray-300 text-red-500 focus:ring-red-500"
+                        className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-red-500 focus:ring-red-500"
                         disabled={submitting}
                       />
-                      <span className="ml-2 text-sm text-gray-700">EL og IT</span>
+                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">EL og IT</span>
                     </label>
                   </div>
                 </div>
@@ -1060,7 +1060,7 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
                 </button>
 
                 {selectedHalfDays.length === 0 && (
-                  <p className="text-sm text-gray-500 text-center">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
                     Vennligst velg minst ett tidslot for å aktivere bestilling
                   </p>
                 )}

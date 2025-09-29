@@ -64,11 +64,11 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
 
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-xl p-8 text-white">
+      <div className="bg-gradient-to-r from-gray-800 to-gray-700 dark:from-gray-900 dark:to-gray-800 rounded-2xl shadow-xl p-8 text-white">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h2 className="text-3xl font-bold mb-2">Oppdag fantastiske hytter</h2>
-            <p className="text-gray-300 text-lg">Finn din perfekte fjellferie</p>
+            <p className="text-gray-300 dark:text-gray-400 text-lg">Finn din perfekte fjellferie</p>
           </div>
           <div className="flex gap-3">
             <div className="relative">
@@ -88,14 +88,14 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
               <input
                 type="text"
                 placeholder="Søk hytter..."
-                className="pl-10 pr-4 py-3 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white placeholder-gray-300 focus:ring-2 focus:ring-red-400 focus:border-transparent transition-all"
+                className="pl-10 pr-4 py-3 bg-white/10 dark:bg-white/5 backdrop-blur border border-white/20 dark:border-white/10 rounded-xl text-white placeholder-gray-300 dark:placeholder-gray-400 focus:ring-2 focus:ring-red-400 focus:border-transparent transition-all"
               />
             </div>
-            <select className="px-4 py-3 bg-white/10 backdrop-blur border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-red-400 focus:border-transparent transition-all">
-              <option className="text-gray-900">Alle steder</option>
-              <option className="text-gray-900">Storby</option>
-              <option className="text-gray-900">Laketown</option>
-              <option className="text-gray-900">Woodland</option>
+            <select className="px-4 py-3 bg-white/10 dark:bg-white/5 backdrop-blur border border-white/20 dark:border-white/10 rounded-xl text-white focus:ring-2 focus:ring-red-400 focus:border-transparent transition-all">
+              <option className="text-gray-900 dark:text-gray-100 dark:bg-gray-800">Alle steder</option>
+              <option className="text-gray-900 dark:text-gray-100 dark:bg-gray-800">Storby</option>
+              <option className="text-gray-900 dark:text-gray-100 dark:bg-gray-800">Laketown</option>
+              <option className="text-gray-900 dark:text-gray-100 dark:bg-gray-800">Woodland</option>
             </select>
           </div>
         </div>
@@ -105,7 +105,7 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
         {cabins.map((cabin, index) => (
           <div
             key={cabin.id}
-            className="group relative bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
+            className="group relative bg-white dark:bg-gray-800 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
           >
             <div
               className={`h-2 ${index % 3 === 0 ? "bg-gradient-to-r from-red-400 to-pink-500" : index % 3 === 1 ? "bg-gradient-to-r from-blue-400 to-cyan-500" : "bg-gradient-to-r from-green-400 to-emerald-500"}`}
@@ -114,10 +114,10 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
             <div className="p-8">
               <div className="flex items-center gap-3 mb-6">
                 <div
-                  className={`w-12 h-12 rounded-2xl flex items-center justify-center ${index % 3 === 0 ? "bg-red-100" : index % 3 === 1 ? "bg-blue-100" : "bg-green-100"}`}
+                  className={`w-12 h-12 rounded-2xl flex items-center justify-center ${index % 3 === 0 ? "bg-red-100 dark:bg-red-900/30" : index % 3 === 1 ? "bg-blue-100 dark:bg-blue-900/30" : "bg-green-100 dark:bg-green-900/30"}`}
                 >
                   <svg
-                    className={`w-6 h-6 ${index % 3 === 0 ? "text-red-600" : index % 3 === 1 ? "text-blue-600" : "text-green-600"}`}
+                    className={`w-6 h-6 ${index % 3 === 0 ? "text-red-600 dark:text-red-400" : index % 3 === 1 ? "text-blue-600 dark:text-blue-400" : "text-green-600 dark:text-green-400"}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -130,15 +130,15 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
                     />
                   </svg>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 group-hover:text-gray-700 transition-colors">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">
                   {cabin.name}
                 </h3>
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -148,14 +148,14 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Kontaktperson</p>
-                    <p className="text-lg font-semibold text-gray-900">{cabin.contact_person_name}</p>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Kontaktperson</p>
+                    <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{cabin.contact_person_name}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -171,17 +171,17 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Adresse</p>
-                    <p className="text-gray-900 font-medium">{cabin.address}</p>
-                    <p className="text-gray-700">
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Adresse</p>
+                    <p className="text-gray-900 dark:text-gray-100 font-medium">{cabin.address}</p>
+                    <p className="text-gray-700 dark:text-gray-300">
                       {cabin.postal_code} {cabin.city}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -191,14 +191,14 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Email</p>
-                    <p className="text-gray-900 font-medium break-all">{cabin.email}</p>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Email</p>
+                    <p className="text-gray-900 dark:text-gray-100 font-medium break-all">{cabin.email}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -208,8 +208,8 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Telefon</p>
-                    <p className="text-gray-900 font-medium">{cabin.phone}</p>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Telefon</p>
+                    <p className="text-gray-900 dark:text-gray-100 font-medium">{cabin.phone}</p>
                   </div>
                 </div>
               </div>
@@ -232,8 +232,8 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
       </div>
 
       {cabins.length === 0 && (
-        <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl shadow-xl p-16 text-center">
-          <div className="text-gray-300 mb-6">
+        <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-3xl shadow-xl p-16 text-center">
+          <div className="text-gray-300 dark:text-gray-600 mb-6">
             <svg className="w-24 h-24 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -243,8 +243,8 @@ export default function CabinListing({ onBookCabin }: CabinListingProps) {
               />
             </svg>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-3">Ingen hytter tilgjengelig</h3>
-          <p className="text-gray-600 text-lg">Sjekk tilbake senere for nye fantastiske oppføringer.</p>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">Ingen hytter tilgjengelig</h3>
+          <p className="text-gray-600 dark:text-gray-400 text-lg">Sjekk tilbake senere for nye fantastiske oppføringer.</p>
         </div>
       )}
     </div>
