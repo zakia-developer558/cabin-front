@@ -31,7 +31,6 @@ interface CabinTableItem {
   phone: string
   email: string
   contact_person_name: string
-  contact_person_employer?: string
   is_member?: boolean
   createdAt?: string
   updatedAt?: string

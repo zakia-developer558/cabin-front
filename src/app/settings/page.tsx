@@ -97,24 +97,24 @@ export default function SettingsPage() {
           <div className="p-6 space-y-8">
             {/* Profile Section */}
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900">Profilinformasjon</h2>
-              <div className="bg-gray-50 rounded-lg p-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Profilinformasjon</h2>
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Fornavn</label>
-                    <p className="text-gray-900">{user?.firstName || 'N/A'}</p>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fornavn</label>
+                    <p className="text-gray-900 dark:text-gray-100">{user?.firstName || 'N/A'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Etternavn</label>
-                    <p className="text-gray-900">{user?.lastName || 'N/A'}</p>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Etternavn</label>
+                    <p className="text-gray-900 dark:text-gray-100">{user?.lastName || 'N/A'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">E-post</label>
-                    <p className="text-gray-900">{user?.email || 'N/A'}</p>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">E-post</label>
+                    <p className="text-gray-900 dark:text-gray-100">{user?.email || 'N/A'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Rolle</label>
-                    <p className="text-gray-900 capitalize">{user?.role || 'N/A'}</p>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Rolle</label>
+                    <p className="text-gray-900 dark:text-gray-100 capitalize">{user?.role || 'N/A'}</p>
                   </div>
                 </div>
               </div>
@@ -122,9 +122,9 @@ export default function SettingsPage() {
 
             {/* Public Cabin Link Section */}
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900">Offentlig hyttelenke</h2>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm text-blue-800 mb-3">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Offentlig hyttelenke</h2>
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <p className="text-sm text-blue-800 dark:text-blue-200 mb-3">
                   Del denne lenken med potensielle gjester for å vise frem alle dine hytter. 
                   De kan bla gjennom og bestille direkte fra denne offentlige siden.
                 </p>
@@ -132,7 +132,7 @@ export default function SettingsPage() {
                 {companySlug ? (
                   <div className="space-y-3">
                     <div className="flex items-center space-x-2">
-                      <div className="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono text-gray-700">
+                      <div className="flex-1 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg px-3 py-2 text-sm font-mono text-gray-700 dark:text-gray-100">
                         {publicCabinUrl}
                       </div>
                       <button
@@ -161,13 +161,13 @@ export default function SettingsPage() {
                       </button>
                     </div>
                     
-                    <div className="text-xs text-blue-600">
+                    <div className="text-xs text-blue-600 dark:text-blue-300">
                       <strong>Din firmaslug:</strong> {companySlug}
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <p className="text-sm text-yellow-800">
+                  <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
+                    <p className="text-sm text-yellow-800 dark:text-yellow-200">
                       ⚠️ Firmaslug ikke funnet. Vennligst kontakt support for å sette opp din offentlige hyttelenke.
                     </p>
                   </div>
@@ -177,9 +177,9 @@ export default function SettingsPage() {
 
             {/* Additional Settings Placeholder */}
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900">Kontoinnstillinger</h2>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-gray-600 text-sm">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Kontoinnstillinger</h2>
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <p className="text-gray-600 dark:text-gray-300 text-sm">
                   Ytterligere kontoinnstillinger og preferanser vil være tilgjengelige her i fremtidige oppdateringer.
                 </p>
               </div>

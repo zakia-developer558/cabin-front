@@ -182,9 +182,9 @@ export default function OwnerDashboard() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 21l4-4 4 4" />
                 </svg>
-                <h1 className="text-3xl font-bold mb-4">Welcome to Your Dashboard!</h1>
+                <h1 className="text-3xl font-bold mb-4">Velkommen til ditt dashbord!</h1>
                 <p className="text-gray-300 text-lg mb-8">
-                  You haven&apos;t added any cabins yet. Start by adding your first cabin to begin managing bookings and availability.
+                  Du har ikke lagt til noen hytter ennå. Start med å legge til din første hytte for å begynne å administrere bestillinger og tilgjengelighet.
                 </p>
               </div>
               
@@ -195,7 +195,7 @@ export default function OwnerDashboard() {
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                <span>Add Your First Cabin</span>
+                <span>Legg til din første hytte</span>
               </button>
             </div>
           </div>

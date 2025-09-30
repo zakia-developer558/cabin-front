@@ -23,7 +23,7 @@ interface Cabin {
   color?: string
 }
 
-type HalfDay = "first" | "second" // first: 12 AM to 12 PM, second: 12 PM to 12 AM
+type HalfDay = "first" | "second" // first: 00:00 to 12:00, second: 12:00 to 23:59
 interface HalfDaySelection {
   date: Date
   half: HalfDay
@@ -72,6 +72,7 @@ function CabinBookingPageContent() {
   const params = useParams()
   const router = useRouter()
   const cabinSlug = params['cabin-slug'] as string
+  const companySlug = params['company-slug'] as string
 
   const [cabin, setCabin] = useState<Cabin | null>(null)
   const [cabinLoading, setCabinLoading] = useState(true)
@@ -93,7 +94,7 @@ function CabinBookingPageContent() {
     address: "",
     postalCode: "",
     city: "",
-    phone: "",
+    phone: "+47 ",
     email: "",
     employer: "",
     isMemberAEMT: false,
@@ -224,9 +225,11 @@ function CabinBookingPageContent() {
   // Fetch legends from public API
   useEffect(() => {
     const fetchLegends = async () => {
+      if (!companySlug) return
+      
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/legends/public?active=true`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/legends/company/${companySlug}?active=true`
         )
         const data = await res.json()
         if (data.success && data.data) {
@@ -241,7 +244,7 @@ function CabinBookingPageContent() {
     }
 
     fetchLegends()
-  }, [])
+  }, [companySlug])
 
   // Helper functions for legends
   const getLegendByStatus = (status: string) => {
@@ -1114,7 +1117,7 @@ function CabinBookingPageContent() {
           address: "",
           postalCode: "",
           city: "",
-          phone: "",
+          phone: "+47 ",
           email: "",
           employer: "",
           isMemberAEMT: false,
@@ -1171,7 +1174,28 @@ function CabinBookingPageContent() {
     ]
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+    if (field === "phone" && typeof value === "string") {
+      // Handle Norwegian phone number formatting
+      let phoneValue = value;
+      
+      // Always ensure it starts with +47
+      if (!phoneValue.startsWith("+47")) {
+        phoneValue = "+47 " + phoneValue.replace(/^\+?47\s?/, "");
+      }
+      
+      // Remove any non-digit characters after +47
+      const digitsOnly = phoneValue.replace(/^\+47\s?/, "").replace(/\D/g, "");
+      
+      // Limit to 8 digits
+      const limitedDigits = digitsOnly.slice(0, 8);
+      
+      // Format as +47 XXXXXXXX
+      phoneValue = "+47 " + limitedDigits;
+      
+      setFormData((prev) => ({ ...prev, [field]: phoneValue }));
+    } else {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    }
   }
 
   const removeHalfDaySelection = (selectionToRemove: HalfDaySelection) => {
@@ -1331,7 +1355,7 @@ function CabinBookingPageContent() {
                             {getDateStatus(day) === "partially_booked" ? (
                               // Render partially booked day - but allow interaction with available halves
                               <>
-                                {/* First half (12 AM - 12 PM) */}
+                                {/* First half (00:00 - 12:00) */}
                                 <div
                                   onMouseDown={() => !loading && handleHalfDayMouseDown(day, "first")}
                                   onMouseEnter={() => !loading && handleHalfDayMouseEnter(day, "first")}
@@ -1347,7 +1371,7 @@ function CabinBookingPageContent() {
                                   }}
                                 />
 
-                                {/* Second half (12 PM - 12 AM) */}
+                                {/* Second half (12:00 - 23:59) */}
                                 <div
                                   onMouseDown={() => !loading && handleHalfDayMouseDown(day, "second")}
                                   onMouseEnter={() => !loading && handleHalfDayMouseEnter(day, "second")}
@@ -1371,7 +1395,7 @@ function CabinBookingPageContent() {
                             ) : (
                               // Render normal half-day selection interface
                               <>
-                                {/* First half (12 AM - 12 PM) - Top-left diagonal */}
+                                {/* First half (00:00 - 12:00) - Top-left diagonal */}
                                 <div
                                   onMouseDown={() => !loading && handleHalfDayMouseDown(day, "first")}
                                   onMouseEnter={() => !loading && handleHalfDayMouseEnter(day, "first")}
@@ -1387,7 +1411,7 @@ function CabinBookingPageContent() {
                                   }}
                                 />
 
-                                {/* Second half (12 PM - 12 AM) - Bottom-right diagonal */}
+                                {/* Second half (12:00 - 23:59) - Bottom-right diagonal */}
                                 <div
                                   onMouseDown={() => !loading && handleHalfDayMouseDown(day, "second")}
                                   onMouseEnter={() => !loading && handleHalfDayMouseEnter(day, "second")}
@@ -1495,7 +1519,7 @@ function CabinBookingPageContent() {
                       <div key={index} className="flex items-center justify-between">
                         <span>
                           {selection.date.toLocaleDateString("nb-NO")} •{" "}
-                          {selection.half === "first" ? "12:00 AM - 12:00 PM" : "12:00 PM - 12:00 AM"}
+                          {selection.half === "first" ? "00:00 - 12:00" : "12:00 - 23:59"}
                         </span>
                         <button
                           type="button"

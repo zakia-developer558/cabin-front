@@ -14,7 +14,6 @@ interface Cabin {
   phone: string
   email: string
   contact_person_name: string
-  contact_person_employer?: string
   is_member?: boolean
   createdAt?: string
   updatedAt?: string
@@ -326,9 +325,6 @@ export default function CompanyCabinsPage() {
                           </div>
                           <div>
                             <p className="font-medium text-gray-900 dark:text-white">{cabin.contact_person_name}</p>
-                            {cabin.contact_person_employer && (
-                              <p className="text-sm text-gray-600 dark:text-gray-400">{cabin.contact_person_employer}</p>
-                            )}
                           </div>
                         </div>
                       </td>

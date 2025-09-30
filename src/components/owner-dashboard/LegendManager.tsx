@@ -102,7 +102,17 @@ export default function LegendManager({ }: LegendManagerProps) {
 
     try {
       if (isCreating) {
-        await addLegend(editingLegend)
+        // Filter out unwanted properties and only pass the required legend data
+        const legendData: Omit<Legend, 'id' | 'isDefault'> = {
+          name: editingLegend.name,
+          color: editingLegend.color,
+          bgColor: editingLegend.bgColor,
+          borderColor: editingLegend.borderColor,
+          textColor: editingLegend.textColor,
+          isActive: editingLegend.isActive,
+          description: editingLegend.description
+        }
+        await addLegend(legendData)
       } else {
         await updateLegend(editingLegend.id, editingLegend)
       }
@@ -254,7 +264,7 @@ export default function LegendManager({ }: LegendManagerProps) {
                     className={`px-3 py-1 rounded-full text-sm ${editingLegend.bgColor} ${editingLegend.textColor}`}
                     style={{ backgroundColor: editingLegend.color + '20', color: editingLegend.color }}
                   >
-                    Preview: {editingLegend.name || 'Legend Name'}
+                    Preview: {editingLegend.name || 'Legendenavn'}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -267,14 +277,14 @@ export default function LegendManager({ }: LegendManagerProps) {
                     className="flex items-center gap-1 px-3 py-1 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
                   >
                     <X className="w-4 h-4" />
-                    Cancel
+                    Avbryt
                   </button>
                   <button
                     onClick={handleSaveLegend}
                     className="flex items-center gap-1 bg-green-500 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700 text-white px-3 py-1 rounded transition-colors"
                   >
                     <Save className="w-4 h-4" />
-                    Save
+                    Lagre
                   </button>
                 </div>
               </div>
@@ -290,20 +300,20 @@ export default function LegendManager({ }: LegendManagerProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Legend Name
-                    </label>
-                    <input
-                      type="text"
-                      value={editingLegend.name}
-                      onChange={(e) => setEditingLegend({ ...editingLegend, name: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                      placeholder="Enter legend name"
-                    />
+                    Legendenavn
+                  </label>
+                  <input
+                    type="text"
+                    value={editingLegend.name}
+                    onChange={(e) => setEditingLegend({ ...editingLegend, name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    placeholder="Skriv inn legendenavn"
+                  />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Color
-                    </label>
+                    Farge
+                  </label>
                     <div className="relative">
                       <button
                         onClick={() => setShowColorPicker(!showColorPicker)}
@@ -330,15 +340,15 @@ export default function LegendManager({ }: LegendManagerProps) {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Description (Optional)
-                  </label>
-                  <textarea
-                    value={editingLegend.description || ""}
-                    onChange={(e) => setEditingLegend({ ...editingLegend, description: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    rows={2}
-                    placeholder="Enter description for this legend"
-                  />
+                  Beskrivelse (Valgfritt)
+                </label>
+                <textarea
+                  value={editingLegend.description || ""}
+                  onChange={(e) => setEditingLegend({ ...editingLegend, description: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  rows={2}
+                  placeholder="Skriv inn beskrivelse for denne legenden"
+                />
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -347,7 +357,7 @@ export default function LegendManager({ }: LegendManagerProps) {
                       className={`px-3 py-1 rounded-full text-sm ${editingLegend.bgColor} ${editingLegend.textColor}`}
                       style={{ backgroundColor: editingLegend.color + '20', color: editingLegend.color }}
                     >
-                      Preview: {editingLegend.name || 'Legend Name'}
+                      Preview: {editingLegend.name || 'Legendenavn'}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -360,14 +370,14 @@ export default function LegendManager({ }: LegendManagerProps) {
                       className="flex items-center gap-1 px-3 py-1 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
                     >
                       <X className="w-4 h-4" />
-                      Cancel
+                      Avbryt
                     </button>
                     <button
                       onClick={handleSaveLegend}
                       className="flex items-center gap-1 bg-green-500 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700 text-white px-3 py-1 rounded transition-colors"
                     >
                       <Save className="w-4 h-4" />
-                      Save
+                      Lagre
                     </button>
                   </div>
                 </div>
@@ -393,12 +403,12 @@ export default function LegendManager({ }: LegendManagerProps) {
                         <span className="font-medium text-gray-900 dark:text-gray-100">{legend.name}</span>
                         {legend.isDefault && (
                           <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full">
-                            Default
+                            Standard
                           </span>
                         )}
                         {!legend.isActive && (
                           <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded-full">
-                            Inactive
+                            Inaktiv
                           </span>
                         )}
                       </div>
@@ -417,7 +427,7 @@ export default function LegendManager({ }: LegendManagerProps) {
                       onChange={() => toggleLegendActive(legend.id)}
                       className="rounded"
                     />
-                    Active
+                    Aktiv
                   </label>
                   
                   <button
@@ -447,7 +457,7 @@ export default function LegendManager({ }: LegendManagerProps) {
 
       {legends.length === 0 && (
         <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-          <p>No legends configured. Add your first custom legend to get started.</p>
+          <p>Ingen legender konfigurert. Legg til din første tilpassede legende for å komme i gang.</p>
         </div>
       )}
     </div>

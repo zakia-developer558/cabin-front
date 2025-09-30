@@ -12,6 +12,7 @@ export interface Legend {
   isActive: boolean
   isDefault: boolean
   description?: string
+  companySlug?: string
 }
 
 interface LegendsContextType {
@@ -32,58 +33,58 @@ const LegendsContext = createContext<LegendsContextType | undefined>(undefined)
 const defaultLegends: Legend[] = [
   {
     id: 'available',
-    name: 'Available',
+    name: 'Tilgjengelig',
     color: '#10b981',
     bgColor: 'bg-green-100',
     borderColor: 'border-green-200',
     textColor: 'text-green-800',
     isActive: true,
     isDefault: true,
-    description: 'Available for booking'
+    description: 'Tilgjengelig for bestilling'
   },
   {
     id: 'booked',
-    name: 'Booked',
+    name: 'Opptatt',
     color: '#ef4444',
     bgColor: 'bg-red-100',
     borderColor: 'border-red-200',
     textColor: 'text-red-800',
     isActive: true,
     isDefault: true,
-    description: 'Fully booked'
+    description: 'Fullstendig booket'
   },
   {
     id: 'partially_booked',
-    name: 'Partially Booked',
+    name: 'Delvis opptatt',
     color: '#f59e0b',
     bgColor: 'bg-orange-100',
     borderColor: 'border-orange-200',
     textColor: 'text-orange-800',
     isActive: true,
     isDefault: true,
-    description: 'Partially booked (half-day)'
+    description: 'Delvis booket (halv dag)'
   },
   {
     id: 'maintenance',
-    name: 'Maintenance',
+    name: 'Vedlikehold',
     color: '#eab308',
     bgColor: 'bg-yellow-100',
     borderColor: 'border-yellow-200',
     textColor: 'text-yellow-800',
     isActive: true,
     isDefault: true,
-    description: 'Under maintenance'
+    description: 'Under vedlikehold'
   },
   {
     id: 'unavailable',
-    name: 'Unavailable',
+    name: 'Ikke tilgjengelig',
     color: '#6b7280',
     bgColor: 'bg-gray-100',
     borderColor: 'border-gray-200',
     textColor: 'text-gray-500',
     isActive: true,
     isDefault: true,
-    description: 'Not available for booking'
+    description: 'Ikke tilgjengelig for bestilling'
   }
 ]
 
@@ -175,10 +176,25 @@ export function LegendsProvider({ children }: LegendsProviderProps) {
   const addLegend = async (legendData: Omit<Legend, 'id' | 'isDefault'>) => {
     if (!token) return
 
+    // Get company slug from localStorage
+    const userCompanySlug = localStorage.getItem('companySlug') || ''
+
     const newLegend: Legend = {
       ...legendData,
       id: `custom_${Date.now()}`,
-      isDefault: false
+      isDefault: false,
+      companySlug: userCompanySlug
+    }
+
+    const payload = {
+      name: legendData.name,
+      color: legendData.color,
+      bgColor: legendData.bgColor,
+      borderColor: legendData.borderColor,
+      textColor: legendData.textColor,
+      isActive: legendData.isActive,
+      description: legendData.description,
+      userCompanySlug
     }
 
     try {
@@ -188,15 +204,7 @@ export function LegendsProvider({ children }: LegendsProviderProps) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          name: legendData.name,
-          color: legendData.color,
-          bgColor: legendData.bgColor,
-          borderColor: legendData.borderColor,
-          textColor: legendData.textColor,
-          isActive: legendData.isActive,
-          description: legendData.description
-        }),
+        body: JSON.stringify(payload),
       })
 
       const data = await response.json()
