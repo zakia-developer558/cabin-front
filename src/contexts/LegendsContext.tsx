@@ -226,13 +226,16 @@ export function LegendsProvider({ children }: LegendsProviderProps) {
     if (!token) return
 
     try {
+      // Remove id from the payload as it should not be sent to the backend
+      const { id: _, ...updatePayload } = updates
+      
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/legends/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(updates),
+        body: JSON.stringify(updatePayload),
       })
 
       const data = await response.json()

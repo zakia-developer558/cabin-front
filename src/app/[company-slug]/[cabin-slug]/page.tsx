@@ -82,12 +82,13 @@ function CabinBookingPageContent() {
   const [submitting, setSubmitting] = useState(false)
   const { toasts, success, error, info, removeToast } = useToast()
   
-  // Custom legends state for public API
+  // Custom legends state for public API (not using context since it's for authenticated users)
   const [legends, setLegends] = useState<Legend[]>([])
 
   const [selectedHalfDays, setSelectedHalfDays] = useState<HalfDaySelection[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState<HalfDaySelection | null>(null)
+  const [lastClickedDate, setLastClickedDate] = useState<HalfDaySelection | null>(null)
 
   const [formData, setFormData] = useState({
     name: "",
@@ -155,6 +156,7 @@ function CabinBookingPageContent() {
         const data = await res.json()
         if (data.success && data.data) {
           setCabin(data.data)
+          console.log('Cabin loaded - halfdayAvailability:', data.data.halfdayAvailability)
         } else {
           error("Hytte ikke funnet", "Den forespurte hytta kunne ikke finnes.")
           router.push('/') // Redirect to home if cabin not found
@@ -412,7 +414,34 @@ function CabinBookingPageContent() {
     let currentHalf = actualStart.half;
 
     while (currentDate <= actualEnd.date) {
-      selections.push({ date: new Date(currentDate), half: currentHalf });
+      // Check if this date is available before adding to selection
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+      const day = currentDate.getDate();
+      const dateStr = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+      const dayData = calendarData.find((d) => d.date === dateStr);
+      
+      // Only add if the date is available or partially booked (and the specific half is available)
+      let canSelect = false;
+      if (dayData) {
+        if (dayData.status === "available") {
+          canSelect = true;
+        } else if (dayData.status === "partiallyBooked") {
+          const bookedHalves = getBookedHalves(dayData);
+          if (currentHalf === "first" && !bookedHalves.first) {
+            canSelect = true;
+          } else if (currentHalf === "second" && !bookedHalves.second) {
+            canSelect = true;
+          }
+        }
+      } else {
+        // If no data found, assume available
+        canSelect = true;
+      }
+      
+      if (canSelect) {
+        selections.push({ date: new Date(currentDate), half: currentHalf });
+      }
       
       if (currentDate.getTime() === actualEnd.date.getTime() && currentHalf === actualEnd.half) {
         break;
@@ -436,22 +465,28 @@ function CabinBookingPageContent() {
     
     // Allow selection for available days
     if (status === "available") {
-      // Check if any half is actually booked by approved bookings
-      const year = selectedMonth.getFullYear()
-      const month = selectedMonth.getMonth() + 1
-      const dateStr = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`
-      const dayData = calendarData.find((d) => d.date === dateStr)
-      
-      if (dayData) {
-        const bookedHalves = getBookedHalves(dayData)
-        
-        // Block selection if any half is booked by approved bookings
-        if (bookedHalves.first || bookedHalves.second) {
-          return
-        }
-      }
       
       const clickedDate = createLocalDate(selectedMonth.getFullYear(), selectedMonth.getMonth(), day)
+      const clickedSelection: HalfDaySelection = { date: clickedDate, half: "first" }
+      
+      console.log('=== RANGE SELECTION DEBUG ===')
+      console.log('Clicked date:', clickedDate)
+      console.log('Last clicked date:', lastClickedDate)
+      console.log('Status:', status)
+      console.log('Day:', day)
+      
+      // If there's a previous selection and this is a different date, select range
+      if (lastClickedDate && 
+          (lastClickedDate.date.getTime() !== clickedDate.getTime())) {
+        
+        console.log('Creating range selection between:', lastClickedDate.date, 'and', clickedDate)
+        // Create range between last clicked and current clicked
+        const rangeSelections = getHalfDaysBetween(lastClickedDate, { date: clickedDate, half: "second" })
+        console.log('Range selections:', rangeSelections)
+        setSelectedHalfDays(rangeSelections)
+        setLastClickedDate(null) // Reset after range selection
+        return
+      }
       
       // Check if this date is already selected (both halves)
       const isAlreadySelected = selectedHalfDays.some(s => 
@@ -473,6 +508,7 @@ function CabinBookingPageContent() {
             s.date.getMonth() === selectedMonth.getMonth() && 
             s.date.getFullYear() === selectedMonth.getFullYear())
         ))
+        setLastClickedDate(null)
       } else {
         // If not selected, add to existing selection (additive)
         const newSelections: HalfDaySelection[] = [
@@ -489,6 +525,9 @@ function CabinBookingPageContent() {
           )
           return [...filtered, ...newSelections]
         })
+        
+        // Set this as the last clicked date for potential range selection
+        setLastClickedDate(clickedSelection)
       }
 
       setIsDragging(true)
@@ -516,6 +555,18 @@ function CabinBookingPageContent() {
         
         if (availableHalf) {
           const clickedDate = createLocalDate(selectedMonth.getFullYear(), selectedMonth.getMonth(), day)
+          const clickedSelection: HalfDaySelection = { date: clickedDate, half: availableHalf }
+          
+          // If there's a previous selection and this is a different date, select range
+          if (lastClickedDate && 
+              (lastClickedDate.date.getTime() !== clickedDate.getTime())) {
+            
+            // Create range between last clicked and current clicked
+            const rangeSelections = getHalfDaysBetween(lastClickedDate, clickedSelection)
+            setSelectedHalfDays(rangeSelections)
+            setLastClickedDate(null) // Reset after range selection
+            return
+          }
           
           // Check if this half is already selected
           const isAlreadySelected = selectedHalfDays.some(s => 
@@ -533,10 +584,14 @@ function CabinBookingPageContent() {
                 s.date.getFullYear() === selectedMonth.getFullYear() &&
                 s.half === availableHalf)
             ))
+            setLastClickedDate(null)
           } else {
             // If not selected, add to existing selection (additive)
             const selection: HalfDaySelection = { date: clickedDate, half: availableHalf }
             setSelectedHalfDays(prev => [...prev, selection])
+            
+            // Set this as the last clicked date for potential range selection
+            setLastClickedDate(clickedSelection)
           }
 
           setIsDragging(true)
@@ -626,6 +681,9 @@ function CabinBookingPageContent() {
       }
       
       const clickedDate = createLocalDate(selectedMonth.getFullYear(), selectedMonth.getMonth(), day)
+      const clickedSelection: HalfDaySelection = { date: clickedDate, half }
+      
+      console.log('Half-day clicked:', { day, half, clickedDate, lastClickedDate, selectedHalfDaysCount: selectedHalfDays.length })
       
       // Check if this specific half is already selected
       const isAlreadySelected = selectedHalfDays.some(s => 
@@ -635,6 +693,33 @@ function CabinBookingPageContent() {
         s.half === half
       )
       
+      // Range selection logic - only trigger if:
+      // 1. We have existing selections (selectedHalfDays.length > 0)
+      // 2. We have a lastClickedDate 
+      // 3. This is a different selection than lastClickedDate
+      // 4. This half is not already selected
+      if (selectedHalfDays.length > 0 && 
+          lastClickedDate && 
+          !isAlreadySelected &&
+          !(lastClickedDate.date.getDate() === day && 
+            lastClickedDate.date.getMonth() === selectedMonth.getMonth() && 
+            lastClickedDate.date.getFullYear() === selectedMonth.getFullYear() &&
+            lastClickedDate.half === half)) {
+        
+        console.log('Triggering range selection between:', lastClickedDate, 'and:', clickedSelection)
+        
+        // Get range between lastClickedDate and current selection
+        const rangeSelections = getHalfDaysBetween(lastClickedDate, clickedSelection)
+        console.log('Range selections:', rangeSelections)
+        
+        // Replace current selection with the range
+        setSelectedHalfDays(rangeSelections)
+        setLastClickedDate(clickedSelection)
+        setIsDragging(true)
+        setDragStart(clickedSelection)
+        return
+      }
+      
       if (isAlreadySelected) {
         // If already selected, remove this selection (deselect)
         setSelectedHalfDays(prev => prev.filter(s => 
@@ -643,14 +728,18 @@ function CabinBookingPageContent() {
             s.date.getFullYear() === selectedMonth.getFullYear() &&
             s.half === half)
         ))
+        // Reset lastClickedDate when deselecting
+        setLastClickedDate(null)
+        console.log('Deselected half-day, reset lastClickedDate to null')
       } else {
         // If not selected, add to existing selection (additive)
-        const selection: HalfDaySelection = { date: clickedDate, half }
-        setSelectedHalfDays(prev => [...prev, selection])
+        setSelectedHalfDays(prev => [...prev, clickedSelection])
+        setLastClickedDate(clickedSelection)
+        console.log('Selected half-day, set lastClickedDate to:', clickedSelection)
       }
 
       setIsDragging(true)
-      setDragStart({ date: clickedDate, half })
+      setDragStart(clickedSelection)
       return
     }
 
@@ -667,6 +756,9 @@ function CabinBookingPageContent() {
         // Only allow selection if this half is NOT the booked half
         if (half !== bookedHalf) {
           const clickedDate = createLocalDate(selectedMonth.getFullYear(), selectedMonth.getMonth(), day)
+          const clickedSelection: HalfDaySelection = { date: clickedDate, half }
+          
+          console.log('Partially booked day clicked:', { day, half, clickedDate, lastClickedDate })
           
           // Check if this specific half is already selected
           const isAlreadySelected = selectedHalfDays.some(s => 
@@ -676,6 +768,27 @@ function CabinBookingPageContent() {
             s.half === half
           )
           
+          // Range selection logic for partially booked days
+          if (lastClickedDate && 
+              !(lastClickedDate.date.getDate() === day && 
+                lastClickedDate.date.getMonth() === selectedMonth.getMonth() && 
+                lastClickedDate.date.getFullYear() === selectedMonth.getFullYear() &&
+                lastClickedDate.half === half)) {
+            
+            console.log('Triggering range selection on partially booked day between:', lastClickedDate, 'and:', clickedSelection)
+            
+            // Get range between lastClickedDate and current selection
+            const rangeSelections = getHalfDaysBetween(lastClickedDate, clickedSelection)
+            console.log('Range selections for partially booked:', rangeSelections)
+            
+            // Replace current selection with the range
+            setSelectedHalfDays(rangeSelections)
+            setLastClickedDate(clickedSelection)
+            setIsDragging(true)
+            setDragStart(clickedSelection)
+            return
+          }
+          
           if (isAlreadySelected) {
             // If already selected, remove this selection (deselect)
             setSelectedHalfDays(prev => prev.filter(s => 
@@ -684,14 +797,18 @@ function CabinBookingPageContent() {
                 s.date.getFullYear() === selectedMonth.getFullYear() &&
                 s.half === half)
             ))
+            // Reset lastClickedDate when deselecting
+            setLastClickedDate(null)
+            console.log('Deselected partially booked half-day, reset lastClickedDate to null')
           } else {
             // If not selected, add to existing selection (additive)
-            const selection: HalfDaySelection = { date: clickedDate, half }
-            setSelectedHalfDays(prev => [...prev, selection])
+            setSelectedHalfDays(prev => [...prev, clickedSelection])
+            setLastClickedDate(clickedSelection)
+            console.log('Selected partially booked half-day, set lastClickedDate to:', clickedSelection)
           }
 
           setIsDragging(true)
-          setDragStart({ date: clickedDate, half })
+          setDragStart(clickedSelection)
           return
         }
       }
@@ -1210,6 +1327,49 @@ function CabinBookingPageContent() {
     )
   }
 
+  // Function to format selected dates as ranges
+  const formatSelectedDatesAsRanges = (selections: HalfDaySelection[]) => {
+    if (selections.length === 0) return []
+    
+    // Sort selections by date and half
+    const sorted = [...selections].sort((a, b) => {
+      const dateCompare = a.date.getTime() - b.date.getTime()
+      if (dateCompare !== 0) return dateCompare
+      return a.half === "first" ? -1 : 1
+    })
+    
+    const ranges: { start: HalfDaySelection, end: HalfDaySelection }[] = []
+    let currentRangeStart = sorted[0]
+    let currentRangeEnd = sorted[0]
+    
+    for (let i = 1; i < sorted.length; i++) {
+      const current = sorted[i]
+      const previous = sorted[i - 1]
+      
+      // Check if current selection is consecutive to the previous one
+      const isConsecutive = 
+        (current.date.getTime() === previous.date.getTime() && 
+         previous.half === "first" && current.half === "second") ||
+        (current.date.getTime() === previous.date.getTime() + 24 * 60 * 60 * 1000 && 
+         previous.half === "second" && current.half === "first")
+      
+      if (isConsecutive) {
+        // Extend current range
+        currentRangeEnd = current
+      } else {
+        // End current range and start new one
+        ranges.push({ start: currentRangeStart, end: currentRangeEnd })
+        currentRangeStart = current
+        currentRangeEnd = current
+      }
+    }
+    
+    // Add the last range
+    ranges.push({ start: currentRangeStart, end: currentRangeEnd })
+    
+    return ranges
+  }
+
   // Loading state for cabin data
   if (cabinLoading) {
     return (
@@ -1468,72 +1628,109 @@ function CabinBookingPageContent() {
 
               <div className="space-y-4">
                 <div className="flex flex-wrap gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-green-100 dark:bg-green-900 border border-green-200 dark:border-green-700 rounded"></div>
-                    <span className="text-gray-600 dark:text-gray-300">Tilgjengelig</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-red-100 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded"></div>
-                    <span className="text-gray-600 dark:text-gray-300">Opptatt</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border border-gray-300 dark:border-gray-600 rounded relative overflow-hidden bg-white dark:bg-gray-700">
-                      <div className="absolute inset-0 bg-green-200 dark:bg-green-800" style={{ clipPath: 'polygon(0% 0%, 0% 100%, 100% 100%)' }}></div>
-                      <div className="absolute inset-0 bg-red-200 dark:bg-red-800" style={{ clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%)' }}></div>
-                    </div>
-                    <span className="text-gray-600 dark:text-gray-300">Delvis opptatt</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-blue-500 rounded"></div>
-                    <span className="text-gray-600 dark:text-gray-300">Valgt</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-gray-100 dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded"></div>
-                    <span className="text-gray-600 dark:text-gray-300">Ikke tilgjengelig</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-yellow-100 dark:bg-yellow-900 border border-yellow-200 dark:border-yellow-700 rounded"></div>
-                    <span className="text-gray-600 dark:text-gray-300">Vedlikehold</span>
-                  </div>
+                  {/* Default Legends */}
+                  {activeLegends
+                    .filter(legend => legend.isDefault)
+                    .map((legend) => {
+                      // Special handling for partially booked legend
+                      if (legend.id === 'partially_booked') {
+                        return (
+                          <div key={legend.id} className="flex items-center gap-2">
+                            <div className="w-4 h-4 border border-gray-300 dark:border-gray-600 rounded relative overflow-hidden bg-white dark:bg-gray-700">
+                              <div className="absolute inset-0 bg-green-200 dark:bg-green-800" style={{ clipPath: 'polygon(0% 0%, 0% 100%, 100% 100%)' }}></div>
+                              <div className="absolute inset-0 bg-red-200 dark:bg-red-800" style={{ clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%)' }}></div>
+                            </div>
+                            <span className="text-gray-600 dark:text-gray-300">{legend.name}</span>
+                          </div>
+                        )
+                      }
+                      
+                      return (
+                        <div key={legend.id} className="flex items-center gap-2">
+                          <div 
+                            className="w-4 h-4 rounded border" 
+                            style={{ 
+                              backgroundColor: legend.color,
+                              borderColor: legend.color
+                            }}
+                          ></div>
+                          <span className="text-gray-600 dark:text-gray-300">{legend.name}</span>
+                        </div>
+                      )
+                    })}
+                  
                   {/* Custom Legends */}
-                  {activeLegends.map((legend) => (
-                    <div key={legend.id} className="flex items-center gap-2">
-                      <div 
-                        className="w-4 h-4 rounded border opacity-75" 
-                        style={{ 
-                          backgroundColor: legend.color,
-                          borderColor: legend.color
-                        }}
-                      ></div>
-                      <span className="text-gray-600 dark:text-gray-300">{legend.name}</span>
-                    </div>
-                  ))}
+                  {activeLegends
+                    .filter(legend => !legend.isDefault)
+                    .map((legend) => (
+                      <div key={legend.id} className="flex items-center gap-2">
+                        <div 
+                          className="w-4 h-4 rounded border opacity-75" 
+                          style={{ 
+                            backgroundColor: legend.color,
+                            borderColor: legend.color
+                          }}
+                        ></div>
+                        <span className="text-gray-600 dark:text-gray-300">{legend.name}</span>
+                      </div>
+                    ))}
                 </div>
               </div>
 
               {selectedHalfDays.length > 0 && (
                 <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mt-4">
-                  <div className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">Valgte tidspunkt:</div>
-                  <div className="text-sm text-blue-700 dark:text-blue-200 space-y-1 max-h-32 overflow-y-auto">
-                    {selectedHalfDays.map((selection, index) => (
-                      <div key={index} className="flex items-center justify-between">
-                        <span>
-                          {selection.date.toLocaleDateString("nb-NO")} •{" "}
-                          {selection.half === "first" ? "00:00 - 12:00" : "12:00 - 23:59"}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => removeHalfDaySelection(selection)}
-                          className="ml-2 text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-full p-1 transition-colors"
-                          title="Fjern dette tidspunktet"
-                          disabled={submitting}
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-                          </svg>
-                        </button>
-                      </div>
-                    ))}
+                  <div className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-3">Valgte tidspunkt:</div>
+                  <div className="space-y-3 max-h-32 overflow-y-auto">
+                    {formatSelectedDatesAsRanges(selectedHalfDays).map((range, index) => {
+                      const startTime = range.start.half === "first" ? "00:00" : "12:00"
+                      const endTime = range.end.half === "first" ? "12:00" : "23:59"
+                      const isSameDate = range.start.date.getTime() === range.end.date.getTime()
+                      
+                      return (
+                        <div key={index} className="flex items-center justify-between">
+                          <div className="flex items-center gap-4 text-sm">
+                            <div>
+                              <span className="text-gray-600 dark:text-gray-400 font-medium">Start dato:</span>
+                              <div className="text-blue-700 dark:text-blue-200 font-medium">
+                                {range.start.date.toLocaleDateString("nb-NO", { 
+                                  day: "numeric", 
+                                  month: "short" 
+                                })} - {startTime}
+                              </div>
+                            </div>
+                            <div>
+                              <span className="text-gray-600 dark:text-gray-400 font-medium">Slutt dato:</span>
+                              <div className="text-blue-700 dark:text-blue-200 font-medium">
+                                {range.end.date.toLocaleDateString("nb-NO", { 
+                                  day: "numeric", 
+                                  month: "short" 
+                                })} - {endTime}
+                              </div>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              // Remove all selections in this range
+                              const rangeSelections = selectedHalfDays.filter(selection => {
+                                const selectionTime = selection.date.getTime()
+                                const startTime = range.start.date.getTime()
+                                const endTime = range.end.date.getTime()
+                                return selectionTime >= startTime && selectionTime <= endTime
+                              })
+                              rangeSelections.forEach(selection => removeHalfDaySelection(selection))
+                            }}
+                            className="ml-2 text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-full p-1 transition-colors"
+                            title="Fjern dette tidsrommet"
+                            disabled={submitting}
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                            </svg>
+                          </button>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               )}

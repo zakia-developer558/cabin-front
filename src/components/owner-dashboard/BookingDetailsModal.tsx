@@ -20,6 +20,7 @@ interface BookingDetailsModalProps {
   booking: Booking | null
   isOpen: boolean
   onClose: () => void
+  cabinSlug: string | null
 }
 
 const formatDateTime = (iso: string) => {
@@ -36,7 +37,8 @@ const formatDateTime = (iso: string) => {
 export default function BookingDetailsModal({ 
   booking, 
   isOpen, 
-  onClose
+  onClose,
+  cabinSlug
 }: BookingDetailsModalProps) {
   const [loading, setLoading] = useState<string | null>(null)
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -115,6 +117,47 @@ export default function BookingDetailsModal({
     } catch (err) {
       console.error("Error rejecting booking:", err)
       error("Nettverksfeil", "En feil oppstod under avslag av bestillingen. Sjekk tilkoblingen din.")
+    } finally {
+      setLoading(null)
+    }
+  }
+
+  const handleCancel = async () => {
+    if (!booking || !token) {
+      error("Autentiseringsfeil", "Vennligst logg inn igjen for å fortsette.")
+      return
+    }
+
+    if (!cabinSlug) {
+      error("Feil", "Hytteinformasjon mangler. Kan ikke kansellere bestillingen.")
+      return
+    }
+
+    if (!confirm("Er du sikker på at du vil kansellere denne bekreftede bestillingen?")) {
+      return
+    }
+
+    setLoading("cancel")
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/cabins/${cabinSlug}/bookings/${booking.id}/owner-cancel`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        success("Bestilling kansellert", "Den bekreftede bestillingen har blitt kansellert.")
+        onClose()
+      } else {
+        error("Kansellering feilet", data.message || "Kunne ikke kansellere bestillingen. Prøv igjen.")
+      }
+    } catch (err) {
+      console.error("Error cancelling booking:", err)
+      error("Nettverksfeil", "En feil oppstod under kansellering av bestillingen. Sjekk tilkoblingen din.")
     } finally {
       setLoading(null)
     }
@@ -239,6 +282,24 @@ export default function BookingDetailsModal({
                   <CheckCircle className="w-3 h-3" />
                 )}
                 Bekreft
+              </button>
+            </div>
+          )}
+
+          {/* Cancel Button for Confirmed Bookings */}
+          {booking.status === "Bekreftet" && (
+            <div className="flex justify-end gap-2 pt-4 mt-4 border-t border-gray-100 dark:border-gray-700">
+              <button
+                onClick={handleCancel}
+                disabled={loading === "cancel"}
+                className="flex items-center gap-1 px-3 py-1.5 text-sm text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30 border border-red-200 dark:border-red-700 rounded disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {loading === "cancel" ? (
+                  <div className="w-3 h-3 border border-red-700 dark:border-red-300 border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <XCircle className="w-3 h-3" />
+                )}
+                Kanseller bestilling
               </button>
             </div>
           )}

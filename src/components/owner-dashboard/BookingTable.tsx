@@ -137,15 +137,8 @@ export default function BookingTable({ bookings, cabinName }: BookingTableProps)
             {paginatedBookings.map((booking) => (
               <tr key={booking.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 <td className="px-4 py-4">
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 bg-gray-800 dark:bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="text-white text-sm font-medium">
-                        {booking.orderNo && typeof booking.orderNo === 'string' ? booking.orderNo.charAt(0).toUpperCase() : 'N'}
-                      </span>
-                    </div>
-                    <div className="ml-3 min-w-0">
-                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{booking.orderNo || 'N/A'}</div>
-                    </div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    {booking.orderNo || 'N/A'}
                   </div>
                 </td>
                 <td className="px-4 py-4">
@@ -252,6 +245,7 @@ export default function BookingTable({ bookings, cabinName }: BookingTableProps)
           booking={selectedBooking}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
+          cabinSlug={cabinName}
         />
       )}
     </div>

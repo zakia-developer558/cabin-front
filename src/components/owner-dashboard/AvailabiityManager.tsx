@@ -227,7 +227,7 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
             const customLegend = customLegendDates.get(dateStr)!
             
             finalDates.push({
-              id: `${dateStr}-custom`,
+              id: `${dateStr}`,
               date: dateStr,
               status: customLegend.name, // Use the legend name as status
               type: customLegend.name, // Use legend name as type instead of "custom"
@@ -323,24 +323,34 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
     try {
       const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/cabins/${selectedCabin}/block`
 
+      console.log("🎯 Selected availability type:", availabilityType)
+      console.log("🔍 Checking if availabilityType === 'available':", availabilityType === "available")
+
       if (availabilityType === "available") {
+        console.log("🔓 Unblocking dates - sending unblock action")
         // Unblock selected dates individually
-        const requests = selectedDates.map((date) =>
-          fetch(url, {
+        const requests = selectedDates.map((date) => {
+          const payload = {
+            action: "unblock",
+            date,
+            half: "FULL",
+          }
+          console.log("🚀 Sending unblock payload for date", date, ":", payload)
+          
+          return fetch(url, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({
-              action: "unblock",
-              date,
-              half: "FULL",
-            }),
+            body: JSON.stringify(payload),
           })
-        )
-        await Promise.all(requests)
+        })
+        
+        const responses = await Promise.all(requests)
+        console.log("📡 Unblock responses:", responses.map(r => r.status))
       } else {
+        console.log("🔒 Blocking dates - sending block action")
         // Block selected dates
         const payload = {
           action: "block",
@@ -348,8 +358,7 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
           reason: availabilityType, // Use the selected availability type directly as the reason
         }
 
-        console.log("🚀 Sending payload:", payload) // Debug log to see what's being sent
-        console.log("🎯 Selected availability type (legend ID):", availabilityType)
+        console.log("🚀 Sending block payload:", payload) // Debug log to see what's being sent
 
         const response = await fetch(url, {
           method: "POST",
@@ -361,7 +370,7 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
         })
 
         const result = await response.json()
-        console.log("📡 API response:", result) // Debug log to see the response
+        console.log("📡 Block API response:", result) // Debug log to see the response
       }
 
       setSelectedDates([])
@@ -387,8 +396,12 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
               onChange={(e) => setAvailabilityType(e.target.value)}
               className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 min-w-0 flex-1 sm:flex-none sm:min-w-[200px] bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
             >
+              {/* Always include the "available" option for unblocking */}
+              <option key="available" value="available">
+                Sett som Tilgjengelig
+              </option>
               {activeLegends
-                .filter(legend => legend.id !== 'booked' && legend.id !== 'partially_booked')
+                .filter(legend => legend.id !== 'booked' && legend.id !== 'partially_booked' && legend.id !== 'available')
                 .map(legend => (
                   <option key={legend.id} value={legend.id}>
                     Sett som {legend.name}
