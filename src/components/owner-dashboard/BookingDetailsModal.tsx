@@ -21,6 +21,7 @@ interface BookingDetailsModalProps {
   isOpen: boolean
   onClose: () => void
   cabinSlug: string | null
+  onBookingUpdate?: () => void // Callback to refresh booking data after actions
 }
 
 const formatDateTime = (iso: string) => {
@@ -38,7 +39,8 @@ export default function BookingDetailsModal({
   booking, 
   isOpen, 
   onClose,
-  cabinSlug
+  cabinSlug,
+  onBookingUpdate
 }: BookingDetailsModalProps) {
   const [loading, setLoading] = useState<string | null>(null)
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -74,6 +76,10 @@ export default function BookingDetailsModal({
 
       if (response.ok && data.success) {
         success("Bestilling bekreftet!", "Bestillingen har blitt godkjent.")
+        // Trigger refresh of booking data
+        if (onBookingUpdate) {
+          onBookingUpdate()
+        }
         onClose()
       } else {
         error("Bekreftelse feilet", data.message || "Kunne ikke bekrefte bestillingen. Prøv igjen.")
@@ -110,6 +116,10 @@ export default function BookingDetailsModal({
 
       if (response.ok && data.success) {
         success("Bestilling avslått", "Bestillingen har blitt avslått.")
+        // Trigger refresh of booking data
+        if (onBookingUpdate) {
+          onBookingUpdate()
+        }
         onClose()
       } else {
         error("Avslag feilet", data.message || "Kunne ikke avslå bestillingen. Prøv igjen.")
@@ -151,6 +161,10 @@ export default function BookingDetailsModal({
 
       if (response.ok && data.success) {
         success("Bestilling kansellert", "Den bekreftede bestillingen har blitt kansellert.")
+        // Trigger refresh of booking data
+        if (onBookingUpdate) {
+          onBookingUpdate()
+        }
         onClose()
       } else {
         error("Kansellering feilet", data.message || "Kunne ikke kansellere bestillingen. Prøv igjen.")

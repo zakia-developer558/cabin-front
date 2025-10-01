@@ -5,6 +5,7 @@ import { useLegends } from "../../contexts/LegendsContext"
 
 interface CalendarProps {
   selectedCabin: string | null
+  onRefreshRequest?: (refreshFn: () => void) => void // Callback to receive refresh function
 }
 
 interface CalendarItem {
@@ -43,7 +44,7 @@ interface CalendarData {
   month: CalendarMonth
 }
 
-export default function Calendar({ selectedCabin }: CalendarProps) {
+export default function Calendar({ selectedCabin, onRefreshRequest }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date(2025, 8)) // September 2025
   const [calendarData, setCalendarData] = useState<CalendarData | null>(null)
   const [loading, setLoading] = useState(false)
@@ -90,6 +91,19 @@ export default function Calendar({ selectedCabin }: CalendarProps) {
   useEffect(() => {
     fetchCalendarData(currentDate.getFullYear(), currentDate.getMonth())
   }, [selectedCabin, currentDate, fetchCalendarData])
+
+  // Add effect to handle external refresh requests
+  useEffect(() => {
+    if (onRefreshRequest) {
+      // Expose the refresh function to parent component
+      const refreshCalendar = () => {
+        fetchCalendarData(currentDate.getFullYear(), currentDate.getMonth())
+      }
+      
+      // Call the callback with the refresh function
+      onRefreshRequest(refreshCalendar)
+    }
+  }, [onRefreshRequest, fetchCalendarData, currentDate])
 
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear()

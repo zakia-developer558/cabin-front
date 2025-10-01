@@ -7,6 +7,7 @@ import type { Legend } from "../../contexts/LegendsContext"
 
 interface AvailabilityManagerProps {
   selectedCabin: string | null
+  onCalendarRefresh?: () => void // Callback to refresh calendar after availability updates
 }
 
 interface AvailabilitySetting {
@@ -31,7 +32,7 @@ interface BlockRange {
   reason?: string
 }
 
-export default function AvailabilityManager({ selectedCabin }: AvailabilityManagerProps) {
+export default function AvailabilityManager({ selectedCabin, onCalendarRefresh }: AvailabilityManagerProps) {
   const [selectedDates, setSelectedDates] = useState<string[]>([])
   const [availabilityType, setAvailabilityType] = useState<string>("available")
   const [availabilitySettings, setAvailabilitySettings] = useState<AvailabilitySetting[]>([])
@@ -380,6 +381,11 @@ export default function AvailabilityManager({ selectedCabin }: AvailabilityManag
       
       // Instead, manually refresh the availability data
       await fetchAvailability()
+      
+      // Refresh calendar component if callback is provided
+      if (onCalendarRefresh) {
+        onCalendarRefresh()
+      }
     } catch (error) {
       console.error("Bulk update error:", error)
     }

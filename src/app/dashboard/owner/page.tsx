@@ -41,6 +41,7 @@ export default function OwnerDashboard() {
   const [cabinsLoading, setCabinsLoading] = useState(true)
   const [isAddCabinModalOpen, setIsAddCabinModalOpen] = useState(false)
   const [isUpdateCabinModalOpen, setIsUpdateCabinModalOpen] = useState(false)
+  const [calendarRefreshFn, setCalendarRefreshFn] = useState<(() => void) | null>(null)
 
   // Get token on client side only
   useEffect(() => {
@@ -283,12 +284,12 @@ export default function OwnerDashboard() {
                 )}
               </div>
 
-              <BookingTable bookings={bookings} cabinName={selectedCabin} />
+              <BookingTable bookings={bookings} cabinName={selectedCabin} onBookingUpdate={fetchBookings} />
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-              <Calendar selectedCabin={selectedCabin} />
-              <AvailabilityManager selectedCabin={selectedCabin} />
+              <Calendar selectedCabin={selectedCabin} onRefreshRequest={setCalendarRefreshFn} />
+              <AvailabilityManager selectedCabin={selectedCabin} onCalendarRefresh={calendarRefreshFn || undefined} />
               <LegendManager selectedCabin={selectedCabin} />
             </div>
           </main>

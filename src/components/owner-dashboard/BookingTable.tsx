@@ -31,9 +31,10 @@ const formatDateTime = (iso: string) => {
 interface BookingTableProps {
   bookings: Booking[]
   cabinName: string | null
+  onBookingUpdate?: () => void // Callback to refresh booking data after actions
 }
 
-export default function BookingTable({ bookings, cabinName }: BookingTableProps) {
+export default function BookingTable({ bookings, cabinName, onBookingUpdate }: BookingTableProps) {
   const [activeTab, setActiveTab] = useState<"all" | "confirmed" | "pending" | "rejected">("all")
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
@@ -246,6 +247,7 @@ export default function BookingTable({ bookings, cabinName }: BookingTableProps)
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           cabinSlug={cabinName}
+          onBookingUpdate={onBookingUpdate}
         />
       )}
     </div>
