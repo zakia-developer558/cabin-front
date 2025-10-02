@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
+import { useToast } from "../../../hooks/useToast"
+import { ToastContainer } from "../../../components/ui/Toast"
 import { LegendsProvider } from "../../../contexts/LegendsContext"
 import DashboardHeader from "../../../components/owner-dashboard/DashboardHeader"
 import Sidebar from "../../../components/owner-dashboard/Sidebar"
@@ -38,6 +40,7 @@ interface BackendBooking {
 export default function OwnerDashboard() {
   const router = useRouter()
   const [refreshKey, setRefreshKey] = useState(0)
+  const { toasts, success, error, removeToast } = useToast()
   const [selectedCabin, setSelectedCabin] = useState<string | null>(null) // will be set to first available cabin
   const [bookings, setBookings] = useState([])
   const [token, setToken] = useState<string | null>(null)
@@ -127,12 +130,12 @@ export default function OwnerDashboard() {
   const handleUpdateCabin = async (cabinData: CabinData) => {
     try {
       if (!token) {
-        alert("Unauthorized: No token found")
+        error("Unauthorized", "No token found")
         return
       }
 
       if (!selectedCabin) {
-        alert("No cabin selected")
+        error("No cabin selected")
         return
       }
 
@@ -154,13 +157,13 @@ export default function OwnerDashboard() {
         await fetchCabins()
         // Close the modal
         setIsUpdateCabinModalOpen(false)
-        alert("Hytta ble oppdatert!")
+        success("Hytta ble oppdatert!")
       } else {
-        alert("Kunne ikke oppdatere hytta")
+        error("Kunne ikke oppdatere hytta")
       }
     } catch (err) {
       console.error("Error updating cabin:", err)
-      alert("Noe gikk galt under oppdateringen av hytta")
+      error("Noe gikk galt under oppdateringen av hytta")
     }
   }
 
@@ -313,6 +316,8 @@ export default function OwnerDashboard() {
             </div>
           </main>
         </div>
+        {/* Toasts */}
+        <ToastContainer toasts={toasts} onClose={removeToast} />
         
         {/* Add Cabin Modal */}
         <AddCabinModal
