@@ -51,6 +51,7 @@ export default function UpdateCabinModal({
   const [loading, setLoading] = useState(false)
 
   // Fetch cabin data when modal opens
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isOpen && cabinSlug && !initialData) {
       fetchCabinData()

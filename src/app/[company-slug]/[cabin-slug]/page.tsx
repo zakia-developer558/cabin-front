@@ -1684,7 +1684,6 @@ function CabinBookingPageContent() {
                     {formatSelectedDatesAsRanges(selectedHalfDays).map((range, index) => {
                       const startTime = range.start.half === "first" ? "00:00" : "12:00"
                       const endTime = range.end.half === "first" ? "12:00" : "23:59"
-                      const isSameDate = range.start.date.getTime() === range.end.date.getTime()
                       
                       return (
                         <div key={index} className="flex items-center justify-between">

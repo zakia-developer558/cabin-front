@@ -1,5 +1,5 @@
 "use client";
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent, useEffect, Suspense } from "react";
 import Link from "next/link";
 import Header from "../../components/general/header";
 import { useSearchParams } from "next/navigation";
@@ -26,7 +26,7 @@ interface LoginResponse {
   message?: string;
 }
 
-export default function LoginPage() {
+function LoginContent() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -58,21 +58,23 @@ export default function LoginPage() {
     }
     setForgotLoading(true);
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
-      const res = await fetch(`${backendUrl}/v1/auth/forgot-password`, {
+      //const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/auth/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: emailTrimmed })
       });
-      const data = await res.json().catch(() => ({}));
+      type ApiResponse = { message?: string }
+      const data: ApiResponse = await res.json().catch(() => ({} as ApiResponse));
       if (!res.ok) {
-        throw new Error((data as any)?.message || "Kunne ikke sende e-post");
+        throw new Error(data.message || "Kunne ikke sende e-post");
       }
       success("E-post sendt", "Sjekk innboksen for videre instruksjoner.");
       setForgotOpen(false);
       setForgotEmail("");
-    } catch (err: any) {
-      toastError("Feil ved forespørsel", err?.message || "Prøv igjen senere.");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Prøv igjen senere.";
+      toastError("Feil ved forespørsel", msg);
     } finally {
       setForgotLoading(false);
     }
@@ -331,5 +333,13 @@ export default function LoginPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
   );
 }

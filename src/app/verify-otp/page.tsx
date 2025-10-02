@@ -1,11 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useToast } from "../../hooks/useToast"
 import { ToastContainer } from "../../components/ui/Toast"
 
-export default function VerifyOtpPage() {
+function VerifyOtpContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { toasts, success, error, removeToast } = useToast()
@@ -56,8 +56,9 @@ export default function VerifyOtpPage() {
       }
       // Redirect to login page after successful verification with a flag
       router.push("/login?verified=1")
-    } catch (err: any) {
-      error("Verifisering feilet", err?.message || "Prøv igjen")
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Prøv igjen"
+      error("Verifisering feilet", msg)
     } finally {
       setSubmitting(false)
     }
@@ -106,5 +107,13 @@ export default function VerifyOtpPage() {
       </div>
       <ToastContainer toasts={toasts} onClose={removeToast} />
     </div>
+  )
+}
+
+export default function VerifyOtpPage() {
+  return (
+    <Suspense fallback={null}>
+      <VerifyOtpContent />
+    </Suspense>
   )
 }

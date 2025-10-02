@@ -227,7 +227,8 @@ export function LegendsProvider({ children }: LegendsProviderProps) {
 
     try {
       // Remove id from the payload as it should not be sent to the backend
-      const { id: _, ...updatePayload } = updates
+      const { id: _id, ...updatePayload } = updates
+      void _id
       
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/legends/${id}`, {
         method: 'PUT',

@@ -261,18 +261,7 @@ export default function BookingCalendar({
     return "available"
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "booked":
-        return "bg-gray-300"
-      case "maintenance":
-        return "bg-gray-200"
-      case "unavailable":
-        return "bg-gray-100"
-      default:
-        return "bg-white"
-    }
-  }
+  // Removed unused getStatusColor to satisfy ESLint no-unused-vars
 
   const navigateMonth = (direction: 'prev' | 'next') => {
     const newDate = new Date(currentDate)

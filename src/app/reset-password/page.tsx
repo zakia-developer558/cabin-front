@@ -1,11 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useToast } from "../../hooks/useToast"
 import { ToastContainer } from "../../components/ui/Toast"
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { toasts, success, error, removeToast } = useToast()
@@ -43,15 +43,17 @@ export default function ResetPasswordPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, password })
       })
-      const data = await res.json().catch(() => ({}))
+      type ApiResponse = { message?: string }
+      const data: ApiResponse = await res.json().catch(() => ({} as ApiResponse))
       if (!res.ok) {
-        throw new Error((data as any)?.message || "Tilbakestilling feilet")
+        throw new Error(data.message || "Tilbakestilling feilet")
       }
       success("Passord tilbakestilt", "Vennligst logg inn med nytt passord")
       if (typeof window !== "undefined") localStorage.removeItem("resetToken")
       router.push("/login")
-    } catch (err: any) {
-      error("Feil", err?.message || "Prøv igjen senere")
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Prøv igjen senere"
+      error("Feil", msg)
     } finally {
       setSubmitting(false)
     }
@@ -97,5 +99,13 @@ export default function ResetPasswordPage() {
       </div>
       <ToastContainer toasts={toasts} onClose={removeToast} />
     </div>
+  )
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={null}>
+      <ResetPasswordContent />
+    </Suspense>
   )
 }
