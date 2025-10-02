@@ -73,7 +73,7 @@ export default function UpdateCabinModal({
         return
       }
 
-      const response = await fetch(`http://localhost:5000/v1/cabins/${cabinSlug}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/cabins/${cabinSlug}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -101,8 +101,8 @@ export default function UpdateCabinModal({
         }
       }
     } catch (error) {
-      console.error("Error fetching cabin data:", error)
-      alert("Failed to fetch cabin data. Please try again.")
+      console.error("Feil ved henting av kabindata:", error)
+      alert("Kunne ikke hente hyttedata. Prøv på nytt.")
     } finally {
       setLoading(false)
     }
@@ -145,8 +145,8 @@ export default function UpdateCabinModal({
       setImagePreview(null)
       onClose()
     } catch (error) {
-      console.error("Error submitting form:", error)
-      alert("Failed to upload image. Please try again.")
+      console.error("Feil ved innsending av skjema:", error)
+      alert("Kunne ikke laste opp bildet. Prøv på nytt.")
     } finally {
       setUploading(false)
     }

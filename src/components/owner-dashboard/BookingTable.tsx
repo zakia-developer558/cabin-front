@@ -12,6 +12,7 @@ interface Booking {
   name: string
   email: string
   address: string
+  affiliation?: string
   status: "Venter" | "Bekreftet" | "Avlyst"
   checkIn: string
   checkOut: string

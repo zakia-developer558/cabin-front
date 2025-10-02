@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import { LegendsProvider } from "../../../contexts/LegendsContext"
 import DashboardHeader from "../../../components/owner-dashboard/DashboardHeader"
 import Sidebar from "../../../components/owner-dashboard/Sidebar"
@@ -28,12 +29,15 @@ interface BackendBooking {
   guestEmail: string
   guestAddress: string
   guestCity: string
+  guestAffiliation?: string
   status: 'pending' | 'approved' | 'confirmed' | 'cancelled'
   startDateTime: string
   endDateTime: string
 }
 
 export default function OwnerDashboard() {
+  const router = useRouter()
+  const [refreshKey, setRefreshKey] = useState(0)
   const [selectedCabin, setSelectedCabin] = useState<string | null>(null) // will be set to first available cabin
   const [bookings, setBookings] = useState([])
   const [token, setToken] = useState<string | null>(null)
@@ -178,6 +182,7 @@ export default function OwnerDashboard() {
           name: b.guestName,
           email: b.guestEmail,
           address: `${b.guestAddress}, ${b.guestCity}`,
+          affiliation: b.guestAffiliation || "",
           status:
             b.status === "pending"
               ? "Venter"
@@ -198,6 +203,20 @@ export default function OwnerDashboard() {
   useEffect(() => {
     fetchBookings()
   }, [fetchBookings])
+
+  // Centralized dashboard refresh: refetch bookings and refresh calendar
+  const refreshDashboard = useCallback(() => {
+    // Refetch bookings table
+    fetchBookings()
+    // Refresh calendar if available
+    if (calendarRefreshFn) {
+      calendarRefreshFn()
+    }
+    // Ensure full route data revalidation for any server components
+    router.refresh()
+    // Bump refresh key to signal all child components to refetch
+    setRefreshKey((k) => k + 1)
+  }, [fetchBookings, calendarRefreshFn, router])
 
   // Show loading until we have the token and cabins are loaded
   if (token === null || cabinsLoading) {
@@ -284,12 +303,12 @@ export default function OwnerDashboard() {
                 )}
               </div>
 
-              <BookingTable bookings={bookings} cabinName={selectedCabin} onBookingUpdate={fetchBookings} />
+              <BookingTable bookings={bookings} cabinName={selectedCabin} onBookingUpdate={refreshDashboard} />
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-              <Calendar selectedCabin={selectedCabin} onRefreshRequest={setCalendarRefreshFn} />
-              <AvailabilityManager selectedCabin={selectedCabin} onCalendarRefresh={calendarRefreshFn || undefined} />
+              <Calendar selectedCabin={selectedCabin} onRefreshRequest={setCalendarRefreshFn} refreshKey={refreshKey} />
+              <AvailabilityManager selectedCabin={selectedCabin} onCalendarRefresh={refreshDashboard} refreshKey={refreshKey} />
               <LegendManager selectedCabin={selectedCabin} />
             </div>
           </main>

@@ -6,6 +6,7 @@ import { useLegends } from "../../contexts/LegendsContext"
 interface CalendarProps {
   selectedCabin: string | null
   onRefreshRequest?: (refreshFn: () => void) => void // Callback to receive refresh function
+  refreshKey?: number
 }
 
 interface CalendarItem {
@@ -44,7 +45,7 @@ interface CalendarData {
   month: CalendarMonth
 }
 
-export default function Calendar({ selectedCabin, onRefreshRequest }: CalendarProps) {
+export default function Calendar({ selectedCabin, onRefreshRequest, refreshKey }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date(2025, 8)) // September 2025
   const [calendarData, setCalendarData] = useState<CalendarData | null>(null)
   const [loading, setLoading] = useState(false)
@@ -92,6 +93,13 @@ export default function Calendar({ selectedCabin, onRefreshRequest }: CalendarPr
     fetchCalendarData(currentDate.getFullYear(), currentDate.getMonth())
   }, [selectedCabin, currentDate, fetchCalendarData])
 
+  // Force refetch when parent refresh key changes
+  useEffect(() => {
+    if (refreshKey !== undefined) {
+      fetchCalendarData(currentDate.getFullYear(), currentDate.getMonth())
+    }
+  }, [refreshKey, fetchCalendarData, currentDate])
+
   // Add effect to handle external refresh requests
   useEffect(() => {
     if (onRefreshRequest) {
@@ -130,8 +138,8 @@ const isPartialBooking = (dayData : CalendarDay) => {
   if (!dayData.items || dayData.items.length === 0) return false
 
   for (const item of dayData.items) {
-    // Only consider approved bookings for visual display
-    if (item.type === 'booking' && item.status === 'approved') {
+    // Consider approved and confirmed bookings for visual display
+    if (item.type === 'booking' && (item.status === 'approved' || item.status === 'confirmed')) {
       // Parse the UTC datetime strings
       const startDate = new Date(item.startDateTime)
       const endDate = new Date(item.endDateTime)
@@ -175,8 +183,8 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
   let secondHalfBooked = false
 
   for (const item of dayData.items) {
-    // Only consider approved bookings as "booked" for visual display
-    if (item.type === 'booking' && item.status === 'approved') {
+    // Consider approved and confirmed bookings as "booked" for visual display
+    if (item.type === 'booking' && (item.status === 'approved' || item.status === 'confirmed')) {
       // Parse the UTC datetime strings
       const startDate = new Date(item.startDateTime)
       const endDate = new Date(item.endDateTime)
@@ -246,11 +254,11 @@ const getBookedHalves = (dayData: CalendarDay): { first: boolean, second: boolea
         }
       }
 
-      // Check if date has approved bookings for visual display
+      // Check if date has booked items to determine display
       if (dayData.status === 'booked') {
-        // Check if there are any approved bookings
+        // Check if there are any approved or confirmed bookings
         const hasApprovedBookings = dayData.items?.some(item => 
-          item.type === 'booking' && item.status === 'approved'
+          item.type === 'booking' && (item.status === 'approved' || item.status === 'confirmed')
         )
         
         if (hasApprovedBookings) {

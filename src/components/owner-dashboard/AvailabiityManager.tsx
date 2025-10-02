@@ -8,6 +8,7 @@ import type { Legend } from "../../contexts/LegendsContext"
 interface AvailabilityManagerProps {
   selectedCabin: string | null
   onCalendarRefresh?: () => void // Callback to refresh calendar after availability updates
+  refreshKey?: number
 }
 
 interface AvailabilitySetting {
@@ -32,7 +33,7 @@ interface BlockRange {
   reason?: string
 }
 
-export default function AvailabilityManager({ selectedCabin, onCalendarRefresh }: AvailabilityManagerProps) {
+export default function AvailabilityManager({ selectedCabin, onCalendarRefresh, refreshKey }: AvailabilityManagerProps) {
   const [selectedDates, setSelectedDates] = useState<string[]>([])
   const [availabilityType, setAvailabilityType] = useState<string>("available")
   const [availabilitySettings, setAvailabilitySettings] = useState<AvailabilitySetting[]>([])
@@ -283,6 +284,13 @@ export default function AvailabilityManager({ selectedCabin, onCalendarRefresh }
       fetchAvailability()
     }
   }, [fetchAvailability, legendsLoading, legends.length])
+
+  // Force refetch when parent refresh key changes
+  useEffect(() => {
+    if (refreshKey !== undefined) {
+      fetchAvailability()
+    }
+  }, [refreshKey, fetchAvailability])
 
   const getStatusColor = (status: string, legendData?: Legend) => {
     // If we have legendData (for custom legends), use its colors

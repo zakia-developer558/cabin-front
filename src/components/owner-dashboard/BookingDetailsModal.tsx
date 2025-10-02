@@ -11,6 +11,7 @@ interface Booking {
   name: string
   email: string
   address: string
+  affiliation?: string
   status: "Venter" | "Bekreftet" | "Avlyst"
   checkIn: string
   checkOut: string
@@ -214,6 +215,10 @@ export default function BookingDetailsModal({
                     <span className="ml-2 text-gray-900 dark:text-gray-100">{booking.email}</span>
                   </div>
                   <div>
+                    <span className="text-gray-500 dark:text-gray-400">Affiliation:</span>
+                    <span className="ml-2 text-gray-900 dark:text-gray-100">{booking.affiliation || 'N/A'}</span>
+                  </div>
+                  <div>
                     <span className="text-gray-500 dark:text-gray-400">Adresse:</span>
                     <span className="ml-2 text-gray-900 dark:text-gray-100">{booking.address}</span>
                   </div>
@@ -230,16 +235,6 @@ export default function BookingDetailsModal({
                   <div>
                     <span className="text-gray-500 dark:text-gray-400">Utsjekking:</span>
                     <span className="ml-2 text-gray-900 dark:text-gray-100">{formatDateTime(booking.checkOut)}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-500 dark:text-gray-400">Status:</span>
-                    <span className={`ml-2 px-2 py-0.5 text-xs rounded ${
-                      booking.status === "Bekreftet" ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300" :
-                      booking.status === "Venter" ? "bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300" :
-                      "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300"
-                    }`}>
-                      {booking.status}
-                    </span>
                   </div>
                   <div>
                     <span className="text-gray-500 dark:text-gray-400">Status:</span>

@@ -167,82 +167,67 @@ export default function BookingCalendar({
   // Get the booking display type based on the current booking times
   const getCurrentBookingDisplayType = (day: number | null) => {
     if (!day || !isCurrentBookingDate(day)) return null
-    
+
     // Parse dates as UTC to match API response format
     const checkInDate = new Date(booking.checkIn)
     const checkOutDate = new Date(booking.checkOut)
-    
-    // Get the time components in UTC
+
+    // Time components in UTC
     const checkInHour = checkInDate.getUTCHours()
     const checkInMinutes = checkInDate.getUTCMinutes()
     const checkOutHour = checkOutDate.getUTCHours()
     const checkOutMinutes = checkOutDate.getUTCMinutes()
-    
-    // Set dates to start of day for comparison (UTC)
-    const checkInStart = new Date(checkInDate)
-    checkInStart.setUTCHours(0, 0, 0, 0)
-    const checkOutStart = new Date(checkOutDate)
-    checkOutStart.setUTCHours(0, 0, 0, 0)
-    
-    // Check if it's a single-day booking
-    if (checkInStart.getTime() === checkOutStart.getTime()) {
-      // Check if it's a full day booking (00:00 to 23:59)
-      if (checkInHour === 0 && checkInMinutes === 0 && 
-          checkOutHour === 23 && checkOutMinutes >= 59) {
+
+    // Compare by calendar day using UTC Y/M/D to avoid timezone mismatches
+    const dayY = currentDate.getFullYear()
+    const dayM = currentDate.getMonth() // 0-indexed
+    const dayD = day
+    const isCheckInDay = (
+      checkInDate.getUTCFullYear() === dayY &&
+      checkInDate.getUTCMonth() === dayM &&
+      checkInDate.getUTCDate() === dayD
+    )
+    const isCheckOutDay = (
+      checkOutDate.getUTCFullYear() === dayY &&
+      checkOutDate.getUTCMonth() === dayM &&
+      checkOutDate.getUTCDate() === dayD
+    )
+
+    // Single-day booking
+    const isSingleDay = (
+      checkInDate.getUTCFullYear() === checkOutDate.getUTCFullYear() &&
+      checkInDate.getUTCMonth() === checkOutDate.getUTCMonth() &&
+      checkInDate.getUTCDate() === checkOutDate.getUTCDate()
+    )
+
+    if (isSingleDay) {
+      // Full-day booking (00:00 → 23:59)
+      if (checkInHour === 0 && checkInMinutes === 0 && checkOutHour === 23 && checkOutMinutes >= 59) {
         return 'full-day'
       }
-      
-      // Check if it's a long booking (more than 12 hours)
+      // Duration >= 12h considered full day
       const totalMinutes = (checkOutHour * 60 + checkOutMinutes) - (checkInHour * 60 + checkInMinutes)
-      if (totalMinutes >= 12 * 60) {
-        return 'full-day'
-      }
-      
-      // Morning booking (ends before or at 12:00)
-      if (checkOutHour <= 12) {
-        return 'first-half'
-      }
-      
-      // Afternoon booking (starts at or after 12:00)
-      if (checkInHour >= 12) {
-        return 'second-half'
-      }
-      
-      // Default to full day
+      if (totalMinutes >= 12 * 60) return 'full-day'
+      // Otherwise decide by times
+      if (checkOutHour <= 12) return 'first-half'
+      if (checkInHour >= 12) return 'second-half'
       return 'full-day'
     }
-    
-    // For multi-day bookings, determine based on which day this is
-    const year = currentDate.getFullYear()
-    const month = currentDate.getMonth()
-    const dayDate = new Date(year, month, day)
-    dayDate.setHours(0, 0, 0, 0)
-    
-    // Check if this is the check-in day
-    if (dayDate.getTime() === checkInStart.getTime()) {
-      // For check-in day, show based on check-in time
-      if (checkInHour === 0 && checkInMinutes === 0) {
-        return 'full-day'  // Full day if starts at midnight
-      } else if (checkInHour >= 12) {
-        return 'second-half'  // Afternoon check-in
-      } else {
-        return 'first-half'   // Morning check-in
-      }
+
+    // Multi-day booking
+    if (isCheckInDay) {
+      if (checkInHour === 0 && checkInMinutes === 0) return 'full-day'
+      if (checkInHour >= 12) return 'second-half'
+      return 'first-half'
     }
-    
-    // Check if this is the check-out day
-    if (dayDate.getTime() === checkOutStart.getTime()) {
-      // For check-out day, show based on check-out time
-      if (checkOutHour === 23 && checkOutMinutes >= 59) {
-        return 'full-day'  // Full day if ends at 23:59
-      } else if (checkOutHour <= 12) {
-        return 'first-half'   // Morning check-out
-      } else {
-        return 'second-half'  // Afternoon check-out
-      }
+
+    if (isCheckOutDay) {
+      if (checkOutHour === 23 && checkOutMinutes >= 59) return 'full-day'
+      if (checkOutHour <= 12) return 'first-half'
+      return 'second-half'
     }
-    
-    // For days in between check-in and check-out, it's a full day
+
+    // Days between are full-day
     return 'full-day'
   }
 
