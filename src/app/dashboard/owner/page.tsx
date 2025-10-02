@@ -154,13 +154,13 @@ export default function OwnerDashboard() {
         await fetchCabins()
         // Close the modal
         setIsUpdateCabinModalOpen(false)
-        alert("Cabin updated successfully!")
+        alert("Hytta ble oppdatert!")
       } else {
-        alert("Failed to update cabin")
+        alert("Kunne ikke oppdatere hytta")
       }
     } catch (err) {
       console.error("Error updating cabin:", err)
-      alert("Something went wrong while updating the cabin")
+      alert("Noe gikk galt under oppdateringen av hytta")
     }
   }
 
