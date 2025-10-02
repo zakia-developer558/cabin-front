@@ -215,7 +215,7 @@ export default function BookingDetailsModal({
                     <span className="ml-2 text-gray-900 dark:text-gray-100">{booking.email}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500 dark:text-gray-400">Affiliation:</span>
+                    <span className="text-gray-500 dark:text-gray-400">Tilhørighet:</span>
                     <span className="ml-2 text-gray-900 dark:text-gray-100">{booking.affiliation || 'N/A'}</span>
                   </div>
                   <div>
