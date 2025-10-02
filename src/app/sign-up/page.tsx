@@ -1,11 +1,13 @@
 "use client"
 import Header from "../../components/general/header" 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useToast } from "../../hooks/useToast"
 import { ToastContainer } from "../../components/ui/Toast"
 
 export default function SignupPage() {
+  const router = useRouter()
   const [userType] = useState<"user" | "owner">("owner")
   const [formData, setFormData] = useState({
     firstName: "",
@@ -90,6 +92,13 @@ export default function SignupPage() {
       }
 
       success("Registrering vellykket!", "Konto opprettet! Du kan nå logge inn med dine nye legitimasjoner.")
+      // Persist email so OTP page can prefill
+      if (typeof window !== "undefined") {
+        localStorage.setItem("pendingEmail", formData.email)
+      }
+      // Navigate to OTP verification page with email
+      router.push(`/verify-otp?email=${encodeURIComponent(formData.email)}`)
+      // Optionally clear form after navigation
       setFormData({
         firstName: "",
         lastName: "",
@@ -98,8 +107,7 @@ export default function SignupPage() {
         companyName: ""
       })
       
-      // Optionally redirect to login page after successful registration
-      // window.location.href = "/login"
+      // OTP flow handles post-registration routing
       
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : "Noe gikk galt. Vennligst prøv igjen."
