@@ -372,10 +372,7 @@ export default function BookingCalendar({
             <div className="w-4 h-4 bg-red-500 rounded"></div>
             <span>Gjeldende</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
-            <span>Opptatt</span>
-          </div>
+    
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded"></div>
             <span>Ledig</span>
