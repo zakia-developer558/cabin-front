@@ -136,7 +136,7 @@ export default function OwnerDashboard() {
         return
       }
 
-      const response = await fetch(`http://localhost:5000/v1/cabins/update/${selectedCabin}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/cabins/update/${selectedCabin}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
