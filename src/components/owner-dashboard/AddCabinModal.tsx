@@ -17,6 +17,7 @@ export interface CabinData {
   halfdayAvailability: boolean
   image?: string
   color: string
+  affiliations: string[]
 }
 
 interface AddCabinModalProps {
@@ -37,10 +38,12 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
     halfdayAvailability: false,
     image: "",
     color: "#4ECDC4",
+    affiliations: [],
   })
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
+  const [newAffiliation, setNewAffiliation] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -74,9 +77,11 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
         halfdayAvailability: false,
         image: "",
         color: "#4ECDC4",
+        affiliations: [],
       })
       setSelectedImage(null)
       setImagePreview(null)
+      setNewAffiliation("")
       onClose()
     } catch (error) {
       console.error("Error submitting form:", error)
@@ -93,6 +98,30 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
       ...prev,
       [name]: target.type === "checkbox" ? target.checked : value,
     }))
+  }
+
+  const addAffiliation = () => {
+    if (newAffiliation.trim() && !formData.affiliations.includes(newAffiliation.trim())) {
+      setFormData((prev) => ({
+        ...prev,
+        affiliations: [...prev.affiliations, newAffiliation.trim()],
+      }))
+      setNewAffiliation("")
+    }
+  }
+
+  const removeAffiliation = (affiliationToRemove: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      affiliations: prev.affiliations.filter(affiliation => affiliation !== affiliationToRemove),
+    }))
+  }
+
+  const handleAffiliationKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      addAffiliation()
+    }
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -237,6 +266,50 @@ export default function AddCabinModal({ isOpen, onClose, onSubmit }: AddCabinMod
               className="mr-2 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 dark:border-gray-600 rounded"
             />
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Halvdags tilgjengelighet</label>
+          </div>
+
+          {/* Affiliations Section */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tilknytninger</label>
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                value={newAffiliation}
+                onChange={(e) => setNewAffiliation(e.target.value)}
+                onKeyPress={handleAffiliationKeyPress}
+                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                placeholder="Legg til tilknytning (f.eks. Acme AS)"
+              />
+              <button
+                type="button"
+                onClick={addAffiliation}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!newAffiliation.trim()}
+              >
+                Legg til
+              </button>
+            </div>
+            
+            {/* Display affiliations as tags */}
+            {formData.affiliations.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {formData.affiliations.map((affiliation, index) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
+                  >
+                    {affiliation}
+                    <button
+                      type="button"
+                      onClick={() => removeAffiliation(affiliation)}
+                      className="ml-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200 transition-colors"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Color Selection */}

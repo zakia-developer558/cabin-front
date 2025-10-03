@@ -1,5 +1,6 @@
 // components/Header.jsx
 import Link from 'next/link'
+import ThemeSwitcher from '../ui/ThemeSwitcher'
 
 export default function Header() {
   return (
@@ -10,7 +11,7 @@ export default function Header() {
           <Link href="/" className="hover:text-gray-300 dark:hover:text-gray-400 transition-colors">
             Hjem
           </Link>
-      
+          <ThemeSwitcher />
         </nav>
       </div>
     </header>

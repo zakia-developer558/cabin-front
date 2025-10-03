@@ -136,11 +136,11 @@ export default function BookingTable({ bookings, cabinName, onBookingUpdate }: B
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            {paginatedBookings.map((booking) => (
+            {paginatedBookings.map((booking, index) => (
               <tr key={booking.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 <td className="px-4 py-4">
                   <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {booking.orderNo || 'N/A'}
+                    {startIndex + index + 1}
                   </div>
                 </td>
                 <td className="px-4 py-4">

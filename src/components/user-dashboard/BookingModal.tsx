@@ -17,6 +17,7 @@ interface Cabin {
   price_per_night: number
   max_guests: number
   amenities: string[]
+  affiliations?: string[]
 }
 
 interface BookingModalProps {
@@ -76,8 +77,7 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
     phone: "",
     email: "",
     employer: "",
-    isMemberAEMT: false,
-    isMemberELIT: false,
+    selectedAffiliations: [] as string[],
   })
 
   // Helper function to create consistent dates without timezone issues
@@ -436,14 +436,7 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
 
   // Helper function to determine guest affiliation
   const getGuestAffiliation = () => {
-    if (formData.isMemberAEMT && formData.isMemberELIT) {
-      return "AEMT, EL og IT Agder"
-    } else if (formData.isMemberAEMT) {
-      return "AEMT"
-    } else if (formData.isMemberELIT) {
-      return "EL og IT Agder"
-    }
-    return ""
+    return formData.selectedAffiliations.join(", ")
   }
 
   // FIXED: Helper function to format half-day selections for API
@@ -680,8 +673,7 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
         phone: "",
         email: "",
         employer: "",
-        isMemberAEMT: false,
-        isMemberELIT: false,
+        selectedAffiliations: [],
       })
       // Close modal after a short delay to allow user to see the success message
       setTimeout(() => {
@@ -705,6 +697,15 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleAffiliationChange = (affiliation: string, checked: boolean) => {
+    setFormData((prev) => ({
+      ...prev,
+      selectedAffiliations: checked
+        ? [...prev.selectedAffiliations, affiliation]
+        : prev.selectedAffiliations.filter(a => a !== affiliation)
+    }))
   }
 
   const removeHalfDaySelection = (selectionToRemove: HalfDaySelection) => {
@@ -1021,26 +1022,22 @@ export default function BookingModal({ cabin, onClose }: BookingModalProps) {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Medlem av:</label>
                   <div className="space-y-2">
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={formData.isMemberAEMT}
-                        onChange={(e) => handleInputChange("isMemberAEMT", e.target.checked)}
-                        className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-red-500 focus:ring-red-500"
-                        disabled={submitting}
-                      />
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">AEMT</span>
-                    </label>
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={formData.isMemberELIT}
-                        onChange={(e) => handleInputChange("isMemberELIT", e.target.checked)}
-                        className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-red-500 focus:ring-red-500"
-                        disabled={submitting}
-                      />
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">EL og IT</span>
-                    </label>
+                    {cabin.affiliations && cabin.affiliations.length > 0 ? (
+                      cabin.affiliations.map((affiliation) => (
+                        <label key={affiliation} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={formData.selectedAffiliations.includes(affiliation)}
+                            onChange={(e) => handleAffiliationChange(affiliation, e.target.checked)}
+                            className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-red-500 focus:ring-red-500"
+                            disabled={submitting}
+                          />
+                          <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">{affiliation}</span>
+                        </label>
+                      ))
+                    ) : (
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Ingen tilgjengelige tilhørigheter</p>
+                    )}
                   </div>
                 </div>
 

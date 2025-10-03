@@ -16,6 +16,7 @@ export interface CabinData {
   halfdayAvailability: boolean
   image?: string
   color: string
+  affiliations: string[]
 }
 
 interface UpdateCabinModalProps {
@@ -44,11 +45,13 @@ export default function UpdateCabinModal({
     halfdayAvailability: false,
     image: "",
     color: "#4ECDC4",
+    affiliations: [],
   })
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [newAffiliation, setNewAffiliation] = useState("")
 
   // Fetch cabin data when modal opens
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,6 +99,7 @@ export default function UpdateCabinModal({
           halfdayAvailability: cabinData.halfdayAvailability || false,
           image: cabinData.image || "",
           color: cabinData.color || "#4ECDC4",
+          affiliations: cabinData.affiliations || [],
         })
         if (cabinData.image) {
           setImagePreview(cabinData.image)
@@ -141,9 +145,11 @@ export default function UpdateCabinModal({
         halfdayAvailability: false,
         image: "",
         color: "#4ECDC4",
+        affiliations: [],
       })
       setSelectedImage(null)
       setImagePreview(null)
+      setNewAffiliation("")
       onClose()
     } catch (error) {
       console.error("Feil ved innsending av skjema:", error)
@@ -160,6 +166,30 @@ export default function UpdateCabinModal({
       ...prev,
       [name]: target.type === "checkbox" ? target.checked : value,
     }))
+  }
+
+  const addAffiliation = () => {
+    if (newAffiliation.trim() && !formData.affiliations.includes(newAffiliation.trim())) {
+      setFormData((prev) => ({
+        ...prev,
+        affiliations: [...prev.affiliations, newAffiliation.trim()],
+      }))
+      setNewAffiliation("")
+    }
+  }
+
+  const removeAffiliation = (affiliationToRemove: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      affiliations: prev.affiliations.filter(affiliation => affiliation !== affiliationToRemove),
+    }))
+  }
+
+  const handleAffiliationKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      addAffiliation()
+    }
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -311,6 +341,47 @@ export default function UpdateCabinModal({
                 />
                 <span className="text-sm text-gray-600 dark:text-gray-400">{formData.color}</span>
               </div>
+            </div>
+
+            {/* Affiliations Section */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tilknytninger</label>
+              <div className="flex space-x-2 mb-2">
+                <input
+                  type="text"
+                  value={newAffiliation}
+                  onChange={(e) => setNewAffiliation(e.target.value)}
+                  onKeyPress={handleAffiliationKeyPress}
+                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                  placeholder="Legg til tilknytning"
+                />
+                <button
+                  type="button"
+                  onClick={addAffiliation}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                >
+                  Legg til
+                </button>
+              </div>
+              {formData.affiliations.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {formData.affiliations.map((affiliation, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200"
+                    >
+                      {affiliation}
+                      <button
+                        type="button"
+                        onClick={() => removeAffiliation(affiliation)}
+                        className="ml-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Image Upload Section */}

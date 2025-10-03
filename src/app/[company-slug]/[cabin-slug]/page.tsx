@@ -21,6 +21,7 @@ interface Cabin {
   amenities: string[]
   halfdayAvailability?: boolean
   color?: string
+  affiliations?: string[]
 }
 
 type HalfDay = "first" | "second" // first: 00:00 to 12:00, second: 12:00 to 23:59
@@ -98,8 +99,7 @@ function CabinBookingPageContent() {
     phone: "+47 ",
     email: "",
     employer: "",
-    isMemberAEMT: false,
-    isMemberELIT: false,
+    selectedAffiliations: [] as string[],
   })
 
   // Helper function to generate dynamic color classes based on cabin color
@@ -483,6 +483,7 @@ function CabinBookingPageContent() {
         // Create range between last clicked and current clicked
         const rangeSelections = getHalfDaysBetween(lastClickedDate, { date: clickedDate, half: "second" })
         console.log('Range selections:', rangeSelections)
+        // Single range logic: replace all existing selections with the new range
         setSelectedHalfDays(rangeSelections)
         setLastClickedDate(null) // Reset after range selection
         return
@@ -502,29 +503,29 @@ function CabinBookingPageContent() {
       )
       
       if (isAlreadySelected) {
-        // If already selected, remove this date from selection (deselect)
-        setSelectedHalfDays(prev => prev.filter(s => 
-          !(s.date.getDate() === day && 
-            s.date.getMonth() === selectedMonth.getMonth() && 
-            s.date.getFullYear() === selectedMonth.getFullYear())
-        ))
-        setLastClickedDate(null)
+        // Deselection disabled - clicking selected dates does nothing
+        return
       } else {
-        // If not selected, add to existing selection (additive)
+        // Single range logic: if no previous selection, clear all and start new range
         const newSelections: HalfDaySelection[] = [
           { date: clickedDate, half: "first" },
           { date: clickedDate, half: "second" }
         ]
         
-        // Remove any existing selections for this date first, then add new ones
-        setSelectedHalfDays(prev => {
-          const filtered = prev.filter(s => 
-            !(s.date.getDate() === day && 
-              s.date.getMonth() === selectedMonth.getMonth() && 
-              s.date.getFullYear() === selectedMonth.getFullYear())
-          )
-          return [...filtered, ...newSelections]
-        })
+        if (!lastClickedDate) {
+          // Starting a new range - clear all previous selections
+          setSelectedHalfDays(newSelections)
+        } else {
+          // Continuing a range - remove any existing selections for this date first, then add new ones
+          setSelectedHalfDays(prev => {
+            const filtered = prev.filter(s => 
+              !(s.date.getDate() === day && 
+                s.date.getMonth() === selectedMonth.getMonth() && 
+                s.date.getFullYear() === selectedMonth.getFullYear())
+            )
+            return [...filtered, ...newSelections]
+          })
+        }
         
         // Set this as the last clicked date for potential range selection
         setLastClickedDate(clickedSelection)
@@ -563,6 +564,7 @@ function CabinBookingPageContent() {
             
             // Create range between last clicked and current clicked
             const rangeSelections = getHalfDaysBetween(lastClickedDate, clickedSelection)
+            // Single range logic: replace all existing selections with the new range
             setSelectedHalfDays(rangeSelections)
             setLastClickedDate(null) // Reset after range selection
             return
@@ -577,18 +579,20 @@ function CabinBookingPageContent() {
           )
           
           if (isAlreadySelected) {
-            // If already selected, remove this selection (deselect)
-            setSelectedHalfDays(prev => prev.filter(s => 
-              !(s.date.getDate() === day && 
-                s.date.getMonth() === selectedMonth.getMonth() && 
-                s.date.getFullYear() === selectedMonth.getFullYear() &&
-                s.half === availableHalf)
-            ))
-            setLastClickedDate(null)
+            // Never deselect when clicking on an already selected date
+            // Just update lastClickedDate for potential range extensions
+            setLastClickedDate(clickedSelection)
           } else {
-            // If not selected, add to existing selection (additive)
+            // Single range logic: if no previous selection, clear all and start new range
             const selection: HalfDaySelection = { date: clickedDate, half: availableHalf }
-            setSelectedHalfDays(prev => [...prev, selection])
+            
+            if (!lastClickedDate) {
+              // Starting a new range - clear all previous selections
+              setSelectedHalfDays([selection])
+            } else {
+              // Continuing a range - add to existing selection
+              setSelectedHalfDays(prev => [...prev, selection])
+            }
             
             // Set this as the last clicked date for potential range selection
             setLastClickedDate(clickedSelection)
@@ -647,7 +651,20 @@ function CabinBookingPageContent() {
           }
         })
         
-        setSelectedHalfDays(fullDaySelections)
+        // Add to existing selection instead of replacing it during drag
+        setSelectedHalfDays(prev => {
+          const newSelections = [...prev]
+          fullDaySelections.forEach(selection => {
+            // Only add if not already selected
+            const alreadyExists = newSelections.some(s => 
+              s.date.getTime() === selection.date.getTime() && s.half === selection.half
+            )
+            if (!alreadyExists) {
+              newSelections.push(selection)
+            }
+          })
+          return newSelections
+        })
       }
     }
   }
@@ -698,6 +715,7 @@ function CabinBookingPageContent() {
       // 2. We have a lastClickedDate 
       // 3. This is a different selection than lastClickedDate
       // 4. This half is not already selected
+      // 5. The clicked date is NOT within the current selection range (to prevent accidental range replacement)
       if (selectedHalfDays.length > 0 && 
           lastClickedDate && 
           !isAlreadySelected &&
@@ -712,7 +730,7 @@ function CabinBookingPageContent() {
         const rangeSelections = getHalfDaysBetween(lastClickedDate, clickedSelection)
         console.log('Range selections:', rangeSelections)
         
-        // Replace current selection with the range
+        // Single range logic: replace all existing selections with the new range
         setSelectedHalfDays(rangeSelections)
         setLastClickedDate(clickedSelection)
         setIsDragging(true)
@@ -721,19 +739,19 @@ function CabinBookingPageContent() {
       }
       
       if (isAlreadySelected) {
-        // If already selected, remove this selection (deselect)
-        setSelectedHalfDays(prev => prev.filter(s => 
-          !(s.date.getDate() === day && 
-            s.date.getMonth() === selectedMonth.getMonth() && 
-            s.date.getFullYear() === selectedMonth.getFullYear() &&
-            s.half === half)
-        ))
-        // Reset lastClickedDate when deselecting
-        setLastClickedDate(null)
-        console.log('Deselected half-day, reset lastClickedDate to null')
+        // Never deselect when clicking on an already selected date
+        // Just update lastClickedDate for potential range extensions
+        setLastClickedDate(clickedSelection)
+        console.log('Clicked on selected date, updated lastClickedDate to:', clickedSelection)
       } else {
-        // If not selected, add to existing selection (additive)
-        setSelectedHalfDays(prev => [...prev, clickedSelection])
+        // Single range logic: if no previous selection, clear all and start new range
+        if (!lastClickedDate) {
+          // Starting a new range - clear all previous selections
+          setSelectedHalfDays([clickedSelection])
+        } else {
+          // Continuing a range - add to existing selection
+          setSelectedHalfDays(prev => [...prev, clickedSelection])
+        }
         setLastClickedDate(clickedSelection)
         console.log('Selected half-day, set lastClickedDate to:', clickedSelection)
       }
@@ -781,7 +799,7 @@ function CabinBookingPageContent() {
             const rangeSelections = getHalfDaysBetween(lastClickedDate, clickedSelection)
             console.log('Range selections for partially booked:', rangeSelections)
             
-            // Replace current selection with the range
+            // Single range logic: replace all existing selections with the new range
             setSelectedHalfDays(rangeSelections)
             setLastClickedDate(clickedSelection)
             setIsDragging(true)
@@ -790,19 +808,17 @@ function CabinBookingPageContent() {
           }
           
           if (isAlreadySelected) {
-            // If already selected, remove this selection (deselect)
-            setSelectedHalfDays(prev => prev.filter(s => 
-              !(s.date.getDate() === day && 
-                s.date.getMonth() === selectedMonth.getMonth() && 
-                s.date.getFullYear() === selectedMonth.getFullYear() &&
-                s.half === half)
-            ))
-            // Reset lastClickedDate when deselecting
-            setLastClickedDate(null)
-            console.log('Deselected partially booked half-day, reset lastClickedDate to null')
+            // Deselection disabled - clicking selected half-days does nothing
+            return
           } else {
-            // If not selected, add to existing selection (additive)
-            setSelectedHalfDays(prev => [...prev, clickedSelection])
+            // Single range logic: if no previous selection, clear all and start new range
+            if (!lastClickedDate) {
+              // Starting a new range - clear all previous selections
+              setSelectedHalfDays([clickedSelection])
+            } else {
+              // Continuing a range - add to existing selection
+              setSelectedHalfDays(prev => [...prev, clickedSelection])
+            }
             setLastClickedDate(clickedSelection)
             console.log('Selected partially booked half-day, set lastClickedDate to:', clickedSelection)
           }
@@ -851,7 +867,20 @@ function CabinBookingPageContent() {
 
       if (dragStart) {
         const rangeSelections = getHalfDaysBetween(dragStart, hoveredSelection)
-        setSelectedHalfDays(rangeSelections)
+        // Add to existing selection instead of replacing it during drag
+        setSelectedHalfDays(prev => {
+          const newSelections = [...prev]
+          rangeSelections.forEach(selection => {
+            // Only add if not already selected
+            const alreadyExists = newSelections.some(s => 
+              s.date.getTime() === selection.date.getTime() && s.half === selection.half
+            )
+            if (!alreadyExists) {
+              newSelections.push(selection)
+            }
+          })
+          return newSelections
+        })
       }
       return
     }
@@ -873,7 +902,20 @@ function CabinBookingPageContent() {
 
           if (dragStart) {
             const rangeSelections = getHalfDaysBetween(dragStart, hoveredSelection)
-            setSelectedHalfDays(rangeSelections)
+            // Add to existing selection instead of replacing it during drag
+            setSelectedHalfDays(prev => {
+              const newSelections = [...prev]
+              rangeSelections.forEach(selection => {
+                // Only add if not already selected
+                const alreadyExists = newSelections.some(s => 
+                  s.date.getTime() === selection.date.getTime() && s.half === selection.half
+                )
+                if (!alreadyExists) {
+                  newSelections.push(selection)
+                }
+              })
+              return newSelections
+            })
           }
           return
         }
@@ -1042,14 +1084,7 @@ function CabinBookingPageContent() {
 
   // Helper function to determine guest affiliation
   const getGuestAffiliation = () => {
-    if (formData.isMemberAEMT && formData.isMemberELIT) {
-      return "AEMT, EL og IT Agder"
-    } else if (formData.isMemberAEMT) {
-      return "AEMT"
-    } else if (formData.isMemberELIT) {
-      return "EL og IT Agder"
-    }
-    return ""
+    return formData.selectedAffiliations.join(", ")
   }
 
   // Helper function to format half-day selections for single API call
@@ -1237,8 +1272,7 @@ function CabinBookingPageContent() {
           phone: "+47 ",
           email: "",
           employer: "",
-          isMemberAEMT: false,
-          isMemberELIT: false,
+          selectedAffiliations: [],
         })
         
         // Refresh calendar data
@@ -1313,6 +1347,15 @@ function CabinBookingPageContent() {
     } else {
       setFormData((prev) => ({ ...prev, [field]: value }));
     }
+  }
+
+  const handleAffiliationChange = (affiliation: string, checked: boolean) => {
+    setFormData((prev) => ({
+      ...prev,
+      selectedAffiliations: checked
+        ? [...prev.selectedAffiliations, affiliation]
+        : prev.selectedAffiliations.filter(a => a !== affiliation)
+    }))
   }
 
   const removeHalfDaySelection = (selectionToRemove: HalfDaySelection) => {
@@ -1837,34 +1880,26 @@ function CabinBookingPageContent() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Medlem av:</label>
                   <div className="space-y-2">
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={formData.isMemberAEMT}
-                        onChange={(e) => handleInputChange("isMemberAEMT", e.target.checked)}
-                        className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2"
-                        style={{
-                          '--tw-ring-color': colors.primary,
-                          color: colors.primary
-                        } as React.CSSProperties}
-                        disabled={submitting}
-                      />
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">AEMT</span>
-                    </label>
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={formData.isMemberELIT}
-                        onChange={(e) => handleInputChange("isMemberELIT", e.target.checked)}
-                        className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2"
-                        style={{
-                          '--tw-ring-color': colors.primary,
-                          color: colors.primary
-                        } as React.CSSProperties}
-                        disabled={submitting}
-                      />
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">EL og IT</span>
-                    </label>
+                    {cabin?.affiliations && cabin.affiliations.length > 0 ? (
+                      cabin.affiliations.map((affiliation) => (
+                        <label key={affiliation} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={formData.selectedAffiliations.includes(affiliation)}
+                            onChange={(e) => handleAffiliationChange(affiliation, e.target.checked)}
+                            className="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2"
+                            style={{
+                              '--tw-ring-color': colors.primary,
+                              color: colors.primary
+                            } as React.CSSProperties}
+                            disabled={submitting}
+                          />
+                          <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">{affiliation}</span>
+                        </label>
+                      ))
+                    ) : (
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Ingen tilgjengelige medlemskap</p>
+                    )}
                   </div>
                 </div>
 
